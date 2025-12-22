@@ -9,16 +9,16 @@ const UnicornBackground = () => {
 
   // Configuration based on theme
   const getConfig = useCallback(() => {
-    if (theme === 'unicorn') {
+      if (theme === 'unicorn') {
       return {
-        COLOR_PRIMARY: [0.9, 0.2, 0.7], // Magenta
-        COLOR_SECONDARY: [0.2, 0.9, 0.9], // Cyan
-        COLOR_TERTIARY: [1.0, 0.9, 0.2], // Yellow
-        PARTICLE_COUNT: 300,
-        SMOKE_SPEED: 0.0001,
-        FRICTION: 0.95,
-        MOUSE_INFLUENCE: 0.5,
-        BG_IMAGE: '/bg-unicorn.jpg'
+        COLOR_PRIMARY: [1.0, 0.0, 0.8], // Hot Pink
+        COLOR_SECONDARY: [0.0, 1.0, 1.0], // Cyan
+        COLOR_TERTIARY: [0.8, 0.2, 1.0], // Purple
+        PARTICLE_COUNT: 400, // More particles
+        SMOKE_SPEED: 0.0002, // Slightly faster
+        FRICTION: 0.96,
+        MOUSE_INFLUENCE: 0.8, // More reactive
+        BG_IMAGE: '/vaporwave-bg.jpg'
       };
     } else if (theme === 'dark') {
       return {
@@ -61,10 +61,13 @@ const UnicornBackground = () => {
       particles.current.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
-        radius: Math.random() * 1.5 + 0.5,
+        vx: (Math.random() - 0.5) * 0.5, // Faster movement
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 3 + 1, // Bigger particles (1-4px)
         color: color,
+        alpha: Math.random(), // Random starting opacity
+        alphaSpeed: (Math.random() * 0.02) + 0.005, // Twinkle speed
+        alphaDirection: 1 // 1 for fading in, -1 for fading out
       });
     }
   }, [getConfig]);
@@ -107,11 +110,33 @@ const UnicornBackground = () => {
       if (p.y < 0) p.y = canvas.height;
       if (p.y > canvas.height) p.y = 0;
 
+      // Twinkle effect logic
+      if (theme === 'unicorn') {
+        p.alpha += p.alphaSpeed * p.alphaDirection;
+        if (p.alpha > 1) {
+          p.alpha = 1;
+          p.alphaDirection = -1;
+        } else if (p.alpha < 0.2) {
+          p.alpha = 0.2;
+          p.alphaDirection = 1;
+        }
+      }
+
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${p.color[0] * 255}, ${p.color[1] * 255}, ${p.color[2] * 255}, 0.8)`;
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = ctx.fillStyle;
+      // Use dynamic alpha for unicorn theme, static 0.8 for others
+      const alpha = theme === 'unicorn' ? p.alpha : 0.8;
+      ctx.fillStyle = `rgba(${p.color[0] * 255}, ${p.color[1] * 255}, ${p.color[2] * 255}, ${alpha})`;
+      
+      // Enhanced glow for unicorn theme
+      if (theme === 'unicorn') {
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = `rgba(${p.color[0] * 255}, ${p.color[1] * 255}, ${p.color[2] * 255}, ${alpha})`;
+      } else {
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = ctx.fillStyle;
+      }
+      
       ctx.fill();
     });
 
