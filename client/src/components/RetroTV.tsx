@@ -23,6 +23,16 @@ const PLAYLIST = [
     title: "Roots - Northside",
     src: "/roots-northside.mp3",
     image: "/pixel-clouds.jpg"
+  },
+  {
+    title: "Train Heist",
+    src: "/train-heist.mp3",
+    image: "/banana-heist.png"
+  },
+  {
+    title: "Xmas Lofi",
+    src: "/xmas-lofi.mp3",
+    image: "/santa-dj.jpg"
   }
 ];
 
