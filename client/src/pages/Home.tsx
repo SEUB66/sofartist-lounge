@@ -104,82 +104,82 @@ export default function Home() {
         <div className={`absolute transition-all duration-500 ease-in-out z-50 
           ${isMaximized 
             ? 'inset-4 w-auto h-auto' 
-            : 'top-1/2 -translate-y-1/2 right-[10%] w-[400px]'
+            : 'top-1/2 -translate-y-1/2 right-[10%] w-[300px]' // Reduced width to 300px
           }
         `}>
           <Card className={`w-full h-full backdrop-blur-xl border transition-all duration-500 flex flex-col ${getGlassStyle()}`}>
             
             {/* Window Controls Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-black/10">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-black/10">
               <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full ${theme === 'light' ? 'bg-orange-400' : 'bg-cyan-400'} animate-pulse`} />
-                <span className={`text-xs font-mono uppercase tracking-widest ${theme === 'light' ? 'text-orange-800/70' : 'text-white/50'}`}>
-                  Secure_Shell_v2.0
+                <div className={`w-2.5 h-2.5 rounded-full ${theme === 'light' ? 'bg-orange-400' : 'bg-cyan-400'} animate-pulse`} />
+                <span className={`text-[10px] font-mono uppercase tracking-widest ${theme === 'light' ? 'text-orange-800/70' : 'text-white/50'}`}>
+                  Secure_Shell
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button 
                   onClick={toggleWindow}
-                  className={`p-1 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
+                  className={`p-0.5 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
                 >
-                  <Minus size={14} />
+                  <Minus size={12} />
                 </button>
                 <button 
                   onClick={toggleMaximize}
-                  className={`p-1 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
+                  className={`p-0.5 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
                 >
-                  <Square size={12} />
+                  <Square size={10} />
                 </button>
                 <button 
                   onClick={toggleWindow}
-                  className="p-1 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors text-white/50"
+                  className="p-0.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors text-white/50"
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </button>
               </div>
             </div>
 
-            <div className={`flex-1 flex flex-col ${isMaximized ? 'justify-center max-w-md mx-auto w-full' : ''}`}>
-              <CardHeader className="space-y-1 pb-8">
-                <CardTitle className={`text-4xl font-black text-center tracking-tighter uppercase transition-all duration-500 ${getTitleStyle()}`}>
+            <div className={`flex-1 flex flex-col ${isMaximized ? 'justify-center max-w-sm mx-auto w-full' : ''}`}>
+              <CardHeader className="space-y-1 pb-4 pt-4">
+                <CardTitle className={`text-2xl font-black text-center tracking-tighter uppercase transition-all duration-500 ${getTitleStyle()}`}>
                   DEVCAVE BAR
                 </CardTitle>
-                <CardDescription className={`text-center text-lg font-light tracking-widest uppercase ${theme === 'light' ? 'text-orange-800/70' : 'text-gray-300'}`}>
+                <CardDescription className={`text-center text-xs font-light tracking-widest uppercase ${theme === 'light' ? 'text-orange-800/70' : 'text-gray-300'}`}>
                   Access Terminal
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pb-4">
                 <form>
-                  <div className="grid w-full items-center gap-6">
-                    <div className="flex flex-col space-y-2">
-                      <Label htmlFor="username" className={`font-bold uppercase tracking-widest text-xs ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
+                  <div className="grid w-full items-center gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="username" className={`font-bold uppercase tracking-widest text-[10px] ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
                         Identity
                       </Label>
                       <Input 
                         id="username" 
                         placeholder="CODENAME" 
-                        className={`bg-white/5 h-12 transition-all duration-300 ${getInputStyle()}`} 
+                        className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
                       />
                     </div>
-                    <div className="flex flex-col space-y-2">
-                      <Label htmlFor="password" className={`font-bold uppercase tracking-widest text-xs ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="password" className={`font-bold uppercase tracking-widest text-[10px] ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
                         Passphrase
                       </Label>
                       <Input 
                         id="password" 
                         type="password" 
-                        placeholder="••••••••••••" 
-                        className={`bg-white/5 h-12 transition-all duration-300 ${getInputStyle()}`} 
+                        placeholder="••••••••" 
+                        className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
                       />
                     </div>
                   </div>
                 </form>
               </CardContent>
-              <CardFooter className="flex flex-col space-y-4 pt-6">
-                <Button className={`w-full h-12 border-0 font-bold tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] ${getButtonStyle()}`}>
+              <CardFooter className="flex flex-col space-y-3 pt-2 pb-6">
+                <Button className={`w-full h-10 text-sm border-0 font-bold tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] ${getButtonStyle()}`}>
                   Enter System
                 </Button>
-                <Button variant="link" className={`text-sm font-light ${theme === 'light' ? 'text-orange-800 hover:text-orange-600' : 'text-gray-400 hover:text-white'}`}>
+                <Button variant="link" className={`text-xs font-light h-auto p-0 ${theme === 'light' ? 'text-orange-800 hover:text-orange-600' : 'text-gray-400 hover:text-white'}`}>
                   Forgot credentials?
                 </Button>
               </CardFooter>
