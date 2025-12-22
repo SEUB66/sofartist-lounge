@@ -1,22 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface RetroTVProps {
   isOpen: boolean;
   onClose: () => void;
+  autoPlayTrigger: boolean; // New prop to trigger auto-play
 }
 
-const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
+const PLAYLIST = [
+  {
+    title: "Ms. Pac-Man Theme",
+    src: "/lightbath.mp3", // This is the pacman file
+    image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/25/Ms._Pac-Man_arcade_flyer.png/220px-Ms._Pac-Man_arcade_flyer.png" // Placeholder or specific image
+  },
+  {
+    title: "Profound Impact",
+    src: "/impact.mp3",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" // Abstract/Space image
+  }
+];
+
+const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) => {
   const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [volume, setVolume] = useState(50);
-  const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Initialize audio
   useEffect(() => {
-    audioRef.current = new Audio('/lightbath.mp3');
+    audioRef.current = new Audio(PLAYLIST[currentTrackIndex].src);
     audioRef.current.loop = true;
     audioRef.current.volume = volume / 100;
 
@@ -28,7 +42,27 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
     };
   }, []);
 
-  // Handle Play/Pause
+  // Handle Track Change
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = PLAYLIST[currentTrackIndex].src;
+      if (isPlaying) {
+        audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+      }
+    }
+  }, [currentTrackIndex]);
+
+  // Handle Auto-Play Trigger
+  useEffect(() => {
+    if (autoPlayTrigger && isOpen) {
+      setIsPlaying(true);
+    } else if (!isOpen) {
+      setIsPlaying(false);
+    }
+  }, [autoPlayTrigger, isOpen]);
+
+  // Handle Play/Pause State
   useEffect(() => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -39,12 +73,13 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
     }
   }, [isPlaying]);
 
-  // Handle Volume
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
-  }, [volume]);
+  const nextTrack = () => {
+    setCurrentTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+  };
+
+  const prevTrack = () => {
+    setCurrentTrackIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+  };
 
   if (!isOpen) return null;
 
@@ -54,15 +89,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
       case 'light': return 'shadow-[inset_0_0_50px_rgba(249,115,22,0.5)]';
       case 'unicorn': return 'shadow-[inset_0_0_50px_rgba(236,72,153,0.5)]';
       default: return 'shadow-[inset_0_0_50px_rgba(255,255,255,0.5)]';
-    }
-  };
-
-  const getVisualizerColor = () => {
-    switch (theme) {
-      case 'dark': return 'bg-cyan-400';
-      case 'light': return 'bg-orange-500';
-      case 'unicorn': return 'bg-pink-500';
-      default: return 'bg-white';
     }
   };
 
@@ -76,46 +102,53 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
       />
 
       {/* Screen Content Area */}
-      <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black/80 rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center p-4 ${getScreenGlow()}`}>
+      <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center relative ${getScreenGlow()}`}>
         
-        {/* Retro Visualizer */}
-        <div className="flex items-end justify-center gap-1 h-20 w-full mb-4">
-          {[...Array(12)].map((_, i) => (
-            <div 
-              key={i} 
-              className={`w-2 rounded-t-sm transition-all duration-100 ${getVisualizerColor()}`}
-              style={{ 
-                height: isPlaying ? `${Math.random() * 100}%` : '10%',
-                opacity: 0.8 
-              }}
-            />
-          ))}
+        {/* Track Image Background */}
+        <div className="absolute inset-0 opacity-40">
+           <img 
+             src={PLAYLIST[currentTrackIndex].image} 
+             alt="Track Cover" 
+             className="w-full h-full object-cover"
+           />
         </div>
 
-        {/* Track Info */}
-        <div className="text-center mb-4">
-          <p className={`font-mono text-xs tracking-widest uppercase ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'}`}>
-            Now Playing
-          </p>
-          <p className="text-white font-bold text-sm truncate w-48">
-            Ms. Pac-Man Theme
-          </p>
-        </div>
+        {/* Content Overlay */}
+        <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/30 backdrop-blur-sm h-full justify-center">
+          
+          {/* Track Info */}
+          <div className="text-center mb-4">
+            <p className={`font-mono text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'}`}>
+              Now Playing
+            </p>
+            <p className="text-white font-bold text-sm truncate w-48 drop-shadow-md">
+              {PLAYLIST[currentTrackIndex].title}
+            </p>
+          </div>
 
-        {/* Controls */}
-        <div className="flex items-center gap-4">
-          <button className="text-white/70 hover:text-white transition-colors">
-            <SkipBack size={20} />
-          </button>
-          <button 
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`p-2 rounded-full ${theme === 'light' ? 'bg-orange-500' : 'bg-cyan-600'} text-white hover:scale-110 transition-transform`}
-          >
-            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-          </button>
-          <button className="text-white/70 hover:text-white transition-colors">
-            <SkipForward size={20} />
-          </button>
+          {/* Controls */}
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={prevTrack}
+              className="text-white/70 hover:text-white hover:scale-110 transition-all"
+            >
+              <SkipBack size={24} />
+            </button>
+            
+            <button 
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`p-3 rounded-full ${theme === 'light' ? 'bg-orange-500' : 'bg-cyan-600'} text-white hover:scale-110 transition-transform shadow-lg`}
+            >
+              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+            </button>
+            
+            <button 
+              onClick={nextTrack}
+              className="text-white/70 hover:text-white hover:scale-110 transition-all"
+            >
+              <SkipForward size={24} />
+            </button>
+          </div>
         </div>
 
         {/* Scanlines Effect */}

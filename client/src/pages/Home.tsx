@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,13 +13,14 @@ export default function Home() {
   const { theme } = useTheme();
   const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
   const [isMaximized, setIsMaximized] = useState(false);
+  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
 
   const toggleWindow = () => {
     if (!isWindowOpen) {
-      // Play opening sound when opening the window
-      const audio = new Audio('/open-window.mp3');
-      audio.volume = 0.6;
-      audio.play().catch(e => console.error("Sound play failed:", e));
+      // Trigger auto-play on TV when opening window
+      setShouldAutoPlay(true);
+    } else {
+      setShouldAutoPlay(false);
     }
     setIsWindowOpen(!isWindowOpen);
   };
@@ -90,7 +91,7 @@ export default function Home() {
       </div>
 
       {/* Retro TV Component - Shows when window is open */}
-      <RetroTV isOpen={isWindowOpen} onClose={() => {}} />
+      <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
       {/* Desktop Taskbar / Dock Area (Bottom) */}
       {!isWindowOpen && (
