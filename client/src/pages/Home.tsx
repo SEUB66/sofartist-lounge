@@ -107,7 +107,7 @@ export default function Home() {
                 <img 
                   src="/apple-punk-logo.png" 
                   alt="Apple Punk" 
-                  className="w-48 h-48 mx-auto object-contain"
+                  className="w-48 h-48 mx-auto object-contain max-md:hidden"
                 />
                 <p className="text-fuchsia-300/70 font-mono text-sm tracking-widest">
                   ACCESS TERMINAL

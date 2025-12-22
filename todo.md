@@ -41,3 +41,16 @@
 - [x] Ajouter minimize fonctionnel (bouton jaune)
 - [x] Intégrer RetroTV DANS login window sur mobile
 - [x] Garder TV à gauche sur PC
+
+## 🐛 PHASE 12 : FIX MOBILE BUGS
+- [ ] Enlever le double logo Apple Punk sur mobile
+
+## ✅ PHASE 12 : FIX MOBILE BUGS
+- [x] Enlever le double logo Apple Punk sur mobile
+- [x] Fixer le zoom de la fenêtre (bouton vert)
+- [x] Remettre le template/frame de la TV visible
+
+## ✅ PHASE 13 : RESTORE DESKTOP LOCKED
+- [x] Enlever le zoom (bouton vert inactif)
+- [x] Vérifier que desktop est intact (comme avant)
+- [x] Garder les fixes mobile
