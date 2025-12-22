@@ -25,6 +25,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [volume, setVolume] = useState(50);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -44,7 +45,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
   // Handle Track Change
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && !isTransitioning) {
       const wasPlaying = isPlaying;
       audioRef.current.pause();
       audioRef.current.src = PLAYLIST[currentTrackIndex].src;
@@ -52,7 +53,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         audioRef.current.play().catch(e => console.error("Audio play failed:", e));
       }
     }
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, isTransitioning]);
 
   // Handle Auto-Play Trigger
   useEffect(() => {
@@ -74,13 +75,37 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     }
   }, [isPlaying]);
 
-  const nextTrack = () => {
-    setCurrentTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+  const handleTrackChange = (direction: 'next' | 'prev') => {
+    if (isTransitioning) return;
+
+    setIsTransitioning(true);
+    
+    // Pause current audio during transition
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+
+    setTimeout(() => {
+      if (direction === 'next') {
+        setCurrentTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+      } else {
+        setCurrentTrackIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+      }
+      setIsTransitioning(false);
+      
+      // Resume playing if it was playing before
+      if (isPlaying && audioRef.current) {
+        // The useEffect for currentTrackIndex will handle loading the new src
+        // We just need to ensure it plays after the state update propagates
+        setTimeout(() => {
+            audioRef.current?.play().catch(e => console.error("Audio play failed:", e));
+        }, 50);
+      }
+    }, 1500); // 1.5s transition duration
   };
 
-  const prevTrack = () => {
-    setCurrentTrackIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
-  };
+  const nextTrack = () => handleTrackChange('next');
+  const prevTrack = () => handleTrackChange('prev');
 
   if (!isOpen) return null;
 
@@ -95,6 +120,9 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
   // Determine which image to show
   const getScreenImage = () => {
+    if (isTransitioning) {
+      return "/level-up.jpg";
+    }
     if (!isPlaying) {
       return "/game-over.jpg";
     }
