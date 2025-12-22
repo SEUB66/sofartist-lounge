@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,14 +13,13 @@ import WallModule from "@/components/WallModule";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
-  const { data: user, isLoading } = trpc.auth.me.useQuery();
+  const { user, logout, isLoading } = useAuth();
   
-  const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: () => {
-      toast.success("Logged out successfully");
-      setLocation("/");
-    },
-  });
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    setLocation("/");
+  };
 
   // Redirect to login if not authenticated
   if (!isLoading && !user) {
@@ -79,7 +78,7 @@ export default function Dashboard() {
               &gt; <span className="text-green-400 font-bold">{user?.name || user?.username}</span>
             </div>
             <Button
-              onClick={() => logoutMutation.mutate()}
+              onClick={handleLogout}
               variant="outline"
               size="sm"
               className="gap-2 bg-red-500/10 border-red-500/50 text-red-400 hover:bg-red-500/20 font-mono uppercase tracking-wider"

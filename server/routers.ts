@@ -39,9 +39,14 @@ export const appRouter = router({
           });
         }
 
-        // Create JWT token
+        // Create JWT token with all required fields
         const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret-key");
-        const token = await new SignJWT({ openId: user.openId || `custom-${user.id}` })
+        const openId = user.openId || `custom-${user.id}`;
+        const token = await new SignJWT({ 
+          openId,
+          appId: process.env.VITE_APP_ID || "devcave-bar",
+          name: user.name || user.username
+        })
           .setProtectedHeader({ alg: "HS256" })
           .setExpirationTime("7d")
           .sign(secret);
