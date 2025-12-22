@@ -158,7 +158,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
         {/* Content Overlay (Only show when playing) */}
         {isPlaying && (
-          <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/30 backdrop-blur-sm h-full justify-center animate-in fade-in duration-700">
+          <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/10 h-full justify-center animate-in fade-in duration-700">
             
             {/* Track Info */}
             <div className="text-center mb-4">
