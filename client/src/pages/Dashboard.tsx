@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -10,33 +10,10 @@ import ChatModule from "@/components/ChatModule";
 import RadioModule from "@/components/RadioModule";
 import BoardModule from "@/components/BoardModule";
 import WallModule from "@/components/WallModule";
-import SharedTV from "@/components/SharedTV";
-import { useAudio } from "@/contexts/AudioContext";
-import { trpc } from "@/lib/trpc";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { user, logout, isLoading } = useAuth();
-  const { currentVideo, isTransitioning } = useAudio();
-  
-  // Track online users
-  const { data: onlineCount } = trpc.session.getOnlineCount.useQuery(undefined, {
-    refetchInterval: 10000, // Refresh every 10 seconds
-  });
-  
-  // Send heartbeat every 30 seconds
-  const heartbeatMutation = trpc.session.heartbeat.useMutation();
-  useEffect(() => {
-    // Send initial heartbeat
-    heartbeatMutation.mutate();
-    
-    // Set up interval
-    const interval = setInterval(() => {
-      heartbeatMutation.mutate();
-    }, 30000); // Every 30 seconds
-    
-    return () => clearInterval(interval);
-  }, []);
   
   const handleLogout = () => {
     logout();
@@ -92,9 +69,7 @@ export default function Dashboard() {
             </div>
             <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded bg-green-500/10 border border-green-500/30">
               <Users size={14} className="text-green-400" />
-              <span className="text-xs text-green-300 font-mono">
-                {onlineCount || 0} {onlineCount === 1 ? 'DEV' : 'DEVS'} ONLINE
-              </span>
+              <span className="text-xs text-green-300 font-mono">6 DEVS ONLINE</span>
             </div>
           </div>
           
@@ -117,10 +92,6 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 pb-20">
-        {/* Shared TV - Always visible at the top */}
-        <SharedTV currentVideo={currentVideo} isTransitioning={isTransitioning} />
-        
-        {/* Tabs for modules */}
         <Tabs defaultValue="radio" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-black border-2 border-green-500/30 p-1">
             <TabsTrigger 

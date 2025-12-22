@@ -5,20 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Trash2, Layers, Tv } from "lucide-react";
-import VideoPlayer from "@/components/VideoPlayer";
-import { useAudio } from "@/contexts/AudioContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { Plus, Trash2, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 export default function WallModule() {
-  const { broadcastVideo, activeSource } = useAudio();
-  const { user } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
 
   const { data: posts, refetch } = trpc.wall.getPosts.useQuery();
   
@@ -30,7 +24,6 @@ export default function WallModule() {
       setTitle("");
       setContent("");
       setImageUrl("");
-      setVideoUrl("");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to create post");
@@ -54,7 +47,6 @@ export default function WallModule() {
       title: title.trim(),
       content: content.trim(),
       imageUrl: imageUrl.trim() || undefined,
-      videoUrl: videoUrl.trim() || undefined,
     });
   };
 
@@ -123,17 +115,6 @@ export default function WallModule() {
                   className="bg-black border-orange-500/30 text-orange-100 font-mono"
                 />
               </div>
-              <div>
-                <label className="text-orange-400 font-mono text-sm mb-2 block">
-                  VIDEO URL (OPTIONAL - YouTube, Vimeo, MP4)
-                </label>
-                <Input
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://youtube.com/watch?v=... or .mp4 URL"
-                  className="bg-black border-orange-500/30 text-orange-100 font-mono"
-                />
-              </div>
               <Button
                 onClick={handleSubmit}
                 disabled={createPostMutation.isPending}
@@ -181,33 +162,6 @@ export default function WallModule() {
                       alt={post.title}
                       className="w-full max-h-64 object-cover"
                     />
-                  </div>
-                )}
-                
-                {post.videoUrl && (
-                  <div className="mb-3">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Button
-                        onClick={() => {
-                          if (activeSource === "radio") {
-                            toast.error("⚠️ STOP THE RADIO FIRST!");
-                            return;
-                          }
-                          broadcastVideo({
-                            url: post.videoUrl!,
-                            title: post.title,
-                            broadcaster: user?.name || user?.username || "Unknown",
-                          });
-                          toast.success("📡 Broadcasting to Shared TV!");
-                        }}
-                        className="bg-green-500/20 hover:bg-green-500/30 text-green-400 border-2 border-green-500 font-mono uppercase tracking-wider gap-2"
-                        size="sm"
-                      >
-                        <Tv size={16} />
-                        PUSH TO TV
-                      </Button>
-                    </div>
-                    <VideoPlayer url={post.videoUrl} />
                   </div>
                 )}
                 
