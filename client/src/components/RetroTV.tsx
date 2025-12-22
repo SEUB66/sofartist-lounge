@@ -192,34 +192,34 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
       {/* CONTRÔLES MAPPÉS SUR LES BOUTONS PHYSIQUES DE LA TV BLEUE */}
       
-      {/* Grosse roulette du HAUT (chaînes) = PLAY */}
+      {/* Grosse roulette du HAUT (dorée, chaînes) = PLAY */}
       <button 
         onClick={() => setIsPlaying(true)}
-        className="absolute top-[18%] right-[10%] w-[13%] h-[13%] z-[60] cursor-pointer hover:bg-cyan-400/20 rounded-full transition-colors"
+        className="absolute top-[25%] right-[8%] w-[15%] h-[18%] z-[60] cursor-pointer hover:bg-cyan-400/20 rounded-full transition-colors"
         title="Play"
         aria-label="Play"
       />
 
-      {/* Grosse roulette du BAS (volume) = PAUSE */}
+      {/* Grosse roulette du BAS (marron, volume) = PAUSE */}
       <button 
         onClick={() => setIsPlaying(false)}
-        className="absolute top-[38%] right-[10%] w-[13%] h-[13%] z-[60] cursor-pointer hover:bg-orange-400/20 rounded-full transition-colors"
+        className="absolute top-[48%] right-[8%] w-[15%] h-[18%] z-[60] cursor-pointer hover:bg-orange-400/20 rounded-full transition-colors"
         title="Pause"
         aria-label="Pause"
       />
 
-      {/* Petit bouton GAUCHE (en bas de la roulette du haut) = BACK */}
+      {/* Petit bouton GAUCHE (doré) = PREVIOUS TRACK */}
       <button 
         onClick={prevTrack}
-        className="absolute top-[32%] right-[10%] w-[6%] h-[5%] z-[60] cursor-pointer hover:bg-pink-400/30 rounded-full transition-colors"
+        className="absolute top-[68%] right-[13%] w-[5%] h-[5%] z-[60] cursor-pointer hover:bg-pink-400/30 rounded-full transition-colors"
         title="Previous Track"
         aria-label="Previous Track"
       />
 
-      {/* Petit bouton DROIT (en bas de la roulette du bas) = NEXT */}
+      {/* Petit bouton DROIT (doré) = NEXT TRACK */}
       <button 
         onClick={nextTrack}
-        className="absolute top-[52%] right-[10%] w-[6%] h-[5%] z-[60] cursor-pointer hover:bg-purple-400/30 rounded-full transition-colors"
+        className="absolute top-[68%] right-[6%] w-[5%] h-[5%] z-[60] cursor-pointer hover:bg-purple-400/30 rounded-full transition-colors"
         title="Next Track"
         aria-label="Next Track"
       />
