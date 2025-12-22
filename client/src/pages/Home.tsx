@@ -93,24 +93,46 @@ export default function Home() {
       {/* Retro TV Component - Shows when window is open */}
       <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
+      {/* Christmas Banner - Shows when window is NOT open */}
+      {!isWindowOpen && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 flex flex-col items-center animate-in fade-in zoom-in duration-1000">
+          <div className="relative group">
+            <img 
+              src="/christmas-banner.png" 
+              alt="Christmas Banner" 
+              className="w-[500px] h-auto rounded-lg shadow-[0_0_50px_rgba(255,0,0,0.3)] border-4 border-white/20"
+            />
+            <div className="absolute -bottom-12 left-0 right-0 text-center">
+              <p className="text-xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-mono tracking-widest animate-pulse">
+                MERRY CHRISTMAS FROM APPLE PUNK FOUNDERS
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Desktop Taskbar / Dock Area (Bottom) */}
       {!isWindowOpen && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
           <button 
             onClick={() => {
-              setTheme('unicorn'); // Switch to unicorn theme
               toggleWindow(); // Open login window
             }}
             className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
             <img 
-              src="/press-start.jpg" 
+              src="/press-start-new.jpg" 
               alt="Press Start" 
               className="h-16 w-auto rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)] border-2 border-cyan-400/50"
             />
           </button>
         </div>
       )}
+
+      {/* Footer Credits */}
+      <div className="absolute bottom-2 right-4 z-50 text-[10px] font-mono text-white/30 tracking-widest pointer-events-none select-none">
+        Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+      </div>
 
       {/* Login Window */}
       {isWindowOpen && (

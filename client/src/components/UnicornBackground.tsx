@@ -168,7 +168,7 @@ const UnicornBackground = () => {
           playsInline
           className="background-video-layer"
         >
-          <source src="/coffee-break.mp4" type="video/mp4" />
+          <source src="/christmas-hero.mp4" type="video/mp4" />
         </video>
       ) : (
         <div 
