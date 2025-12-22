@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -14,47 +13,68 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      <Card className="w-[400px] bg-black/30 backdrop-blur-xl border-white/10 text-white shadow-2xl relative z-10">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 animate-gradient-x">
-            DEVCAVE BAR
-          </CardTitle>
-          <CardDescription className="text-center text-gray-300 text-lg font-light">
-            Exclusive Access Only
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-6">
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="username" className="text-gray-200 font-medium">Identity</Label>
-                <Input 
-                  id="username" 
-                  placeholder="Enter your codename" 
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-pink-500/50 focus:ring-pink-500/20 h-12 transition-all duration-300" 
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label htmlFor="password" className="text-gray-200 font-medium">Passphrase</Label>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  placeholder="••••••••••••" 
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-cyan-500/50 focus:ring-cyan-500/20 h-12 transition-all duration-300" 
-                />
-              </div>
+      {/* Custom Neon Frame Login Container */}
+      <div className="relative w-[500px] h-[800px] flex flex-col items-center justify-center z-10">
+        
+        {/* The Neon Frame Background Image */}
+        <img 
+          src="/login-frame.png" 
+          alt="Login Interface" 
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-2xl"
+        />
+
+        {/* Content Overlay - Positioned to match the frames in the image */}
+        {/* Note: These positions are estimates and might need fine-tuning based on the exact image geometry */}
+        <div className="relative w-full h-full flex flex-col items-center pt-[15%]">
+          
+          {/* Title Area */}
+          <div className="mb-12 text-center z-20">
+            <h1 className="text-4xl font-black tracking-tighter text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] uppercase">
+              DevCave Bar
+            </h1>
+            <p className="text-cyan-300 tracking-widest text-sm font-bold mt-2 uppercase drop-shadow-[0_0_5px_rgba(0,255,255,0.5)]">
+              Access Terminal
+            </p>
+          </div>
+
+          {/* Form Container */}
+          <form className="w-[60%] flex flex-col gap-[120px] mt-10">
+            
+            {/* Username Field - Top Frame (Blue) */}
+            <div className="flex flex-col items-center space-y-2">
+              <Label htmlFor="username" className="text-cyan-400 font-bold uppercase tracking-widest text-xs drop-shadow-[0_0_5px_rgba(0,255,255,0.8)]">
+                Identity
+              </Label>
+              <Input 
+                id="username" 
+                placeholder="CODENAME" 
+                className="bg-transparent border-none text-center text-white text-xl font-mono placeholder:text-cyan-500/30 focus-visible:ring-0 focus-visible:ring-offset-0 h-12 w-full" 
+              />
             </div>
+
+            {/* Password Field - Bottom Frame (Pink) */}
+            <div className="flex flex-col items-center space-y-2 mt-4">
+              <Label htmlFor="password" className="text-pink-500 font-bold uppercase tracking-widest text-xs drop-shadow-[0_0_5px_rgba(255,0,255,0.8)]">
+                Passphrase
+              </Label>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
+                className="bg-transparent border-none text-center text-white text-xl font-mono placeholder:text-pink-500/30 focus-visible:ring-0 focus-visible:ring-offset-0 h-12 w-full" 
+              />
+            </div>
+
+            {/* Login Button - Centered below or between */}
+            <div className="absolute bottom-[15%] left-0 right-0 flex justify-center">
+              <Button className="px-12 py-6 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-full text-white font-bold tracking-widest uppercase transition-all duration-300 hover:scale-110 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                Enter System
+              </Button>
+            </div>
+
           </form>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4 pt-2">
-          <Button className="w-full h-12 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 hover:from-pink-500 hover:via-purple-500 hover:to-cyan-500 text-white border-0 font-bold tracking-wide shadow-lg shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02]">
-            AUTHENTICATE
-          </Button>
-          <Button variant="link" className="text-gray-400 hover:text-white text-sm font-light">
-            Forgot your credentials?
-          </Button>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
