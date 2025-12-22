@@ -34,24 +34,10 @@
 - [ ] Upload photo de profil (max 2MB) - à implémenter
 - [ ] Choisir icône custom pour admin - à implémenter
 
-## 📦 PHASE 6 : INTÉGRATION ASSETS
-- [ ] Copier tous les MP3 du backup
-- [ ] Copier toutes les images/vidéos de transition
-- [ ] Intégrer les 3 backgrounds (dark, unicorn, light)
-- [ ] Système de thèmes avec backgrounds différents
-
-## 🧪 PHASE 7 : TESTS & VALIDATION
-- [ ] Tester le login
-- [ ] Tester l'upload dans chaque module
-- [ ] Tester les permissions (autorisé/non autorisé)
-- [ ] Tester le panel admin
-- [ ] Vérifier que tout marche
-
-## 🎉 PHASE 8 : CHECKPOINT FINAL
-- [ ] Créer le checkpoint final
-- [ ] Livrer le projet complet au user
-
-## ✅ PHASE 9 : MOBILE & RADIO LOGIN
-- [x] Ajouter radio player sur la page de login
-- [x] Rendre le site responsive pour mobile
-- [ ] Tester sur mobile (après checkpoint)
+## ✅ PHASE 11 : BACKGROUNDS & REDESIGN LOGIN
+- [x] Intégrer les 3 backgrounds (dark.mp4, unicorn.mp4, light.jpeg)
+- [x] Système de switch entre thèmes (ThemeToggle)
+- [x] Redesign login window (style Apple Punk purple/fuchsia)
+- [x] Ajouter minimize fonctionnel (bouton jaune)
+- [x] Intégrer RetroTV DANS login window sur mobile
+- [x] Garder TV à gauche sur PC
