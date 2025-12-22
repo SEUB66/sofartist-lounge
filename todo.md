@@ -50,3 +50,8 @@
 ## 🎉 PHASE 8 : CHECKPOINT FINAL
 - [ ] Créer le checkpoint final
 - [ ] Livrer le projet complet au user
+
+## ✅ PHASE 9 : MOBILE & RADIO LOGIN
+- [x] Ajouter radio player sur la page de login
+- [x] Rendre le site responsive pour mobile
+- [ ] Tester sur mobile (après checkpoint)

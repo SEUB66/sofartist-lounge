@@ -6,6 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import UnicornBackground from "@/components/UnicornBackground";
 import RetroTV from "@/components/RetroTV";
 import GameBoyStarter from "@/components/GameBoyStarter";
+import MobileRadioPlayer from "@/components/MobileRadioPlayer";
 
 export default function Home() {
   const { user, setUser, isLoading } = useAuth();
@@ -74,7 +75,7 @@ export default function Home() {
 
       {/* Login Window - Appears when Game Boy is clicked */}
       {isWindowOpen && (
-        <div className="fixed top-1/2 -translate-y-1/2 right-[10%] w-[400px] z-50">
+        <div className="fixed top-1/2 -translate-y-1/2 right-[10%] w-[400px] max-md:right-auto max-md:left-1/2 max-md:-translate-x-1/2 max-md:w-[90%] max-md:max-w-[400px] z-50">
           <div className="bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-xl border-2 border-cyan-500/50 rounded-lg shadow-[0_0_50px_rgba(6,182,212,0.3),inset_0_0_30px_rgba(6,182,212,0.1)]">
             {/* Window Header */}
             <div className="bg-gradient-to-r from-cyan-600 to-blue-600 p-3 rounded-t-lg flex items-center justify-between border-b-2 border-cyan-400/50">
@@ -149,9 +150,12 @@ export default function Home() {
       )}
 
       {/* Footer */}
-      <div className="absolute bottom-4 right-4 z-20 text-white/60 text-xs font-mono">
+      <div className="absolute bottom-4 right-4 max-md:bottom-24 max-md:left-4 max-md:right-4 max-md:text-center z-20 text-white/60 text-xs font-mono">
         Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
       </div>
+
+      {/* Mobile Radio Player */}
+      <MobileRadioPlayer />
     </div>
   );
 }
