@@ -1,0 +1,100 @@
+/* Container for the entire background system */
+.unicorn-background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* The actual background image layer */
+.background-image-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transition: background-image 0.5s ease-in-out;
+}
+
+/* The canvas for particle effects */
+.unicorn-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* Above image, below content */
+  pointer-events: none; /* Let clicks pass through */
+}
+
+/* Overlay for contrast */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Between image and canvas */
+  pointer-events: none;
+}
+
+.background-overlay.dark {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.background-overlay.unicorn {
+  background-color: rgba(20, 0, 20, 0.4);
+}
+
+.background-overlay.light {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Floating asset overlay */
+.unicorn-asset-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  height: 80%;
+  background-image: url('/unicorn-asset.svg'); /* Use SVG */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 3; /* Above canvas */
+  opacity: 0.8;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-20px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+}
+
+.background-video-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
