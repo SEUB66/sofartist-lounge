@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Play, Pause, Upload, Trash2, Music } from "lucide-react";
 import { toast } from "sonner";
+import DefaultPlayer from "@/components/DefaultPlayer";
 
 export default function RadioModule() {
   const [currentTrack, setCurrentTrack] = useState<number | null>(null);
@@ -100,7 +101,12 @@ export default function RadioModule() {
   };
 
   return (
-    <div className="bg-black border-2 border-green-500/30 rounded-lg shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+    <div className="space-y-6">
+      {/* Default Player */}
+      <DefaultPlayer />
+      
+      {/* User Uploaded Tracks */}
+      <div className="bg-black border-2 border-green-500/30 rounded-lg shadow-[0_0_20px_rgba(34,197,94,0.2)]">
       <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
       
       {/* Header */}
@@ -182,6 +188,7 @@ export default function RadioModule() {
           </div>
         )}
       </ScrollArea>
+      </div>
     </div>
   );
 }
