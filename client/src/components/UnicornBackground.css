@@ -1,0 +1,39 @@
+/*
+ * CSS for the UnicornBackground component
+ * Ensures the canvas covers the entire viewport and stays behind all content.
+ */
+#unicorn-background-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Ensure it stays behind all content */
+  display: block;
+  /* Performance optimization: Use will-change to hint to the browser */
+  will-change: transform, opacity;
+  
+  /* Background Image Integration */
+  background-image: url('/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.unicorn-asset-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  height: 80%;
+  background-image: url('/unicorn-asset.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1; /* Above background, below canvas */
+  opacity: 0.8;
+  pointer-events: none;
+  mix-blend-mode: screen; /* Blend nicely with the dark background */
+}
