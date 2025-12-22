@@ -29,6 +29,13 @@
       "when": 1766386359593,
       "tag": "0003_small_jazinda",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1766386962753,
+      "tag": "0004_solid_thaddeus_ross",
+      "breakpoints": true
     }
   ]
 }

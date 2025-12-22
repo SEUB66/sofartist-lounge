@@ -15,6 +15,8 @@ import {
   getAllPosts,
   createPost,
   deletePost,
+  updateUserActivity,
+  getOnlineUsersCount,
 } from "./db-helpers";
 
 export const appRouter = router({
@@ -154,6 +156,17 @@ export const appRouter = router({
         await deletePost(input.id);
         return { success: true };
       }),
+  }),
+
+  // Session router
+  session: router({
+    heartbeat: protectedProcedure.mutation(async ({ ctx }) => {
+      await updateUserActivity(ctx.user.id);
+      return { success: true };
+    }),
+    getOnlineCount: protectedProcedure.query(async () => {
+      return await getOnlineUsersCount();
+    }),
   }),
 });
 
