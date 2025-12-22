@@ -29,7 +29,8 @@ const UnicornBackground = () => {
         SMOKE_SPEED: 0.00005, // Very slow
         FRICTION: 0.98,
         MOUSE_INFLUENCE: 0.3,
-        BG_IMAGE: '/bg-dark.jpg'
+        BG_IMAGE: '/bg-dark.jpg',
+        BG_VIDEO: '/coffee-break.mp4'
       };
     } else {
       // Light theme
@@ -158,11 +159,23 @@ const UnicornBackground = () => {
 
   return (
     <div className="unicorn-background-container">
-      {/* Background Image Layer */}
-      <div 
-        className="background-image-layer"
-        style={{ backgroundImage: `url(${getConfig().BG_IMAGE})` }}
-      />
+      {/* Background Layer (Video or Image) */}
+      {theme === 'dark' ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="background-video-layer"
+        >
+          <source src="/coffee-break.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        <div 
+          className="background-image-layer"
+          style={{ backgroundImage: `url(${getConfig().BG_IMAGE})` }}
+        />
+      )}
       
       {/* Unicorn Asset Overlay */}
       {theme === 'unicorn' && (
