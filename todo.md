@@ -13,3 +13,5 @@
 - [x] Replace background images with new high-quality versions (unicorn + light)
 - [x] Restore magical particle animations
 - [x] Ensure full-screen display without compression
+- [x] Delete all old background images except keyboard image
+- [ ] Verify new backgrounds display correctly
