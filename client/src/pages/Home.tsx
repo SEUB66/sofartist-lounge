@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,17 +7,38 @@ import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import RetroTV from "@/components/RetroTV";
-import { Minus, Square, X, Monitor } from "lucide-react";
+import { Minus, Square, X } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 export default function Home() {
-  const { theme, setTheme } = useTheme();
-  const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
+  const { theme } = useTheme();
+  const [, setLocation] = useLocation();
+  const [isWindowOpen, setIsWindowOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
+  
+  // Login form state
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Check if user is already logged in
+  const { data: currentUser } = trpc.auth.me.useQuery();
+  
+  // Login mutation
+  const loginMutation = trpc.auth.login.useMutation({
+    onSuccess: () => {
+      toast.success("Welcome to DEVCAVE BAR!");
+      setLocation("/dashboard");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Login failed");
+    },
+  });
 
   const toggleWindow = () => {
     if (!isWindowOpen) {
-      // Trigger auto-play on TV when opening window
       setShouldAutoPlay(true);
     } else {
       setShouldAutoPlay(false);
@@ -29,7 +50,21 @@ export default function Home() {
     setIsMaximized(!isMaximized);
   };
 
-  // Define glass styles based on theme
+  const handleLogin = (e: FormEvent) => {
+    e.preventDefault();
+    if (!username.trim() || !password.trim()) {
+      toast.error("Please enter username and password");
+      return;
+    }
+    loginMutation.mutate({ username, password });
+  };
+
+  // If already logged in, redirect to dashboard
+  if (currentUser) {
+    setLocation("/dashboard");
+    return null;
+  }
+
   const getGlassStyle = () => {
     switch (theme) {
       case 'dark':
@@ -90,34 +125,12 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      {/* Retro TV Component - Shows when window is open */}
       <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
-      {/* Christmas Banner - Shows when window is NOT open */}
-      {!isWindowOpen && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 flex flex-col items-center animate-in fade-in zoom-in duration-1000">
-          <div className="relative group">
-            <img 
-              src="/christmas-banner.png" 
-              alt="Christmas Banner" 
-              className="w-[500px] h-auto rounded-lg shadow-[0_0_50px_rgba(255,0,0,0.3)] border-4 border-white/20"
-            />
-            <div className="absolute -bottom-12 left-0 right-0 text-center">
-              <p className="text-xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] font-mono tracking-widest animate-pulse">
-                MERRY CHRISTMAS FROM APPLE PUNK FOUNDERS
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Desktop Taskbar / Dock Area (Bottom) */}
       {!isWindowOpen && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
           <button 
-            onClick={() => {
-              toggleWindow(); // Open login window
-            }}
+            onClick={toggleWindow}
             className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
             <img 
@@ -129,22 +142,19 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer Credits */}
       <div className="absolute bottom-2 right-4 z-50 text-[10px] font-mono text-white/30 tracking-widest pointer-events-none select-none">
         Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
       </div>
 
-      {/* Login Window */}
       {isWindowOpen && (
         <div className={`absolute transition-all duration-500 ease-in-out z-50 
           ${isMaximized 
             ? 'inset-4 w-auto h-auto' 
-            : 'top-1/2 -translate-y-1/2 right-[10%] w-[300px]' // Reduced width to 300px
+            : 'top-1/2 -translate-y-1/2 right-[10%] w-[300px]'
           }
         `}>
           <Card className={`w-full h-full backdrop-blur-xl border transition-all duration-500 flex flex-col ${getGlassStyle()}`}>
             
-            {/* Window Controls Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-black/10">
               <div className="flex items-center gap-2">
                 <div className={`w-2.5 h-2.5 rounded-full ${theme === 'light' ? 'bg-orange-400' : 'bg-cyan-400'} animate-pulse`} />
@@ -184,7 +194,7 @@ export default function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-4">
-                <form>
+                <form onSubmit={handleLogin}>
                   <div className="grid w-full items-center gap-4">
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="username" className={`font-bold uppercase tracking-widest text-[10px] ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
@@ -193,6 +203,9 @@ export default function Home() {
                       <Input 
                         id="username" 
                         placeholder="CODENAME" 
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        disabled={loginMutation.isPending}
                         className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
                       />
                     </div>
@@ -204,6 +217,9 @@ export default function Home() {
                         id="password" 
                         type="password" 
                         placeholder="••••••••" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loginMutation.isPending}
                         className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
                       />
                     </div>
@@ -211,11 +227,12 @@ export default function Home() {
                 </form>
               </CardContent>
               <CardFooter className="flex flex-col space-y-3 pt-2 pb-6">
-                <Button className={`w-full h-10 text-sm border-0 font-bold tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] ${getButtonStyle()}`}>
-                  Enter System
-                </Button>
-                <Button variant="link" className={`text-xs font-light h-auto p-0 ${theme === 'light' ? 'text-orange-800 hover:text-orange-600' : 'text-gray-400 hover:text-white'}`}>
-                  Forgot credentials?
+                <Button 
+                  onClick={handleLogin}
+                  disabled={loginMutation.isPending}
+                  className={`w-full h-10 text-sm border-0 font-bold tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] ${getButtonStyle()}`}
+                >
+                  {loginMutation.isPending ? "ACCESSING..." : "Enter System"}
                 </Button>
               </CardFooter>
             </div>

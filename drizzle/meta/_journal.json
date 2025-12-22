@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1766373500780,
+      "tag": "0000_useful_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1766373554256,
+      "tag": "0001_glorious_power_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1766374084264,
+      "tag": "0002_breezy_proteus",
+      "breakpoints": true
+    }
+  ]
+}
