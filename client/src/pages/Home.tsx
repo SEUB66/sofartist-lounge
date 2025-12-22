@@ -14,7 +14,7 @@ export default function Home() {
       if (data.success && data.user) {
         setUser(data.user);
         toast.success(`Welcome, ${data.user.username}!`);
-        window.location.href = "/dashboard";
+        window.location.href = "/live";
       }
     },
     onError: (error) => {
@@ -43,9 +43,9 @@ export default function Home() {
     loginMutation.mutate({ username: username.toLowerCase(), password });
   };
 
-  // If already logged in, redirect to dashboard
+  // If already logged in, redirect to live
   if (user && !isLoading) {
-    window.location.href = "/dashboard";
+    window.location.href = "/live";
     return null;
   }
 
@@ -93,10 +93,12 @@ export default function Home() {
 
             {/* Terminal Content */}
             <div className="p-8 space-y-6">
-              <div className="text-center space-y-2">
-                <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] tracking-wider">
-                  DEVCAVE BAR
-                </h1>
+              <div className="text-center space-y-4">
+                <img 
+                  src="/apple-punk-logo.png" 
+                  alt="Apple Punk" 
+                  className="w-48 h-48 mx-auto object-contain"
+                />
                 <p className="text-cyan-300/70 font-mono text-sm tracking-widest">
                   ACCESS TERMINAL
                 </p>

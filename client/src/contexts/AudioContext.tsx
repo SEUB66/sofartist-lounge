@@ -12,6 +12,7 @@ interface AudioContextType {
   activeSource: AudioSource;
   currentVideo: CurrentVideo | null;
   isTransitioning: boolean;
+  hasError: boolean;
   setActiveSource: (source: AudioSource) => void;
   broadcastVideo: (video: CurrentVideo) => void;
   stopBroadcast: () => void;
@@ -23,15 +24,20 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [activeSource, setActiveSource] = useState<AudioSource>(null);
   const [currentVideo, setCurrentVideo] = useState<CurrentVideo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const broadcastVideo = (video: CurrentVideo) => {
+    // Check if radio is active - show ERROR if so
+    if (activeSource === "radio") {
+      setHasError(true);
+      setTimeout(() => {
+        setHasError(false);
+      }, 3000); // Show ERROR for 3 seconds
+      return;
+    }
+
     // Start transition effect
     setIsTransitioning(true);
-    
-    // Pause radio if playing
-    if (activeSource === "radio") {
-      setActiveSource(null);
-    }
 
     // After 2 seconds, show the video
     setTimeout(() => {
@@ -56,6 +62,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         activeSource,
         currentVideo,
         isTransitioning,
+        hasError,
         setActiveSource,
         broadcastVideo,
         stopBroadcast,

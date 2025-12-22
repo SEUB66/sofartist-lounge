@@ -9,9 +9,10 @@ interface SharedTVProps {
     broadcaster: string;
   } | null;
   isTransitioning: boolean;
+  hasError?: boolean;
 }
 
-export default function SharedTV({ currentVideo, isTransitioning }: SharedTVProps) {
+export default function SharedTV({ currentVideo, isTransitioning, hasError = false }: SharedTVProps) {
   const [showSnow, setShowSnow] = useState(false);
 
   useEffect(() => {
@@ -43,33 +44,25 @@ export default function SharedTV({ currentVideo, isTransitioning }: SharedTVProp
 
       {/* TV Screen */}
       <div className="relative bg-black rounded-lg overflow-hidden border-2 border-green-500/20" style={{ minHeight: '400px' }}>
-        {/* Snow Screen Effect */}
-        {showSnow && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <div 
-              className="absolute inset-0 opacity-80"
-              style={{
-                background: `
-                  repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(255, 255, 255, 0.1) 2px,
-                    rgba(255, 255, 255, 0.1) 4px
-                  )
-                `,
-                animation: 'snow 0.1s infinite',
-              }}
+        {/* ERROR Screen */}
+        {hasError && (
+          <div className="absolute inset-0 z-50">
+            <img 
+              src="/tv-error.jpg" 
+              alt="ERROR" 
+              className="w-full h-full object-cover"
             />
-            <div className="relative z-10 text-white font-mono text-xl animate-pulse">
-              SWITCHING CHANNEL...
-            </div>
-            <style>{`
-              @keyframes snow {
-                0% { background-position: 0 0; }
-                100% { background-position: 0 100%; }
-              }
-            `}</style>
+          </div>
+        )}
+
+        {/* Transition Effect (TV Static Coloré) */}
+        {showSnow && !hasError && (
+          <div className="absolute inset-0 z-50">
+            <img 
+              src="/tv-static-transition.jpg" 
+              alt="TV Static" 
+              className="w-full h-full object-cover"
+            />
           </div>
         )}
 
@@ -84,10 +77,12 @@ export default function SharedTV({ currentVideo, isTransitioning }: SharedTVProp
             <VideoPlayer url={currentVideo.url} />
           </div>
         ) : !showSnow ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-green-400/50 font-mono">
-            <Tv size={64} className="mb-4 opacity-30" />
-            <p className="text-xl">&gt; NO BROADCAST</p>
-            <p className="text-sm mt-2">Push a video from WALL to start watching together!</p>
+          <div className="absolute inset-0">
+            <img 
+              src="/tv-idle.webp" 
+              alt="TV Idle" 
+              className="w-full h-full object-cover"
+            />
           </div>
         ) : null}
 
