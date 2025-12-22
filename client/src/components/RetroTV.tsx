@@ -5,19 +5,19 @@ import { useTheme } from '@/contexts/ThemeContext';
 interface RetroTVProps {
   isOpen: boolean;
   onClose: () => void;
-  autoPlayTrigger: boolean; // New prop to trigger auto-play
+  autoPlayTrigger: boolean;
 }
 
 const PLAYLIST = [
   {
     title: "Ms. Pac-Man Theme",
-    src: "/lightbath.mp3", // This is the pacman file
-    image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/25/Ms._Pac-Man_arcade_flyer.png/220px-Ms._Pac-Man_arcade_flyer.png" // Placeholder or specific image
+    src: "/lightbath.mp3", // Using the pacman file
+    image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/25/Ms._Pac-Man_arcade_flyer.png/220px-Ms._Pac-Man_arcade_flyer.png"
   },
   {
     title: "Profound Impact",
     src: "/impact.mp3",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" // Abstract/Space image
+    image: null // Will use default glitch image
   }
 ];
 
@@ -45,9 +45,10 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   // Handle Track Change
   useEffect(() => {
     if (audioRef.current) {
+      const wasPlaying = isPlaying;
       audioRef.current.pause();
       audioRef.current.src = PLAYLIST[currentTrackIndex].src;
-      if (isPlaying) {
+      if (wasPlaying) {
         audioRef.current.play().catch(e => console.error("Audio play failed:", e));
       }
     }
@@ -92,6 +93,15 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     }
   };
 
+  // Determine which image to show
+  const getScreenImage = () => {
+    if (!isPlaying) {
+      return "/game-over.jpg";
+    }
+    // If playing, check if track has specific image, otherwise use glitch
+    return PLAYLIST[currentTrackIndex].image || "/static-glitch.jpg";
+  };
+
   return (
     <div className="fixed left-10 top-1/2 -translate-y-1/2 w-[500px] h-[400px] z-40 transition-all duration-500 animate-in slide-in-from-left fade-in">
       {/* TV Frame Image */}
@@ -104,55 +114,60 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       {/* Screen Content Area */}
       <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center relative ${getScreenGlow()}`}>
         
-        {/* Track Image Background */}
-        <div className="absolute inset-0 opacity-40">
+        {/* Dynamic Screen Image */}
+        <div className="absolute inset-0">
            <img 
-             src={PLAYLIST[currentTrackIndex].image} 
-             alt="Track Cover" 
-             className="w-full h-full object-cover"
+             src={getScreenImage()} 
+             alt="TV Screen" 
+             className={`w-full h-full object-cover transition-opacity duration-300 ${!isPlaying ? 'opacity-80' : 'opacity-60'}`}
            />
         </div>
 
-        {/* Content Overlay */}
-        <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/30 backdrop-blur-sm h-full justify-center">
-          
-          {/* Track Info */}
-          <div className="text-center mb-4">
-            <p className={`font-mono text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'}`}>
-              Now Playing
-            </p>
-            <p className="text-white font-bold text-sm truncate w-48 drop-shadow-md">
-              {PLAYLIST[currentTrackIndex].title}
-            </p>
+        {/* Content Overlay (Only show when playing) */}
+        {isPlaying && (
+          <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/30 backdrop-blur-sm h-full justify-center animate-in fade-in duration-700">
+            
+            {/* Track Info */}
+            <div className="text-center mb-4">
+              <p className={`font-mono text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
+                Now Playing
+              </p>
+              <p className="text-white font-bold text-sm truncate w-48 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                {PLAYLIST[currentTrackIndex].title}
+              </p>
+            </div>
           </div>
+        )}
 
-          {/* Controls */}
-          <div className="flex items-center gap-6">
-            <button 
-              onClick={prevTrack}
-              className="text-white/70 hover:text-white hover:scale-110 transition-all"
-            >
-              <SkipBack size={24} />
-            </button>
-            
-            <button 
-              onClick={() => setIsPlaying(!isPlaying)}
-              className={`p-3 rounded-full ${theme === 'light' ? 'bg-orange-500' : 'bg-cyan-600'} text-white hover:scale-110 transition-transform shadow-lg`}
-            >
-              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-            </button>
-            
-            <button 
-              onClick={nextTrack}
-              className="text-white/70 hover:text-white hover:scale-110 transition-all"
-            >
-              <SkipForward size={24} />
-            </button>
-          </div>
+        {/* Controls (Always visible but subtle) */}
+        <div className="absolute bottom-4 z-20 flex items-center gap-6">
+          <button 
+            onClick={prevTrack}
+            className="text-white/70 hover:text-white hover:scale-110 transition-all drop-shadow-lg"
+          >
+            <SkipBack size={24} />
+          </button>
+          
+          <button 
+            onClick={() => setIsPlaying(!isPlaying)}
+            className={`p-3 rounded-full ${theme === 'light' ? 'bg-orange-500/80' : 'bg-cyan-600/80'} text-white hover:scale-110 transition-transform shadow-lg backdrop-blur-sm border border-white/20`}
+          >
+            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+          </button>
+          
+          <button 
+            onClick={nextTrack}
+            className="text-white/70 hover:text-white hover:scale-110 transition-all drop-shadow-lg"
+          >
+            <SkipForward size={24} />
+          </button>
         </div>
 
         {/* Scanlines Effect */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-40"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-40 mix-blend-overlay"></div>
+        
+        {/* CRT Flicker Animation */}
+        <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none z-50 mix-blend-overlay"></div>
       </div>
     </div>
   );
