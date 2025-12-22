@@ -18,7 +18,7 @@ const UnicornBackground = () => {
         SMOKE_SPEED: 0.0002, // Slightly faster
         FRICTION: 0.96,
         MOUSE_INFLUENCE: 0.8, // More reactive
-        BG_IMAGE: '/vaporwave-bg.jpg'
+        BG_IMAGE: '/bg-unicorn.jpg'
       };
     } else if (theme === 'dark') {
       return {
@@ -30,7 +30,7 @@ const UnicornBackground = () => {
         FRICTION: 0.98,
         MOUSE_INFLUENCE: 0.3,
         BG_IMAGE: '/bg-dark.jpg',
-        BG_VIDEO: '/coffee-break.mp4'
+        BG_VIDEO: '/main-bg.mp4'
       };
     } else {
       // Light theme
@@ -168,7 +168,7 @@ const UnicornBackground = () => {
           playsInline
           className="background-video-layer"
         >
-          <source src="/christmas-hero.mp4" type="video/mp4" />
+          <source src="/main-bg.mp4" type="video/mp4" />
         </video>
       ) : (
         <div 
