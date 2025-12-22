@@ -54,3 +54,11 @@
 - [x] Enlever le zoom (bouton vert inactif)
 - [x] Vérifier que desktop est intact (comme avant)
 - [x] Garder les fixes mobile
+
+## ✅ PHASE 14 : MODULE RADIO
+- [x] Système d'upload S3 pour fichiers audio (.MP3, .WAV, .MP4)
+- [x] Page RADIO avec player audio
+- [x] Playlist collaborative
+- [x] Routers backend (upload, liste, delete)
+- [x] Validation des formats (.MP3, .WAV, .MP4)
+- [x] Limite 80MB par fichier

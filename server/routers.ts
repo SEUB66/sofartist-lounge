@@ -245,6 +245,87 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+  radio: router({
+    list: publicProcedure.query(async () => {
+      const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const { media, users } = await import("../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const tracks = await db.select({
+        id: media.id,
+        title: media.filename,
+        url: media.url,
+        uploadedBy: users.username,
+      })
+      .from(media)
+      .leftJoin(users, eq(media.userId, users.id))
+      .where(eq(media.type, "audio"))
+      .orderBy(media.createdAt);
+      
+      return tracks;
+    }),
+    upload: protectedProcedure
+      .input(z.object({
+        fileName: z.string(),
+        fileData: z.string(), // base64
+        contentType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Check authorization
+        if (ctx.user.role !== "admin" && ctx.user.authorized !== 1) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized to upload" });
+        }
+        
+        // Upload to S3
+        const { storagePut } = await import("./storage");
+        const buffer = Buffer.from(input.fileData.split(",")[1], "base64");
+        const timestamp = Date.now();
+        const sanitizedName = input.fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const key = `radio/${timestamp}-${sanitizedName}`;
+        const result = await storagePut(key, buffer, input.contentType);
+        
+        // Save to DB
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { media } = await import("../drizzle/schema");
+        
+        await db.insert(media).values({
+          type: "audio",
+          userId: ctx.user.id,
+          filename: input.fileName,
+          url: result.url,
+          fileKey: key,
+          mimeType: input.contentType,
+        });
+        
+        return { success: true };
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { media } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Only admin or uploader can delete
+        const track = await db.select().from(media).where(eq(media.id, input.id)).limit(1);
+        if (track.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Track not found" });
+        }
+        
+        if (ctx.user.role !== "admin" && track[0].userId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not allowed" });
+        }
+        
+        await db.delete(media).where(eq(media.id, input.id));
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
