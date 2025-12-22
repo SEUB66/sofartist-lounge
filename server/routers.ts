@@ -134,29 +134,175 @@ export const appRouter = router({
 
   // Wall router
   wall: router({
-    getPosts: protectedProcedure.query(async () => {
-      return await getAllPosts();
+    getPosts: protectedProcedure.query(async ({ ctx }) => {
+      const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const { posts, users, likes, comments } = await import("../drizzle/schema");
+      const { eq, desc, sql } = await import("drizzle-orm");
+      
+      // Get all posts with user info, like count, comment count, and user's like status
+      const allPosts = await db
+        .select({
+          id: posts.id,
+          userId: posts.userId,
+          title: posts.title,
+          content: posts.content,
+          mediaUrl: posts.mediaUrl,
+          mediaType: posts.mediaType,
+          tags: posts.tags,
+          createdAt: posts.createdAt,
+          uploadedBy: users.username,
+          likeCount: sql<number>`(SELECT COUNT(*) FROM ${likes} WHERE ${likes.postId} = ${posts.id})`,
+          commentCount: sql<number>`(SELECT COUNT(*) FROM ${comments} WHERE ${comments.postId} = ${posts.id})`,
+          userLiked: sql<number>`(SELECT COUNT(*) FROM ${likes} WHERE ${likes.postId} = ${posts.id} AND ${likes.userId} = ${ctx.user.id})`,
+        })
+        .from(posts)
+        .leftJoin(users, eq(posts.userId, users.id))
+        .orderBy(desc(posts.createdAt));
+      
+      // Get comments for each post
+      const postsWithComments = await Promise.all(
+        allPosts.map(async (post) => {
+          const postComments = await db
+            .select({
+              id: comments.id,
+              content: comments.content,
+              username: users.username,
+              createdAt: comments.createdAt,
+            })
+            .from(comments)
+            .leftJoin(users, eq(comments.userId, users.id))
+            .where(eq(comments.postId, post.id))
+            .orderBy(comments.createdAt);
+          
+          return {
+            ...post,
+            userLiked: post.userLiked > 0,
+            comments: postComments,
+          };
+        })
+      );
+      
+      return postsWithComments;
     }),
     createPost: protectedProcedure
       .input(
         z.object({
           title: z.string().min(1).max(255),
           content: z.string().min(1),
-          imageUrl: z.string().optional(),
-          videoUrl: z.string().optional(),
+          tags: z.string().optional(),
+          fileName: z.string().optional(),
+          fileData: z.string().optional(),
+          contentType: z.string().optional(),
+          mediaType: z.enum(["image", "video", "audio", "pdf"]).optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
-        await createPost({
+        // Check authorization
+        if (ctx.user.role !== "admin" && ctx.user.authorized !== 1) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not authorized to upload" });
+        }
+        
+        let mediaUrl: string | undefined;
+        let fileKey: string | undefined;
+        
+        // Upload to S3 if file provided
+        if (input.fileName && input.fileData && input.contentType && input.mediaType) {
+          const { storagePut } = await import("./storage");
+          const buffer = Buffer.from(input.fileData.split(",")[1], "base64");
+          const timestamp = Date.now();
+          const sanitizedName = input.fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
+          const key = `wall/${timestamp}-${sanitizedName}`;
+          const result = await storagePut(key, buffer, input.contentType);
+          mediaUrl = result.url;
+          fileKey = key;
+        }
+        
+        // Save to DB
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { posts } = await import("../drizzle/schema");
+        
+        await db.insert(posts).values({
           userId: ctx.user.id,
-          ...input,
+          title: input.title,
+          content: input.content,
+          mediaUrl,
+          mediaType: input.mediaType,
+          fileKey,
+          tags: input.tags,
+          likes: 0,
         });
+        
         return { success: true };
       }),
     deletePost: protectedProcedure
       .input(z.object({ id: z.number() }))
-      .mutation(async ({ input }) => {
-        await deletePost(input.id);
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { posts } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        
+        // Only admin or author can delete
+        const post = await db.select().from(posts).where(eq(posts.id, input.id)).limit(1);
+        if (post.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
+        }
+        
+        if (ctx.user.role !== "admin" && post[0].userId !== ctx.user.id) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Not allowed" });
+        }
+        
+        await db.delete(posts).where(eq(posts.id, input.id));
+        return { success: true };
+      }),
+    toggleLike: protectedProcedure
+      .input(z.object({ postId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { likes } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Check if user already liked
+        const existingLike = await db
+          .select()
+          .from(likes)
+          .where(and(eq(likes.postId, input.postId), eq(likes.userId, ctx.user.id)))
+          .limit(1);
+        
+        if (existingLike.length > 0) {
+          // Unlike
+          await db.delete(likes).where(eq(likes.id, existingLike[0].id));
+        } else {
+          // Like
+          await db.insert(likes).values({
+            postId: input.postId,
+            userId: ctx.user.id,
+          });
+        }
+        
+        return { success: true };
+      }),
+    addComment: protectedProcedure
+      .input(z.object({ postId: z.number(), content: z.string().min(1).max(500) }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { comments } = await import("../drizzle/schema");
+        
+        await db.insert(comments).values({
+          postId: input.postId,
+          userId: ctx.user.id,
+          content: input.content,
+        });
+        
         return { success: true };
       }),
   }),

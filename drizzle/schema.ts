@@ -46,7 +46,7 @@ export const messages = mysqlTable("messages", {
 export type Message = typeof messages.$inferSelect;
 export type InsertMessage = typeof messages.$inferInsert;
 
-// Media files table (for radio MP3s and board images)
+// Media files table (for radio MP3s and TV images/videos)
 export const media = mysqlTable("media", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
@@ -68,14 +68,40 @@ export const posts = mysqlTable("posts", {
   userId: int("userId").notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content").notNull(),
-  imageUrl: text("imageUrl"),
-  videoUrl: text("videoUrl"),
+  mediaUrl: text("mediaUrl"),
+  mediaType: mysqlEnum("mediaType", ["image", "video", "audio", "pdf"]),
+  fileKey: text("fileKey"),
+  tags: text("tags"), // JSON array stored as text
+  likes: int("likes").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = typeof posts.$inferInsert;
+
+// Comments table for wall posts
+export const comments = mysqlTable("comments", {
+  id: int("id").autoincrement().primaryKey(),
+  postId: int("postId").notNull(),
+  userId: int("userId").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Comment = typeof comments.$inferSelect;
+export type InsertComment = typeof comments.$inferInsert;
+
+// Likes table for wall posts
+export const likes = mysqlTable("likes", {
+  id: int("id").autoincrement().primaryKey(),
+  postId: int("postId").notNull(),
+  userId: int("userId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Like = typeof likes.$inferSelect;
+export type InsertLike = typeof likes.$inferInsert;
 
 // Active sessions table for tracking online users
 export const sessions = mysqlTable("sessions", {

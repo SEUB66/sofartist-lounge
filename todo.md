@@ -74,3 +74,18 @@
 - [x] Routers backend (tv.upload, tv.list, tv.delete)
 - [x] Validation des formats et tailles
 - [x] Limite 200MB pour vidéos, 10MB pour images
+
+## ✅ PHASE 16 : MODULE WALL (CREATIVE!)
+- [x] Système d'upload multiformat (images, vidéos, audio, PDF)
+- [x] Galerie style Pinterest avec masonry layout
+- [x] Preview inline pour tous les formats
+- [x] Likes système (toggle like/unlike)
+- [x] Comments système (ajouter/supprimer commentaires)
+- [x] Tags/Catégories pour organiser le contenu
+- [x] Search bar pour filtrer par titre/tags
+- [x] Bouton "PUSH TO TV" sur les vidéos (UI only, fonctionnalité à implémenter)
+- [x] Audio player intégré pour les fichiers audio
+- [x] PDF viewer inline
+- [x] Routers backend (wall.getPosts, wall.createPost, wall.deletePost, wall.toggleLike, wall.addComment)
+- [x] Validation formats : images (.PNG, .GIF, .JPEG, .JPG), vidéos (.MP4, .MOV, .WMV), audio (.MP3, .WAV), PDF (.PDF)
+- [x] Limites : 10MB images, 200MB vidéos, 80MB audio, 20MB PDF

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE posts \nADD COLUMN mediaUrl TEXT,\nADD COLUMN mediaType ENUM('image', 'video', 'audio', 'pdf'),\nADD COLUMN fileKey TEXT,\nADD COLUMN tags TEXT,\nADD COLUMN likes INT DEFAULT 0 NOT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3GEZ22KnG87deUN.root --database kTHKHDptenrRnbqSNy7sPc --execute ALTER TABLE posts \nADD COLUMN mediaUrl TEXT,\nADD COLUMN mediaType ENUM('image', 'video', 'audio', 'pdf'),\nADD COLUMN fileKey TEXT,\nADD COLUMN tags TEXT,\nADD COLUMN likes INT DEFAULT 0 NOT NULL;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2959
+}
