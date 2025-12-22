@@ -5,29 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Radio, MessageSquare, Image, Layers, LogOut, Users } from "lucide-react";
-import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import ChatModule from "@/components/ChatModule";
 import RadioModule from "@/components/RadioModule";
 import BoardModule from "@/components/BoardModule";
 import WallModule from "@/components/WallModule";
-import UnicornBackground from "@/components/UnicornBackground";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { user, logout, isLoading } = useAuth();
   
-  const logoutMutation = trpc.auth.logout.useMutation();
-
-  const handleLogout = async () => {
-    try {
-      await logoutMutation.mutateAsync();
-      logout();
-      toast.success("Logged out successfully");
-      window.location.href = "/";
-    } catch (error) {
-      toast.error("Logout failed");
-    }
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    setLocation("/");
   };
 
   // Redirect to login if not authenticated
@@ -46,8 +37,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Background Video */}
-      <UnicornBackground />
       {/* Scanlines effect */}
       <div className="fixed inset-0 pointer-events-none z-50 opacity-10"
         style={{

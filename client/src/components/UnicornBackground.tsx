@@ -14,13 +14,11 @@ const UnicornBackground = () => {
         COLOR_PRIMARY: [1.0, 0.0, 0.8], // Hot Pink
         COLOR_SECONDARY: [0.0, 1.0, 1.0], // Cyan
         COLOR_TERTIARY: [0.8, 0.2, 1.0], // Purple
-        COLOR_GOLD: [1.0, 0.84, 0.0], // Gold
-        COLOR_VIOLET: [0.58, 0.0, 0.83], // Violet
-        PARTICLE_COUNT: 600, // Even more particles for magic
-        SMOKE_SPEED: 0.0003, // Slightly faster
-        FRICTION: 0.95,
-        MOUSE_INFLUENCE: 1.2, // Very reactive
-        BG_IMAGE: '/bg-unicorn.jpg'
+        PARTICLE_COUNT: 400, // More particles
+        SMOKE_SPEED: 0.0002, // Slightly faster
+        FRICTION: 0.96,
+        MOUSE_INFLUENCE: 0.8, // More reactive
+        BG_IMAGE: '/vaporwave-bg.jpg'
       };
     } else if (theme === 'dark') {
       return {
@@ -32,7 +30,7 @@ const UnicornBackground = () => {
         FRICTION: 0.98,
         MOUSE_INFLUENCE: 0.3,
         BG_IMAGE: '/bg-dark.jpg',
-        BG_VIDEO: '/main-bg.mp4'
+        BG_VIDEO: '/coffee-break.mp4'
       };
     } else {
       // Light theme
@@ -58,17 +56,8 @@ const UnicornBackground = () => {
     for (let i = 0; i < config.PARTICLE_COUNT; i++) {
       const colorType = Math.random();
       let color = config.COLOR_PRIMARY;
-      if (theme === 'unicorn') {
-        // More color variety for unicorn theme
-        if (colorType > 0.8) color = config.COLOR_GOLD || config.COLOR_PRIMARY;
-        else if (colorType > 0.6) color = config.COLOR_VIOLET || config.COLOR_SECONDARY;
-        else if (colorType > 0.4) color = config.COLOR_SECONDARY;
-        else if (colorType > 0.2) color = config.COLOR_TERTIARY;
-        else color = config.COLOR_PRIMARY;
-      } else {
-        if (colorType > 0.66) color = config.COLOR_SECONDARY;
-        else if (colorType > 0.33) color = config.COLOR_TERTIARY;
-      }
+      if (colorType > 0.66) color = config.COLOR_SECONDARY;
+      else if (colorType > 0.33) color = config.COLOR_TERTIARY;
 
       particles.current.push({
         x: Math.random() * window.innerWidth,
@@ -142,12 +131,8 @@ const UnicornBackground = () => {
       
       // Enhanced glow for unicorn theme
       if (theme === 'unicorn') {
-        ctx.shadowBlur = 30; // Bigger glow
+        ctx.shadowBlur = 20;
         ctx.shadowColor = `rgba(${p.color[0] * 255}, ${p.color[1] * 255}, ${p.color[2] * 255}, ${alpha})`;
-        // Double glow effect
-        ctx.fill();
-        ctx.shadowBlur = 60;
-        ctx.shadowColor = `rgba(${p.color[0] * 255}, ${p.color[1] * 255}, ${p.color[2] * 255}, ${alpha * 0.5})`;
       } else {
         ctx.shadowBlur = 15;
         ctx.shadowColor = ctx.fillStyle;
@@ -183,7 +168,7 @@ const UnicornBackground = () => {
           playsInline
           className="background-video-layer"
         >
-          <source src="/main-bg.mp4" type="video/mp4" />
+          <source src="/christmas-hero.mp4" type="video/mp4" />
         </video>
       ) : (
         <div 
