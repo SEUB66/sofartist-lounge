@@ -143,11 +143,11 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       <div className={`absolute top-[22%] left-[17%] w-[50%] h-[55%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 flex items-center justify-center bg-black">
            <img 
              src={getScreenImage()} 
              alt="TV Screen" 
-             className={`w-full h-full object-cover transition-opacity duration-300 ${!isPlaying ? 'opacity-80' : 'opacity-60'}`}
+             className={`w-full h-full transition-opacity duration-300 ${!isPlaying ? 'object-contain opacity-90 scale-90' : 'object-cover opacity-60'}`}
            />
         </div>
 
