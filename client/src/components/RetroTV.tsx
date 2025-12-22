@@ -148,14 +148,15 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   return (
     <div className="fixed left-10 top-1/2 -translate-y-1/2 w-[500px] h-[400px] z-40 transition-all duration-500 animate-in slide-in-from-left fade-in">
       {/* TV Frame Image */}
+      {/* TV Frame Image - NOUVELLE IMAGE BLEUE */}
       <img 
-        src="/retro-tv-new.png" 
+        src="/retro-tv-frame.png" 
         alt="Retro TV" 
         className="absolute inset-0 w-full h-full object-contain pointer-events-none z-50"
       />
 
-      {/* Screen Content Area - Adjusted for new TV image */}
-      <div className={`absolute top-[22%] left-[17%] w-[50%] h-[55%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
+      {/* Screen Content Area - Ajusté pour la nouvelle TV bleue */}
+      <div className={`absolute top-[20%] left-[12%] w-[58%] h-[60%] bg-black rounded-[1rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
@@ -189,32 +190,38 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none z-50 mix-blend-overlay"></div>
       </div>
 
-      {/* Invisible Click Areas for Physical Knobs */}
+      {/* CONTRÔLES MAPPÉS SUR LES BOUTONS PHYSIQUES DE LA TV BLEUE */}
       
-      {/* Top Knob - Channel/Track Selector */}
-      <div className="absolute top-[22%] right-[14%] w-[12%] h-[15%] z-[60] flex flex-col">
-        {/* Top half for Next Track */}
-        <button 
-          onClick={nextTrack}
-          className="w-full h-1/2 cursor-pointer hover:bg-white/10 rounded-t-full transition-colors"
-          title="Next Track"
-          aria-label="Next Track"
-        />
-        {/* Bottom half for Previous Track */}
-        <button 
-          onClick={prevTrack}
-          className="w-full h-1/2 cursor-pointer hover:bg-white/10 rounded-b-full transition-colors"
-          title="Previous Track"
-          aria-label="Previous Track"
-        />
-      </div>
-
-      {/* Middle Knob - Play/Pause */}
+      {/* Grosse roulette du HAUT (chaînes) = PLAY */}
       <button 
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute top-[40%] right-[15%] w-[10%] h-[12%] z-[60] cursor-pointer hover:bg-white/10 rounded-full transition-colors"
-        title={isPlaying ? "Pause" : "Play"}
-        aria-label={isPlaying ? "Pause" : "Play"}
+        onClick={() => setIsPlaying(true)}
+        className="absolute top-[18%] right-[10%] w-[13%] h-[13%] z-[60] cursor-pointer hover:bg-cyan-400/20 rounded-full transition-colors"
+        title="Play"
+        aria-label="Play"
+      />
+
+      {/* Grosse roulette du BAS (volume) = PAUSE */}
+      <button 
+        onClick={() => setIsPlaying(false)}
+        className="absolute top-[38%] right-[10%] w-[13%] h-[13%] z-[60] cursor-pointer hover:bg-orange-400/20 rounded-full transition-colors"
+        title="Pause"
+        aria-label="Pause"
+      />
+
+      {/* Petit bouton GAUCHE (en bas de la roulette du haut) = BACK */}
+      <button 
+        onClick={prevTrack}
+        className="absolute top-[32%] right-[10%] w-[6%] h-[5%] z-[60] cursor-pointer hover:bg-pink-400/30 rounded-full transition-colors"
+        title="Previous Track"
+        aria-label="Previous Track"
+      />
+
+      {/* Petit bouton DROIT (en bas de la roulette du bas) = NEXT */}
+      <button 
+        onClick={nextTrack}
+        className="absolute top-[52%] right-[10%] w-[6%] h-[5%] z-[60] cursor-pointer hover:bg-purple-400/30 rounded-full transition-colors"
+        title="Next Track"
+        aria-label="Next Track"
       />
     </div>
   );
