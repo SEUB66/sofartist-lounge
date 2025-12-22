@@ -101,7 +101,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
             audioRef.current?.play().catch(e => console.error("Audio play failed:", e));
         }, 50);
       }
-    }, 1500); // 1.5s transition duration
+    }, 1000); // 1s transition duration
   };
 
   const nextTrack = () => handleTrackChange('next');
@@ -121,7 +121,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   // Determine which image to show
   const getScreenImage = () => {
     if (isTransitioning) {
-      return "/level-up.jpg";
+      return "/tv-static-transition.jpg";
     }
     if (!isPlaying) {
       return "/game-over.jpg";
