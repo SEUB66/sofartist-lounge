@@ -50,7 +50,7 @@ export type InsertMessage = typeof messages.$inferInsert;
 export const media = mysqlTable("media", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  type: mysqlEnum("type", ["audio", "image"]).notNull(),
+  type: mysqlEnum("type", ["audio", "image", "video"]).notNull(),
   filename: varchar("filename", { length: 255 }).notNull(),
   url: text("url").notNull(),
   fileKey: text("fileKey").notNull(),

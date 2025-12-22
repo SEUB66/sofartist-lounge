@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Live from "./pages/Live";
+import TV from "./pages/TV";
 import Wall from "./pages/Wall";
 import Board from "./pages/Board";
 
@@ -21,6 +22,7 @@ function Router() {
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/live"} component={Live} />
+      <Route path={"/tv"} component={TV} />
       <Route path={"/wall"} component={Wall} />
       <Route path={"/board"} component={Board} />
       <Route path={"/404"} component={NotFound} />

@@ -62,3 +62,15 @@
 - [x] Routers backend (upload, liste, delete)
 - [x] Validation des formats (.MP3, .WAV, .MP4)
 - [x] Limite 80MB par fichier
+
+## ✅ PHASE 15 : MODULE TV
+- [x] Système d'upload S3 pour images (.PNG, .GIF, .JPEG, .JPG)
+- [x] Système d'upload S3 pour vidéos (.MP4, .MOV, .WMV)
+- [x] Page TV avec player vidéo
+- [x] Galerie des médias uploadés (images + vidéos)
+- [ ] TV partagée synchronisée entre tous les users (NEXT)
+- [ ] Système "push to TV" pour broadcaster un média (NEXT)
+- [ ] Gestion audio exclusive (Radio OU TV) (NEXT)
+- [x] Routers backend (tv.upload, tv.list, tv.delete)
+- [x] Validation des formats et tailles
+- [x] Limite 200MB pour vidéos, 10MB pour images

@@ -74,33 +74,29 @@ export default function Dashboard() {
       <nav className="bg-black/30 backdrop-blur-lg border-b border-purple-500/20 p-4">
         <div className="container mx-auto flex gap-2">
           <Button
-            variant={activeModule === "radio" ? "default" : "outline"}
-            onClick={() => setActiveModule("radio")}
-            className={activeModule === "radio" ? "bg-purple-600" : ""}
+            variant="outline"
+            onClick={() => window.location.href = "/live"}
           >
             <Radio className="w-4 h-4 mr-2" />
             RADIO
           </Button>
           <Button
-            variant={activeModule === "tv" ? "default" : "outline"}
-            onClick={() => setActiveModule("tv")}
-            className={activeModule === "tv" ? "bg-purple-600" : ""}
+            variant="outline"
+            onClick={() => window.location.href = "/tv"}
           >
             <Tv className="w-4 h-4 mr-2" />
             TV
           </Button>
           <Button
-            variant={activeModule === "board" ? "default" : "outline"}
-            onClick={() => setActiveModule("board")}
-            className={activeModule === "board" ? "bg-purple-600" : ""}
+            variant="outline"
+            onClick={() => window.location.href = "/board"}
           >
             <MessageSquare className="w-4 h-4 mr-2" />
             BOARD
           </Button>
           <Button
-            variant={activeModule === "wall" ? "default" : "outline"}
-            onClick={() => setActiveModule("wall")}
-            className={activeModule === "wall" ? "bg-purple-600" : ""}
+            variant="outline"
+            onClick={() => window.location.href = "/wall"}
           >
             <ImageIcon className="w-4 h-4 mr-2" />
             WALL
@@ -123,41 +119,36 @@ export default function Dashboard() {
         )}
 
         <div className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-lg p-8 min-h-[600px]">
-          {activeModule === "radio" && (
-            <div className="text-center text-white">
-              <Radio className="w-16 h-16 mx-auto mb-4 text-purple-400" />
-              <h2 className="text-3xl font-bold mb-4">MODULE RADIO</h2>
-              <p className="text-gray-400">Upload MP3, créer des playlists, écouter ensemble</p>
-              <p className="text-sm text-purple-400 mt-4">🚧 En construction... 🚧</p>
+          <div className="text-center text-white">
+            <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              WELCOME TO DEVCAVE HUB
+            </h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Choisissez un module ci-dessus pour commencer
+            </p>
+            <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/live"}>
+                <Radio className="w-12 h-12 mx-auto mb-3 text-purple-400" />
+                <h3 className="text-xl font-bold mb-2">RADIO</h3>
+                <p className="text-sm text-gray-400">MP3 Playlist</p>
+              </div>
+              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/tv"}>
+                <Tv className="w-12 h-12 mx-auto mb-3 text-purple-400" />
+                <h3 className="text-xl font-bold mb-2">TV</h3>
+                <p className="text-sm text-gray-400">Videos & Images</p>
+              </div>
+              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/board"}>
+                <MessageSquare className="w-12 h-12 mx-auto mb-3 text-purple-400" />
+                <h3 className="text-xl font-bold mb-2">BOARD</h3>
+                <p className="text-sm text-gray-400">Messages</p>
+              </div>
+              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/wall"}>
+                <ImageIcon className="w-12 h-12 mx-auto mb-3 text-purple-400" />
+                <h3 className="text-xl font-bold mb-2">WALL</h3>
+                <p className="text-sm text-gray-400">Gallery</p>
+              </div>
             </div>
-          )}
-
-          {activeModule === "tv" && (
-            <div className="text-center text-white">
-              <Tv className="w-16 h-16 mx-auto mb-4 text-purple-400" />
-              <h2 className="text-3xl font-bold mb-4">MODULE TV</h2>
-              <p className="text-gray-400">Upload vidéos/images, TV partagée old school</p>
-              <p className="text-sm text-purple-400 mt-4">🚧 En construction... 🚧</p>
-            </div>
-          )}
-
-          {activeModule === "board" && (
-            <div className="text-center text-white">
-              <MessageSquare className="w-16 h-16 mx-auto mb-4 text-purple-400" />
-              <h2 className="text-3xl font-bold mb-4">MODULE BOARD</h2>
-              <p className="text-gray-400">Tableau d'affichage, messages, annonces</p>
-              <p className="text-sm text-purple-400 mt-4">🚧 En construction... 🚧</p>
-            </div>
-          )}
-
-          {activeModule === "wall" && (
-            <div className="text-center text-white">
-              <ImageIcon className="w-16 h-16 mx-auto mb-4 text-purple-400" />
-              <h2 className="text-3xl font-bold mb-4">MODULE WALL</h2>
-              <p className="text-gray-400">Galerie multimédia complète (images, vidéos, audio, PDF)</p>
-              <p className="text-sm text-purple-400 mt-4">🚧 En construction... 🚧</p>
-            </div>
-          )}
+          </div>
         </div>
       </main>
     </div>
