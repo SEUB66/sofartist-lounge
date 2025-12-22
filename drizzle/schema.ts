@@ -21,6 +21,12 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  /** User authorization status - false = mauve (not authorized), true = green mint (authorized) */
+  authorized: int("authorized").default(0).notNull(), // 0 = not authorized, 1 = authorized
+  /** Profile photo URL (max 2MB) */
+  profilePhoto: text("profilePhoto"),
+  /** Custom icon/emoji for admin users */
+  customIcon: varchar("customIcon", { length: 10 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),

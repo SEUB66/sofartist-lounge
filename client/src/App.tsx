@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AudioProvider } from "./contexts/AudioContext";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 import Live from "./pages/Live";
 import Wall from "./pages/Wall";
 import Board from "./pages/Board";
@@ -16,6 +18,8 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/admin"} component={Admin} />
       <Route path={"/live"} component={Live} />
       <Route path={"/wall"} component={Wall} />
       <Route path={"/board"} component={Board} />

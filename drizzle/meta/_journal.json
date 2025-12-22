@@ -36,6 +36,20 @@
       "when": 1766386962753,
       "tag": "0004_solid_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1766395022448,
+      "tag": "0005_third_felicia_hardy",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1766395856767,
+      "tag": "0006_moaning_virginia_dare",
+      "breakpoints": true
     }
   ]
 }

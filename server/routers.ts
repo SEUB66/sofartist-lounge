@@ -67,6 +67,9 @@ export const appRouter = router({
             username: user.username,
             name: user.name,
             role: user.role,
+            authorized: user.authorized || 0,
+            profilePhoto: user.profilePhoto,
+            customIcon: user.customIcon,
           },
         };
       }),
@@ -167,6 +170,80 @@ export const appRouter = router({
     getOnlineCount: protectedProcedure.query(async () => {
       return await getOnlineUsersCount();
     }),
+  }),
+
+  // Admin router
+  admin: router({
+    getAllUsers: protectedProcedure.query(async ({ ctx }) => {
+      // Only admins can access
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+      }
+      const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const { users } = await import("../drizzle/schema");
+      return await db.select().from(users);
+    }),
+    createUser: protectedProcedure
+      .input(z.object({
+        username: z.string().min(1),
+        password: z.string().min(1),
+        name: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        }
+        const bcrypt = await import("bcrypt");
+        const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { users } = await import("../drizzle/schema");
+        
+        const hashedPassword = await bcrypt.hash(input.password, 10);
+        await db.insert(users).values({
+          username: input.username,
+          password: hashedPassword,
+          name: input.name || input.username,
+          role: "user",
+          authorized: 0,
+        });
+        return { success: true };
+      }),
+    toggleAuthorization: protectedProcedure
+      .input(z.object({ userId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        }
+        const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { users } = await import("../drizzle/schema");
+        const { eq, sql } = await import("drizzle-orm");
+        
+        // Toggle: if authorized = 1, set to 0, else set to 1
+        await db.update(users)
+          .set({ authorized: sql`CASE WHEN authorized = 1 THEN 0 ELSE 1 END` })
+          .where(eq(users.id, input.userId));
+        return { success: true };
+      }),
+    deleteUser: protectedProcedure
+      .input(z.object({ userId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Admin only" });
+        }
+        const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { users } = await import("../drizzle/schema");
+        const { eq } = await import("drizzle-orm");
+        
+        await db.delete(users).where(eq(users.id, input.userId));
+        return { success: true };
+      }),
   }),
 });
 
