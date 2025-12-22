@@ -11,28 +11,8 @@ interface RetroTVProps {
 const PLAYLIST = [
   {
     title: "Ms. Pac-Man Theme",
-    src: "/lightbath.mp3", // Using the pacman file
-    image: "/apple-punk-logo.png" // Apple Punk Logo
-  },
-  {
-    title: "Profound Impact",
-    src: "/impact.mp3",
-    image: null // Will use default glitch image
-  },
-  {
-    title: "Roots - Northside",
-    src: "/roots-northside.mp3",
-    image: "/pixel-clouds.jpg"
-  },
-  {
-    title: "Train Heist",
-    src: "/train-heist.mp3",
-    image: "/banana-heist.png"
-  },
-  {
-    title: "Xmas Lofi",
-    src: "/xmas-lofi.mp3",
-    image: "/santa-dj.jpg"
+    src: "/lightbath.mp3",
+    image: "/apple-punk-logo.jpg" // Apple Punk Logo (using .jpg)
   }
 ];
 
