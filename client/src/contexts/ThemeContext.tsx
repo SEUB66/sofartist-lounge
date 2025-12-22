@@ -33,6 +33,8 @@ export function ThemeProvider({
     return defaultTheme;
   });
 
+  const isFirstRender = React.useRef(true);
+
   useEffect(() => {
     const root = document.documentElement;
     // Remove all potential theme classes
@@ -42,6 +44,15 @@ export function ThemeProvider({
 
     if (switchable) {
       localStorage.setItem("theme", theme);
+    }
+
+    // Play sound effect on theme change (skip initial render)
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    } else {
+      const audio = new Audio("/theme-switch.mp3");
+      audio.volume = 0.4; // Set volume to a comfortable level
+      audio.play().catch(e => console.error("Theme switch sound failed:", e));
     }
   }, [theme, switchable]);
 
