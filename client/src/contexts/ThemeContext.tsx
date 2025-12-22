@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark" | "unicorn";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
-  setTheme: (theme: Theme) => void;
   toggleTheme?: () => void;
   switchable: boolean;
 }
@@ -22,58 +21,35 @@ export function ThemeProvider({
   defaultTheme = "light",
   switchable = false,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
       const stored = localStorage.getItem("theme");
-      if (stored === "light" || stored === "dark" || stored === "unicorn") {
-        return stored;
-      }
-      return defaultTheme;
+      return (stored as Theme) || defaultTheme;
     }
     return defaultTheme;
   });
 
-  const isFirstRender = React.useRef(true);
-
   useEffect(() => {
     const root = document.documentElement;
-    // Remove all potential theme classes
-    root.classList.remove("light", "dark", "unicorn");
-    // Add the current theme class
-    root.classList.add(theme);
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
 
     if (switchable) {
       localStorage.setItem("theme", theme);
     }
-
-    // Play sound effect on theme change (skip initial render)
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-    } else {
-      const audio = new Audio("/theme-switch.mp3");
-      audio.volume = 0.4; // Set volume to a comfortable level
-      audio.play().catch(e => console.error("Theme switch sound failed:", e));
-    }
   }, [theme, switchable]);
-
-  const setTheme = (newTheme: Theme) => {
-    if (switchable) {
-      setThemeState(newTheme);
-    }
-  };
 
   const toggleTheme = switchable
     ? () => {
-        setThemeState(prev => {
-          if (prev === "light") return "dark";
-          if (prev === "dark") return "unicorn";
-          return "light";
-        });
+        setTheme(prev => (prev === "light" ? "dark" : "light"));
       }
     : undefined;
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
       {children}
     </ThemeContext.Provider>
   );
