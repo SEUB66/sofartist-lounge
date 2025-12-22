@@ -15,4 +15,4 @@
 - [x] Ensure full-screen display without compression
 - [x] Delete all old background images except keyboard image
 - [ ] Verify new backgrounds display correctly
-- [x] Fix retro TV images display
+- [x] Restore original working RetroTV component and images from git history
