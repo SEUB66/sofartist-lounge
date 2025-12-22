@@ -37,3 +37,20 @@
   pointer-events: none;
   mix-blend-mode: screen; /* Blend nicely with the dark background */
 }
+
+@keyframes float {
+  0% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-20px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+}
+
+.unicorn-asset-overlay {
+  /* Existing styles... */
+  animation: float 6s ease-in-out infinite;
+}
