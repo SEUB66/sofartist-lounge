@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -12,17 +12,39 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
   const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Simulate playback
+  // Initialize audio
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentTime(prev => (prev + 1) % 100);
-      }, 1000);
+    audioRef.current = new Audio('/lightbath.mp3');
+    audioRef.current.loop = true;
+    audioRef.current.volume = volume / 100;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // Handle Play/Pause
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+      } else {
+        audioRef.current.pause();
+      }
     }
-    return () => clearInterval(interval);
   }, [isPlaying]);
+
+  // Handle Volume
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
 
   if (!isOpen) return null;
 
@@ -53,8 +75,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
         className="absolute inset-0 w-full h-full object-contain pointer-events-none z-50"
       />
 
-      {/* Screen Content Area - Positioned absolutely to fit inside the TV screen */}
-      {/* Adjust these values based on the exact transparency area of the PNG */}
+      {/* Screen Content Area */}
       <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black/80 rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center p-4 ${getScreenGlow()}`}>
         
         {/* Retro Visualizer */}
@@ -77,7 +98,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose }) => {
             Now Playing
           </p>
           <p className="text-white font-bold text-sm truncate w-48">
-            Cyber Blues - Harmonica Ver.
+            Ms. Pac-Man Theme
           </p>
         </div>
 
