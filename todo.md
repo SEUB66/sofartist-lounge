@@ -8,4 +8,8 @@
 - [x] Ensure retro TV radio follows in hub (not needed per user)
 - [x] Fix theme system structure
 - [x] Rebuild login page with proper design
-- [x] Fix background video display
+- [ ] REBUILD complete login page with video background and terminal form - video not playing on login page
+- [ ] Completely restore original login page design with terminal form
+- [x] Replace background images with new high-quality versions (unicorn + light)
+- [x] Restore magical particle animations
+- [x] Ensure full-screen display without compression
