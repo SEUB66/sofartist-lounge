@@ -112,7 +112,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       />
 
       {/* Screen Content Area */}
-      <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center relative ${getScreenGlow()}`}>
+      <div className={`absolute top-[15%] left-[12%] w-[62%] h-[60%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
         <div className="absolute inset-0">
@@ -139,35 +139,40 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
           </div>
         )}
 
-        {/* Controls (Always visible but subtle) */}
-        <div className="absolute bottom-4 z-20 flex items-center gap-6">
-          <button 
-            onClick={prevTrack}
-            className="text-white/70 hover:text-white hover:scale-110 transition-all drop-shadow-lg"
-          >
-            <SkipBack size={24} />
-          </button>
-          
-          <button 
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`p-3 rounded-full ${theme === 'light' ? 'bg-orange-500/80' : 'bg-cyan-600/80'} text-white hover:scale-110 transition-transform shadow-lg backdrop-blur-sm border border-white/20`}
-          >
-            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-          </button>
-          
-          <button 
-            onClick={nextTrack}
-            className="text-white/70 hover:text-white hover:scale-110 transition-all drop-shadow-lg"
-          >
-            <SkipForward size={24} />
-          </button>
-        </div>
-
         {/* Scanlines Effect */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-40 mix-blend-overlay"></div>
         
         {/* CRT Flicker Animation */}
         <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none z-50 mix-blend-overlay"></div>
+      </div>
+
+      {/* Controls (Positioned on the TV frame, outside the screen) */}
+      <div className="absolute top-[20%] right-[8%] flex flex-col items-center gap-4 z-50">
+        <button 
+          onClick={() => setIsPlaying(!isPlaying)}
+          className={`w-12 h-12 rounded-full ${theme === 'light' ? 'bg-orange-500/80 hover:bg-orange-400' : 'bg-cyan-600/80 hover:bg-cyan-500'} text-white hover:scale-110 transition-all shadow-lg border-2 border-white/20 flex items-center justify-center`}
+          title={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? <Pause size={20} /> : <Play size={20} fill="currentColor" />}
+        </button>
+        
+        <div className="flex flex-col gap-2 mt-2">
+          <button 
+            onClick={prevTrack}
+            className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white/70 hover:text-white transition-all border border-white/10 flex items-center justify-center"
+            title="Previous Track"
+          >
+            <SkipBack size={14} />
+          </button>
+          
+          <button 
+            onClick={nextTrack}
+            className="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white/70 hover:text-white transition-all border border-white/10 flex items-center justify-center"
+            title="Next Track"
+          >
+            <SkipForward size={14} />
+          </button>
+        </div>
       </div>
     </div>
   );
