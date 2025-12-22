@@ -209,13 +209,47 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         />
       </div>
 
-      {/* Middle Knob - Play/Pause */}
-      <button 
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute top-[40%] right-[15%] w-[10%] h-[12%] z-[60] cursor-pointer hover:bg-white/10 rounded-full transition-colors"
-        title={isPlaying ? "Pause" : "Play"}
-        aria-label={isPlaying ? "Pause" : "Play"}
-      />
+      {/* Middle Knob - Volume Control */}
+      <div className="absolute top-[40%] right-[15%] w-[10%] h-[12%] z-[60] flex flex-col">
+        {/* Top half - Volume Up */}
+        <button 
+          onClick={() => {
+            const newVolume = Math.min(100, volume + 10);
+            setVolume(newVolume);
+            if (audioRef.current) audioRef.current.volume = newVolume / 100;
+          }}
+          className="w-full h-1/2 cursor-pointer hover:bg-cyan-400/20 rounded-t-full transition-colors"
+          title="Volume Up"
+          aria-label="Volume Up"
+        />
+        {/* Bottom half - Volume Down */}
+        <button 
+          onClick={() => {
+            const newVolume = Math.max(0, volume - 10);
+            setVolume(newVolume);
+            if (audioRef.current) audioRef.current.volume = newVolume / 100;
+          }}
+          className="w-full h-1/2 cursor-pointer hover:bg-orange-400/20 rounded-b-full transition-colors"
+          title="Volume Down"
+          aria-label="Volume Down"
+        />
+      </div>
+
+      {/* Small Bottom Buttons - Play/Pause */}
+      <div className="absolute top-[56%] right-[10%] w-[14%] h-[6%] z-[60] flex gap-2">
+        <button 
+          onClick={() => setIsPlaying(true)}
+          className="w-1/2 cursor-pointer hover:bg-green-400/30 rounded-full transition-colors"
+          title="Play"
+          aria-label="Play"
+        />
+        <button 
+          onClick={() => setIsPlaying(false)}
+          className="w-1/2 cursor-pointer hover:bg-red-400/30 rounded-full transition-colors"
+          title="Pause"
+          aria-label="Pause"
+        />
+      </div>
     </div>
   );
 };
