@@ -10,10 +10,13 @@ import ChatModule from "@/components/ChatModule";
 import RadioModule from "@/components/RadioModule";
 import BoardModule from "@/components/BoardModule";
 import WallModule from "@/components/WallModule";
+import SharedTV from "@/components/SharedTV";
+import { useAudio } from "@/contexts/AudioContext";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const { user, logout, isLoading } = useAuth();
+  const { currentVideo, isTransitioning } = useAudio();
   
   const handleLogout = () => {
     logout();
@@ -92,6 +95,10 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 pb-20">
+        {/* Shared TV - Always visible at the top */}
+        <SharedTV currentVideo={currentVideo} isTransitioning={isTransitioning} />
+        
+        {/* Tabs for modules */}
         <Tabs defaultValue="radio" className="w-full">
           <TabsList className="grid w-full grid-cols-4 bg-black border-2 border-green-500/30 p-1">
             <TabsTrigger 

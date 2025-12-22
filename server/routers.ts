@@ -138,6 +138,7 @@ export const appRouter = router({
           title: z.string().min(1).max(255),
           content: z.string().min(1),
           imageUrl: z.string().optional(),
+          videoUrl: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {

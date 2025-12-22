@@ -5,6 +5,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AudioProvider } from "./contexts/AudioContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 
@@ -34,10 +35,12 @@ function App() {
         switchable
       >
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <AudioProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </AudioProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
