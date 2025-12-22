@@ -18,6 +18,11 @@ const PLAYLIST = [
     title: "Profound Impact",
     src: "/impact.mp3",
     image: null // Will use default glitch image
+  },
+  {
+    title: "Roots - Northside",
+    src: "/roots-northside.mp3",
+    image: "/pixel-clouds.jpg"
   }
 ];
 
