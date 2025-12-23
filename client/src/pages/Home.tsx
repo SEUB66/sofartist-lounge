@@ -112,14 +112,14 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer Credits with Icon */}
-      <div className="fixed bottom-4 left-4 z-30 flex items-center gap-2 animate-in fade-in duration-1000 delay-500">
+      {/* Footer Credits with Icon - Centered, Bigger, More Visible */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 animate-in fade-in duration-1000 delay-500">
         <img 
           src="/seub-icon.jpg" 
           alt="Seub Germain" 
-          className="w-6 h-6 rounded shadow-lg hidden md:block"
+          className="w-10 h-10 rounded-md shadow-xl"
         />
-        <span style={{ fontFamily: 'VT323, monospace' }} className="text-[10px] md:text-xs text-white/30 tracking-wider">
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-base md:text-lg text-white/60 tracking-wider">
           Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
         </span>
       </div>
