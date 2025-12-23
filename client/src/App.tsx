@@ -5,15 +5,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import { AudioProvider } from "./contexts/AudioContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
-import Admin from "./pages/Admin";
-import Live from "./pages/Live";
-import TV from "./pages/TV";
-import Wall from "./pages/Wall";
-import Board from "./pages/Board";
-import Library from "./pages/Library";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -21,12 +14,6 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
-      <Route path={"/admin"} component={Admin} />
-      <Route path={"/live"} component={Live} />
-      <Route path={"/tv"} component={TV} />
-      <Route path={"/wall"} component={Wall} />
-      <Route path={"/board"} component={Board} />
-      <Route path={"/library"} component={Library} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -47,12 +34,10 @@ function App() {
         switchable
       >
         <AuthProvider>
-          <AudioProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-            </TooltipProvider>
-          </AudioProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>

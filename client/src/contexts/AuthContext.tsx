@@ -5,9 +5,6 @@ interface User {
   username: string | null;
   name: string | null;
   role: "user" | "admin";
-  authorized: number; // 0 = not authorized (mauve), 1 = authorized (green mint)
-  profilePhoto?: string | null;
-  customIcon?: string | null;
 }
 
 interface AuthContextType {

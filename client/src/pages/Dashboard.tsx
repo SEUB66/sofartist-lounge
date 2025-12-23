@@ -1,161 +1,159 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Radio, Tv, MessageSquare, Image as ImageIcon, Settings, FolderOpen } from "lucide-react";
-
-type Module = "radio" | "tv" | "board" | "wall";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Radio, MessageSquare, Image, Layers, LogOut, Users } from "lucide-react";
+import { toast } from "sonner";
+import ChatModule from "@/components/ChatModule";
+import RadioModule from "@/components/RadioModule";
+import BoardModule from "@/components/BoardModule";
+import WallModule from "@/components/WallModule";
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
-  const [activeModule, setActiveModule] = useState<Module>("radio");
+  const [, setLocation] = useLocation();
+  const { user, logout, isLoading } = useAuth();
+  
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    setLocation("/");
+  };
 
-  if (!user) {
-    window.location.href = "/";
+  // Redirect to login if not authenticated
+  if (!isLoading && !user) {
+    setLocation("/");
     return null;
   }
 
-  const isAuthorized = user.authorized === 1;
-  const isAdmin = user.role === "admin";
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-green-400 text-xl font-mono animate-pulse">LOADING...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Scanlines effect */}
+      <div className="fixed inset-0 pointer-events-none z-50 opacity-10"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 0, 0.1) 2px, rgba(0, 255, 0, 0.1) 4px)',
+        }}
+      />
+
+      {/* CRT curve effect */}
+      <div className="fixed inset-0 pointer-events-none z-50"
+        style={{
+          background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%)',
+        }}
+      />
+
       {/* Header */}
-      <header className="bg-black/50 backdrop-blur-xl border-b border-purple-500/30 p-4">
-        <div className="container mx-auto flex items-center justify-between">
+      <header className="border-b-2 border-green-500/30 bg-black/90 backdrop-blur-sm relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-transparent to-pink-500/5" />
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-4">
-            <img src="/apple-punk-logo.png" alt="Apple Punk" className="h-12" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              DEVCAVE HUB
-            </h1>
+            {/* Apple Punk Logo */}
+            <div className="flex items-center gap-3">
+              <img 
+                src="/logo-applepunk(1).png" 
+                alt="Apple Punk" 
+                className="h-10 w-auto drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]"
+              />
+              <div className="text-3xl font-black text-green-400 tracking-tighter font-mono drop-shadow-[0_0_10px_rgba(34,197,94,0.8)]">
+                APPLE PUNK
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded bg-green-500/10 border border-green-500/30">
+              <Users size={14} className="text-green-400" />
+              <span className="text-xs text-green-300 font-mono">6 DEVS ONLINE</span>
+            </div>
           </div>
           
           <div className="flex items-center gap-4">
-            {/* User Status Badge */}
-            <div className={`px-4 py-2 rounded-lg border-2 ${
-              isAdmin ? "bg-yellow-500/20 border-yellow-500 text-yellow-300" :
-              isAuthorized ? "bg-green-500/20 border-green-400 text-green-300" :
-              "bg-purple-500/20 border-purple-500 text-purple-300"
-            }`}>
-              <div className="flex items-center gap-2">
-                {user.customIcon && <span className="text-xl">{user.customIcon}</span>}
-                <span className="font-bold">{user.username}</span>
-                {isAdmin && <span className="text-xs">(ADMIN)</span>}
-              </div>
+            <div className="text-sm text-green-400/70 font-mono uppercase">
+              &gt; <span className="text-green-400 font-bold">{user?.name || user?.username}</span>
             </div>
-
-            {isAdmin && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => window.location.href = "/admin"}
-                className="border-yellow-500 text-yellow-300 hover:bg-yellow-500/20"
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                ADMIN
-              </Button>
-            )}
-
             <Button
+              onClick={handleLogout}
               variant="outline"
               size="sm"
-              onClick={() => {
-                logout();
-                window.location.href = "/";
-              }}
-              className="border-red-500 text-red-300 hover:bg-red-500/20"
+              className="gap-2 bg-red-500/10 border-red-500/50 text-red-400 hover:bg-red-500/20 font-mono uppercase tracking-wider"
             >
+              <LogOut size={16} />
               EXIT
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Navigation */}
-      <nav className="bg-black/30 backdrop-blur-lg border-b border-purple-500/20 p-4">
-        <div className="container mx-auto flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = "/live"}
-          >
-            <Radio className="w-4 h-4 mr-2" />
-            RADIO
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = "/tv"}
-          >
-            <Tv className="w-4 h-4 mr-2" />
-            TV
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = "/board"}
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            BOARD
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = "/wall"}
-          >
-            <ImageIcon className="w-4 h-4 mr-2" />
-            WALL
-          </Button>
-        </div>
-      </nav>
-
       {/* Main Content */}
-      <main className="container mx-auto p-8">
-        {!isAuthorized && !isAdmin && (
-          <div className="mb-8 p-6 bg-purple-500/20 border-2 border-purple-500 rounded-lg">
-            <h2 className="text-xl font-bold text-purple-300 mb-2">
-              🔒 ACCÈS LIMITÉ
-            </h2>
-            <p className="text-purple-200">
-              Tu dois être autorisé par un admin pour pouvoir uploader du contenu.
-              En attendant, tu peux consulter tout le contenu partagé !
-            </p>
-          </div>
-        )}
+      <main className="container mx-auto px-4 py-8 pb-20">
+        <Tabs defaultValue="radio" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 bg-black border-2 border-green-500/30 p-1">
+            <TabsTrigger 
+              value="radio" 
+              className="gap-2 data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400 data-[state=active]:border-2 data-[state=active]:border-green-500 font-mono uppercase tracking-wider"
+            >
+              <Radio size={16} />
+              RADIO
+            </TabsTrigger>
+            <TabsTrigger 
+              value="chat" 
+              className="gap-2 data-[state=active]:bg-cyan-500/20 data-[state=active]:text-cyan-400 data-[state=active]:border-2 data-[state=active]:border-cyan-500 font-mono uppercase tracking-wider"
+            >
+              <MessageSquare size={16} />
+              CHAT
+            </TabsTrigger>
+            <TabsTrigger 
+              value="board" 
+              className="gap-2 data-[state=active]:bg-pink-500/20 data-[state=active]:text-pink-400 data-[state=active]:border-2 data-[state=active]:border-pink-500 font-mono uppercase tracking-wider"
+            >
+              <Image size={16} />
+              BOARD
+            </TabsTrigger>
+            <TabsTrigger 
+              value="wall" 
+              className="gap-2 data-[state=active]:bg-orange-500/20 data-[state=active]:text-orange-400 data-[state=active]:border-2 data-[state=active]:border-orange-500 font-mono uppercase tracking-wider"
+            >
+              <Layers size={16} />
+              WALL
+            </TabsTrigger>
+          </TabsList>
 
-        <div className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-lg p-8 min-h-[600px]">
-          <div className="text-center text-white">
-            <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              WELCOME TO DEVCAVE HUB
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Choisissez un module ci-dessus pour commencer
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/live"}>
-                <Radio className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-xl font-bold mb-2">RADIO</h3>
-                <p className="text-sm text-gray-400">MP3 Playlist</p>
-              </div>
-              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/tv"}>
-                <Tv className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-xl font-bold mb-2">TV</h3>
-                <p className="text-sm text-gray-400">Videos & Images</p>
-              </div>
-              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/board"}>
-                <MessageSquare className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-xl font-bold mb-2">BOARD</h3>
-                <p className="text-sm text-gray-400">Messages</p>
-              </div>
-              <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/wall"}>
-                <ImageIcon className="w-12 h-12 mx-auto mb-3 text-purple-400" />
-                <h3 className="text-xl font-bold mb-2">WALL</h3>
-                <p className="text-sm text-gray-400">Gallery</p>
-              </div>
-              <div className="p-6 bg-gradient-to-br from-fuchsia-900/40 to-purple-900/40 rounded-lg border-2 border-fuchsia-500/60 hover:border-fuchsia-400 transition-all cursor-pointer" onClick={() => window.location.href = "/library"}>
-                <FolderOpen className="w-12 h-12 mx-auto mb-3 text-fuchsia-400" />
-                <h3 className="text-xl font-bold mb-2">MY LIBRARY</h3>
-                <p className="text-sm text-gray-400">Personal Assets</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          {/* Radio Tab */}
+          <TabsContent value="radio" className="mt-6">
+            <RadioModule />
+          </TabsContent>
+
+          {/* Chat Tab */}
+          <TabsContent value="chat" className="mt-6">
+            <ChatModule />
+          </TabsContent>
+
+          {/* Board Tab */}
+          <TabsContent value="board" className="mt-6">
+            <BoardModule />
+          </TabsContent>
+
+          {/* Wall Tab */}
+          <TabsContent value="wall" className="mt-6">
+            <WallModule />
+          </TabsContent>
+        </Tabs>
       </main>
+
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 border-t-2 border-green-500/30 bg-black/90 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-3 text-center">
+          <p className="text-[10px] font-mono text-green-400/30 tracking-widest uppercase">
+            &gt; DESIGNED - CODED WITH LOVE &lt;3 BY SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
