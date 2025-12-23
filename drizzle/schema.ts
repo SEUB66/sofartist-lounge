@@ -39,3 +39,12 @@ export const sessions = mysqlTable('sessions', {
   userId: int('user_id').notNull().unique(),
   lastHeartbeat: timestamp('last_heartbeat').defaultNow(),
 });
+
+// Table de l'etat de lecture (synchronisation RetroTV)
+export const playbackState = mysqlTable('playback_state', {
+  id: int('id').primaryKey().autoincrement(),
+  currentTrackId: int('current_track_id'),
+  currentTime: int('current_time').default(0),
+  isPlaying: boolean('is_playing').default(false),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});

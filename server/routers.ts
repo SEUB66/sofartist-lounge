@@ -1,6 +1,6 @@
 import { router, publicProcedure } from './trpc.js';
 import { db } from './db.js';
-import { users, messages, media, sessions } from '../drizzle/schema.js';
+import { users, messages, media, sessions, playbackState } from '../drizzle/schema.js';
 import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
@@ -322,6 +322,69 @@ const uploadRouter = router({
     }),
 });
 
+// Router pour la lecture synchronisee (RetroTV)
+const playbackRouter = router({
+  getPlaybackState: publicProcedure.query(async () => {
+    const [state] = await db.select().from(playbackState).limit(1);
+    if (!state) {
+      await db.insert(playbackState).values({
+        currentTrackId: null,
+        currentTime: 0,
+        isPlaying: false,
+      });
+      return { currentTrackId: null, currentTime: 0, isPlaying: false };
+    }
+    return state;
+  }),
+
+  setCurrentTrack: publicProcedure
+    .input(z.object({ trackId: z.number().nullable() }))
+    .mutation(async ({ input }) => {
+      const [state] = await db.select().from(playbackState).limit(1);
+      if (state) {
+        await db.update(playbackState).set({
+          currentTrackId: input.trackId,
+          currentTime: 0,
+          isPlaying: !!input.trackId,
+          updatedAt: new Date(),
+        }).where(eq(playbackState.id, state.id));
+      } else {
+        await db.insert(playbackState).values({
+          currentTrackId: input.trackId,
+          currentTime: 0,
+          isPlaying: !!input.trackId,
+        });
+      }
+      return { success: true };
+    }),
+
+  setCurrentTime: publicProcedure
+    .input(z.object({ currentTime: z.number() }))
+    .mutation(async ({ input }) => {
+      const [state] = await db.select().from(playbackState).limit(1);
+      if (state) {
+        await db.update(playbackState).set({
+          currentTime: input.currentTime,
+          updatedAt: new Date(),
+        }).where(eq(playbackState.id, state.id));
+      }
+      return { success: true };
+    }),
+
+  setIsPlaying: publicProcedure
+    .input(z.object({ isPlaying: z.boolean() }))
+    .mutation(async ({ input }) => {
+      const [state] = await db.select().from(playbackState).limit(1);
+      if (state) {
+        await db.update(playbackState).set({
+          isPlaying: input.isPlaying,
+          updatedAt: new Date(),
+        }).where(eq(playbackState.id, state.id));
+      }
+      return { success: true };
+    }),
+});
+
 // Router principal
 export const appRouter = router({
   auth: authRouter,
@@ -329,6 +392,7 @@ export const appRouter = router({
   settings: settingsRouter,
   upload: uploadRouter,
   presence: presenceRouter,
+  playback: playbackRouter,
 });
 
 export type AppRouter = typeof appRouter;

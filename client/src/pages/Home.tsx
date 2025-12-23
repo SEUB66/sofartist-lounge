@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { trpc } from "@/lib/trpc";
 import { useUser } from "@/contexts/UserContext";
 import { useLocation } from "wouter";
@@ -12,46 +12,23 @@ export default function Home() {
   const { isLoggedIn } = useUser();
   const [, setLocation] = useLocation();
   const [isWindowOpen, setIsWindowOpen] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleStart = () => {
     console.log('🎮 PRESS START CLICKED!');
-    if (!hasStarted) {
-      // Play Game Boy startup sound
-      const gameboySound = new Audio('/gameboy-startup-real.mp3');
-      gameboySound.volume = 0.5;
-      gameboySound.play().catch(e => console.log('Audio play failed:', e));
-      
-      // Play TV power on sound after a short delay
-      setTimeout(() => {
-        const tvSound = new Audio('/tv-power-on.mp3');
-        tvSound.volume = 0.4;
-        tvSound.play().catch(e => console.log('Audio play failed:', e));
-      }, 500);
-      
-      // Show Game Boy
-      setIsWindowOpen(true);
-      setHasStarted(true);
-    } else {
-      // Just toggle Game Boy if already started
-      setIsWindowOpen(!isWindowOpen);
-    }
-  };
-
-  useEffect(() => {
-    if (buttonRef.current) {
-      console.log('✅ Button ref mounted');
-      // Add direct click listener
-      const btn = buttonRef.current;
-      const clickHandler = () => {
-        console.log('🖱️ Direct click detected');
-        handleStart();
-      };
-      btn.addEventListener('click', clickHandler);
-      return () => btn.removeEventListener('click', clickHandler);
-    }
-  }, [hasStarted, isWindowOpen]);
+    setIsWindowOpen(prev => !prev);
+    
+    // Play Game Boy startup sound
+    const gameboySound = new Audio('/gameboy-startup-real.mp3');
+    gameboySound.volume = 0.5;
+    gameboySound.play().catch(e => console.log('Audio play failed:', e));
+    
+    // Play TV power on sound after a short delay
+    setTimeout(() => {
+      const tvSound = new Audio('/tv-power-on.mp3');
+      tvSound.volume = 0.4;
+      tvSound.play().catch(e => console.log('Audio play failed:', e));
+    }, 500);
+  }
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
@@ -71,11 +48,9 @@ export default function Home() {
         </div>
         
         <button 
-          ref={buttonRef}
           onClick={handleStart}
           className="hover:scale-110 transition-transform duration-300 active:scale-95 pointer-events-auto cursor-pointer z-50 relative focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-lg"
           type="button"
-          style={{ touchAction: 'auto' }}
         >
           <img 
             src="/snes-controller.png" 

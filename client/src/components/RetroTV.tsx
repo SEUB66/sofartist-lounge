@@ -9,7 +9,6 @@ interface RetroTVProps {
   autoPlayTrigger: boolean;
 }
 
-// Playlist par défaut (sera combinée avec les uploads)
 const DEFAULT_playlist = [
   {
     title: "Ms. Pac-Man Theme",
@@ -64,20 +63,26 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   const [currentTrackIndex, setCurrentTrackIndex] = useState(2);
   const [playlist, setPlaylist] = useState(DEFAULT_playlist);
   
-  // Charger les tracks uploadées depuis la DB
+  // Charger l'etat de lecture depuis la DB
+  const { data: playbackState, refetch: refetchPlayback } = trpc.playback.getPlaybackState.useQuery();
+  const setCurrentTrackMutation = trpc.playback.setCurrentTrack.useMutation();
+  const setIsPlayingMutation = trpc.playback.setIsPlaying.useMutation();
+  
+  // Charger les tracks uploadees depuis la DB
   const { data: uploadedTracks } = trpc.upload.listMedia.useQuery({ type: 'music' });
   
-  // Combiner la playlist par défaut avec les tracks uploadées
+  // Combiner la playlist par defaut avec les tracks uploadees
   useEffect(() => {
     if (uploadedTracks && uploadedTracks.length > 0) {
       const userTracks = uploadedTracks.map(track => ({
         title: track.title,
         src: track.fileUrl,
-        image: track.coverUrl || '/apple-punk-logo.png' // Logo Apple Punk par défaut
+        image: track.coverUrl || '/apple-punk-logo.png'
       }));
       setPlaylist([...DEFAULT_playlist, ...userTracks]);
     }
   }, [uploadedTracks]);
+
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [volume, setVolume] = useState(50);
   const [position, setPosition] = useState({ x: 16, y: 16 });
@@ -99,6 +104,18 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       }
     };
   }, []);
+
+  // Sync playback state to DB
+  useEffect(() => {
+    setIsPlayingMutation.mutate({ isPlaying });
+  }, [isPlaying]);
+
+  // Sync current track to DB
+  useEffect(() => {
+    if (playlist.length > 0) {
+      setCurrentTrackMutation.mutate({ trackId: currentTrackIndex });
+    }
+  }, [currentTrackIndex]);
 
   // Handle Track Change
   useEffect(() => {
@@ -132,17 +149,23 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     }
   }, [isPlaying]);
 
+  // Periodically refresh playback state
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchPlayback();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [refetchPlayback]);
+
   const handleTrackChange = (direction: 'next' | 'prev') => {
     if (isTransitioning) return;
 
     setIsTransitioning(true);
     
-    // Play TV channel change sound
     const channelSound = new Audio('/tv-channel-change.mp3');
     channelSound.volume = 0.3;
     channelSound.play().catch(e => console.log('Channel change sound failed:', e));
     
-    // Pause current audio during transition
     if (audioRef.current) {
       audioRef.current.pause();
     }
@@ -155,15 +178,12 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       }
       setIsTransitioning(false);
       
-      // Resume playing if it was playing before
       if (isPlaying && audioRef.current) {
-        // The useEffect for currentTrackIndex will handle loading the new src
-        // We just need to ensure it plays after the state update propagates
         setTimeout(() => {
             audioRef.current?.play().catch(e => console.error("Audio play failed:", e));
         }, 50);
       }
-    }, 1000); // 1s transition duration
+    }, 1000);
   };
 
   const nextTrack = () => handleTrackChange('next');
@@ -180,7 +200,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     }
   };
 
-  // Determine which image to show
   const getScreenImage = () => {
     if (isTransitioning) {
       return "/tv-static-transition.jpg";
@@ -188,7 +207,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     if (!isPlaying) {
       return "/game-over.jpg";
     }
-    // If playing, check if track has specific image, otherwise use glitch
     return playlist[currentTrackIndex].image || "/static-glitch.jpg";
   };
 
@@ -231,17 +249,14 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
       onMouseDown={handleMouseDown}
     >
-      {/* TV Frame Image */}
       <img 
         src="/retro-tv-new.png" 
         alt="Retro TV" 
         className="absolute inset-0 w-full h-full object-contain pointer-events-none z-50"
       />
 
-      {/* Screen Content Area - Perfectly centered */}
       <div className={`absolute top-[42px] left-[42px] w-[120px] h-[105px] md:top-[74px] md:left-[74px] md:w-[210px] md:h-[185px] bg-black rounded-[0.8rem] md:rounded-[1.5rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
-        {/* Dynamic Screen Image */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
            <img 
              src={getScreenImage()} 
@@ -250,11 +265,9 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
            />
         </div>
 
-        {/* Content Overlay (Only show when playing) */}
         {isPlaying && (
           <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/10 h-full justify-center animate-in fade-in duration-700">
             
-            {/* Track Info */}
             <div className="text-center mb-4">
               <p className={`font-mono text-[6px] md:text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
                 Now Playing
@@ -266,18 +279,12 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
           </div>
         )}
 
-        {/* Scanlines Effect */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-50 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-40 mix-blend-overlay"></div>
         
-        {/* CRT Flicker Animation */}
         <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none z-50 mix-blend-overlay"></div>
       </div>
 
-      {/* Invisible Click Areas for Physical Knobs */}
-      
-      {/* Top Knob - Channel/Track Selector */}
       <div className="absolute top-[42px] right-[34px] w-[29px] h-[29px] md:top-[74px] md:right-[59px] md:w-[50px] md:h-[50px] z-[60] flex flex-col">
-        {/* Top half for Next Track */}
         <button 
           onClick={nextTrack}
           onMouseDown={(e) => e.stopPropagation()}
@@ -285,7 +292,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
           title="Next Track"
           aria-label="Next Track"
         />
-        {/* Bottom half for Previous Track */}
         <button 
           onClick={prevTrack}
           onMouseDown={(e) => e.stopPropagation()}
@@ -295,7 +301,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         />
       </div>
 
-      {/* Middle Knob - Play/Pause */}
       <button 
         onClick={() => setIsPlaying(!isPlaying)}
         onMouseDown={(e) => e.stopPropagation()}

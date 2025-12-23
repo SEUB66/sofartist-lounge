@@ -146,3 +146,7 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 ### PRIORITÉ 1 : Bug bouton SNES + Chat temps réel
 - [x] Corriger le bug du bouton SNES - le bouton doit répondre au clic (COMPLETÉ)
 - [x] Implémenter le chat synchronisé en temps réel entre tous les utilisateurs (COMPLETÉ)
+
+### PRIORITÉ HAUTE - Demande utilisateur (Phase 2)
+- [ ] Corriger le bug du bouton SNES - onClick ne se déclenche pas
+- [ ] Implémenter la synchronisation RetroTV live - tous les utilisateurs écoutent la même track
