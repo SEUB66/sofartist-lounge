@@ -112,12 +112,12 @@ export default function Hub() {
       <UnicornBackground />
 
       {/* Theme Toggle */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-[100]">
         <ThemeToggle />
       </div>
 
       {/* Compteur d'utilisateurs en ligne */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100]">
         <div className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/30 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.3)]">
           <span style={{ fontFamily: 'VT323, monospace' }} className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse">
             {onlineUsers.length} DEV{onlineUsers.length > 1 ? 'S' : ''} ONLINE
@@ -128,7 +128,7 @@ export default function Hub() {
       {/* Settings Button - Discret */}
       <button
         onClick={() => setShowSettings(!showSettings)}
-        className="absolute top-4 left-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 transition-all hover:scale-110"
+        className="absolute top-4 left-4 z-[100] p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 transition-all hover:scale-110"
         title="Settings"
       >
         <Settings size={20} className="text-white" />
@@ -137,7 +137,7 @@ export default function Hub() {
       {/* Upload Button */}
       <button
         onClick={() => setShowUpload(true)}
-        className="absolute top-4 left-16 z-50 p-2 rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 backdrop-blur-sm border border-white/20 transition-all hover:scale-110 shadow-lg"
+        className="absolute top-4 left-16 z-[100] p-2 rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 backdrop-blur-sm border border-white/20 transition-all hover:scale-110 shadow-lg"
         title="Upload MP3 or Image"
       >
         <Upload size={20} className="text-white" />
