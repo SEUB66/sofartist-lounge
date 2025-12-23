@@ -12,7 +12,7 @@ const PLAYLIST = [
   {
     title: "Ms. Pac-Man Theme",
     src: "/lightbath.mp3", // Using the pacman file
-    image: "https://upload.wikimedia.org/wikipedia/en/thumb/2/25/Ms._Pac-Man_arcade_flyer.png/220px-Ms._Pac-Man_arcade_flyer.png"
+    image: "/apple-punk-logo.png" // Apple Punk Logo
   },
   {
     title: "Profound Impact",

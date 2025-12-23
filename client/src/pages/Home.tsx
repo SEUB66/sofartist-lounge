@@ -10,7 +10,7 @@ import RetroTV from "@/components/RetroTV";
 import { Minus, Square, X, Monitor } from "lucide-react";
 
 export default function Home() {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
   const [isMaximized, setIsMaximized] = useState(false);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
@@ -96,13 +96,19 @@ export default function Home() {
       {/* Desktop Taskbar / Dock Area (Bottom) */}
       {!isWindowOpen && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
-          <Button 
-            onClick={toggleWindow}
-            className={`h-16 w-16 rounded-2xl backdrop-blur-md border border-white/20 shadow-lg hover:scale-110 transition-all duration-300 ${getGlassStyle()} flex flex-col items-center justify-center gap-1`}
+          <button 
+            onClick={() => {
+              setTheme('unicorn'); // Switch to unicorn theme
+              toggleWindow(); // Open login window
+            }}
+            className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
-            <Monitor size={24} className={theme === 'light' ? 'text-orange-600' : 'text-cyan-400'} />
-            <span className={`text-[10px] font-bold uppercase tracking-wider ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}>Login</span>
-          </Button>
+            <img 
+              src="/press-start.jpg" 
+              alt="Press Start" 
+              className="h-16 w-auto rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)] border-2 border-cyan-400/50"
+            />
+          </button>
         </div>
       )}
 
