@@ -29,17 +29,17 @@ export default function Home() {
     setIsMaximized(!isMaximized);
   };
 
-  // Define glass styles based on theme
+  // Define glass styles based on theme - MORE TRANSPARENT
   const getGlassStyle = () => {
     switch (theme) {
       case 'dark':
-        return "bg-cyan-900/20 border-cyan-500/30 shadow-[0_0_40px_rgba(6,182,212,0.2)]";
+        return "bg-cyan-900/10 border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.15)]";
       case 'light':
-        return "bg-orange-500/20 border-orange-500/30 shadow-[0_0_40px_rgba(249,115,22,0.2)]";
+        return "bg-orange-500/10 border-orange-500/20 shadow-[0_0_40px_rgba(249,115,22,0.15)]";
       case 'unicorn':
-        return "bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-500/30 shadow-[0_0_40px_rgba(236,72,153,0.3)]";
+        return "bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-cyan-500/10 border-pink-500/20 shadow-[0_0_40px_rgba(236,72,153,0.2)]";
       default:
-        return "bg-black/40 border-white/10";
+        return "bg-black/20 border-white/10";
     }
   };
 
@@ -112,9 +112,16 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer Credits */}
-      <div className="absolute bottom-2 right-4 z-50 text-[10px] font-mono text-white/30 tracking-widest pointer-events-none select-none">
-        Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+      {/* Footer Credits with Icon */}
+      <div className="fixed bottom-4 left-4 z-30 flex items-center gap-2 animate-in fade-in duration-1000 delay-500">
+        <img 
+          src="/seub-icon.jpg" 
+          alt="Seub Germain" 
+          className="w-6 h-6 rounded shadow-lg hidden md:block"
+        />
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-[10px] md:text-xs text-white/30 tracking-wider">
+          Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+        </span>
       </div>
 
       {/* Login Window */}
