@@ -167,7 +167,7 @@ const UnicornBackground = () => {
           muted
           playsInline
         >
-          <source src="/dark-bg-video-v2.mp4" type="video/mp4" />
+          <source src="/dark-bg-video-v3.mp4" type="video/mp4" />
         </video>
       ) : theme === 'unicorn' ? (
         <video
@@ -177,7 +177,7 @@ const UnicornBackground = () => {
           muted
           playsInline
         >
-          <source src="/unicorn-bg-video.mp4" type="video/mp4" />
+          <source src="/unicorn-bg-video-v2.mp4" type="video/mp4" />
         </video>
       ) : (
         /* Background Image Layer for Light theme */
