@@ -131,7 +131,8 @@ export default function Home() {
         onLogin={(username, password) => {
           console.log('Login:', username, password);
           // Handle login logic here
-        }} 
+        }}
+        onClose={toggleWindow}
       />
 
       {/* OLD Login Window - REMOVED */}

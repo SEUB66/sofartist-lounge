@@ -4,9 +4,10 @@ import { useTheme } from '../contexts/ThemeContext';
 interface GameBoyLoginProps {
   isOpen: boolean;
   onLogin: (username: string, password: string) => void;
+  onClose?: () => void;
 }
 
-export function GameBoyLogin({ isOpen, onLogin }: GameBoyLoginProps) {
+export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   const { theme } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +38,17 @@ export function GameBoyLogin({ isOpen, onLogin }: GameBoyLoginProps) {
     <div className="fixed inset-0 flex items-center justify-center z-40 animate-in fade-in duration-500">
       <audio ref={audioRef} src="/gameboy-startup.mp3" preload="auto" />
       <div className="relative">
-        <img src={getGameBoyImage()} alt="Game Boy" className="w-96 h-auto drop-shadow-2xl" />
+        {/* Minimize Button */}
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="absolute -top-2 -right-2 z-50 w-8 h-8 bg-yellow-400 hover:bg-yellow-300 rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110 border-2 border-yellow-600"
+            title="Minimize"
+          >
+            <span className="text-yellow-900 font-bold text-xl leading-none">−</span>
+          </button>
+        )}
+        <img src={getGameBoyImage()} alt="Game Boy" className="w-[268px] h-auto drop-shadow-2xl" />
         <div className="absolute top-[15%] left-[12%] w-[76%] h-[30%] bg-gradient-to-br from-green-200/90 to-green-300/90 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center p-3 gap-2 animate-fade-in" style={{boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)'}}>
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
             <input 
