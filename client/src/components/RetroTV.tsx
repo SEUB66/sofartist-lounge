@@ -33,6 +33,21 @@ const PLAYLIST = [
     title: "Xmas Lofi",
     src: "/xmas-lofi.mp3",
     image: "/santa-dj.jpg"
+  },
+  {
+    title: "Mind Obsession - Baegel",
+    src: "/ES_mindobsession-baegel.mp3",
+    image: "/ambiancemusic.jpg"
+  },
+  {
+    title: "Ur Face - Le Dorean",
+    src: "/ES_UrFace-LeDorean.mp3",
+    image: "/yougottasprint.jpg"
+  },
+  {
+    title: "Laboratorium - Joel Rampage",
+    src: "/ES_Laboratorium-JoelRampage.mp3",
+    image: "/ride.jpg"
   }
 ];
 
