@@ -10,11 +10,20 @@ interface GameBoyLoginProps {
 export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   const { theme } = useTheme();
   const [nickname, setNickname] = useState('');
+  const [isAnimating, setIsAnimating] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Jouer le son et l'animation au démarrage
   useEffect(() => {
-    if (isOpen && audioRef.current) {
-      audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+    if (isOpen) {
+      setIsAnimating(true);
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+      // Arrêter l'animation après 1 seconde
+      const timer = setTimeout(() => setIsAnimating(false), 1000);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -42,9 +51,13 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
 
   console.log('[GameBoyLogin] Rendering with isOpen=true');
   return (
-    <div className="fixed inset-0 flex items-center justify-end pr-8 md:pr-16 z-40 animate-in fade-in duration-500">
+    <div className={`fixed inset-0 flex items-center justify-end pr-8 md:pr-16 z-40 animate-in fade-in duration-500 ${
+      isAnimating ? 'animate-pulse' : ''
+    }`}>
       <audio ref={audioRef} src="/gameboy-startup-real.mp3" preload="auto" />
-      <div className="relative">
+      <div className={`relative transition-all duration-500 ${
+        isAnimating ? 'scale-110 animate-bounce' : 'scale-100'
+      }`}>
         {/* Minimize Button */}
         {onClose && (
           <button
@@ -55,8 +68,16 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
             <span className="text-yellow-900 font-bold text-xl leading-none">−</span>
           </button>
         )}
-        <img src={getGameBoyImage()} alt="Game Boy" className="w-[200px] md:w-[268px] h-auto drop-shadow-2xl" />
-        <div className="absolute top-[15%] left-[12%] w-[76%] h-[30%] bg-gradient-to-br from-green-200/90 to-green-300/90 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center p-2 md:p-3 gap-1 md:gap-2 animate-fade-in" style={{boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.3)'}}>
+        <img 
+          src={getGameBoyImage()} 
+          alt="Game Boy" 
+          className={`w-[200px] md:w-[268px] h-auto drop-shadow-2xl transition-all duration-500 ${
+            isAnimating ? 'filter brightness-150 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]' : ''
+          }`}
+        />
+        <div className={`absolute top-[15%] left-[12%] w-[76%] h-[30%] bg-gradient-to-br from-green-200/90 to-green-300/90 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center p-2 md:p-3 gap-1 md:gap-2 transition-all duration-500 ${
+          isAnimating ? 'animate-pulse from-green-100 to-green-200' : 'animate-fade-in'
+        }`} style={{boxShadow: isAnimating ? 'inset 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(34,197,94,0.5)' : 'inset 0 2px 8px rgba(0,0,0,0.3)'}}>
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
             <input 
               type="text" 

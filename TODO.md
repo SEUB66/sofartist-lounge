@@ -137,3 +137,8 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 
 ### BUG CRITIQUE : RetroTV
 - [x] RetroTV joue automatiquement au lieu de jouer seulement sur PRESS START (CORRIGÉ)
+
+### Game Boy - Animation et son
+- [x] Créer animation d'ouverture spectaculaire pour Game Boy (COMPLETÉ)
+- [x] Intégrer le vrai son Game Boy startup authentique (COMPLETÉ)
+- [x] Animation d'écran qui s'allume (COMPLETÉ)
