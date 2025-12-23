@@ -117,7 +117,7 @@ export default function Home() {
         <img 
           src="/seub-icon.jpg" 
           alt="Seub Germain" 
-          className="w-10 h-10 rounded-md shadow-xl"
+          className="w-10 h-10 rounded-md shadow-xl animate-pulse-subtle"
         />
         <span style={{ fontFamily: 'VT323, monospace' }} className="text-base md:text-lg text-white/60 tracking-wider">
           Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
