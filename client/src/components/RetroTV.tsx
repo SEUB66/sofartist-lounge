@@ -155,7 +155,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       />
 
       {/* Screen Content Area - Adjusted for new TV image */}
-      <div className={`absolute top-[22%] left-[17%] w-[50%] h-[55%] bg-black rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
+      <div className={`absolute top-[50px] left-[48px] w-[140px] h-[123px] md:top-[88px] md:left-[85px] md:w-[250px] md:h-[220px] bg-black rounded-[1rem] md:rounded-[2rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
@@ -172,10 +172,10 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
             
             {/* Track Info */}
             <div className="text-center mb-4">
-              <p className={`font-mono text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
+              <p className={`font-mono text-[6px] md:text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
                 Now Playing
               </p>
-              <p className="text-white font-bold text-sm truncate w-48 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <p className="text-white font-bold text-[8px] md:text-sm truncate w-24 md:w-48 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                 {PLAYLIST[currentTrackIndex].title}
               </p>
             </div>
@@ -192,7 +192,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       {/* Invisible Click Areas for Physical Knobs */}
       
       {/* Top Knob - Channel/Track Selector */}
-      <div className="absolute top-[22%] right-[14%] w-[12%] h-[15%] z-[60] flex flex-col">
+      <div className="absolute top-[50px] right-[40px] w-[34px] h-[34px] md:top-[88px] md:right-[70px] md:w-[60px] md:h-[60px] z-[60] flex flex-col">
         {/* Top half for Next Track */}
         <button 
           onClick={nextTrack}
@@ -212,7 +212,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       {/* Middle Knob - Play/Pause */}
       <button 
         onClick={() => setIsPlaying(!isPlaying)}
-        className="absolute top-[40%] right-[15%] w-[10%] h-[12%] z-[60] cursor-pointer hover:bg-white/10 rounded-full transition-colors"
+        className="absolute top-[90px] right-[42px] w-[28px] h-[27px] md:top-[160px] md:right-[75px] md:w-[50px] md:h-[48px] z-[60] cursor-pointer hover:bg-white/10 rounded-full transition-colors"
         title={isPlaying ? "Pause" : "Play"}
         aria-label={isPlaying ? "Pause" : "Play"}
       />
