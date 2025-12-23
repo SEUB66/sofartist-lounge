@@ -158,13 +158,34 @@ const UnicornBackground = () => {
 
   return (
     <div className="unicorn-background-container">
-      {/* Background Image Layer */}
-      <div 
-        className="background-image-layer"
-        style={{ backgroundImage: `url(${getConfig().BG_IMAGE})` }}
-      />
-      
-
+      {/* Background Video Layer for Dark and Unicorn themes */}
+      {theme === 'dark' ? (
+        <video
+          className="background-video-layer"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/dark-bg-video.mp4" type="video/mp4" />
+        </video>
+      ) : theme === 'unicorn' ? (
+        <video
+          className="background-video-layer"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/unicorn-bg-video.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        /* Background Image Layer for Light theme */
+        <div 
+          className="background-image-layer"
+          style={{ backgroundImage: `url(${getConfig().BG_IMAGE})` }}
+        />
+      )}
       
       {/* Canvas Layer (Particles) */}
       <canvas ref={canvasRef} className="unicorn-canvas" />

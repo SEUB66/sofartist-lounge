@@ -120,7 +120,7 @@ export default function Home() {
           alt="Seub Germain" 
           className="w-10 h-10 rounded-md shadow-xl animate-pulse-subtle"
         />
-        <span style={{ fontFamily: 'VT323, monospace' }} className="text-base md:text-lg text-white/60 tracking-wider">
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-base md:text-lg bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent tracking-wider font-bold">
           Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
         </span>
       </div>
