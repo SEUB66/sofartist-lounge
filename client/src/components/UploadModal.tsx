@@ -84,7 +84,6 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     
     try {
       // 1. Obtenir l'URL présignée
-      console.log('Getting upload URL...');
       const { uploadUrl, publicUrl, key } = await getUploadUrlMutation.mutateAsync({
         userId: user.id,
         type: activeTab === 'mp3' ? 'music' : 'image',

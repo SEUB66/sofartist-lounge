@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from '@/contexts/UserContext';
 import { useLocation } from 'wouter';
 import UnicornBackground from '@/components/UnicornBackground';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserBubble } from '@/components/UserBubble';
 import { ChatMessage } from '@/components/ChatMessage';
-import { ChatBox } from '@/components/ChatBox';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { UploadModal } from '@/components/UploadModal';
 import { Settings, Upload } from 'lucide-react';
@@ -166,9 +165,6 @@ export default function Hub() {
           />
         ))}
       </div>
-
-      {/* Chat Box - Permanent History */}
-      <ChatBox messages={messages} />
 
       {/* Chat Messages - Flottants */}
       <div className="absolute inset-0 pointer-events-none z-20">
