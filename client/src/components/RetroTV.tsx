@@ -39,7 +39,7 @@ const PLAYLIST = [
 const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) => {
   const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(2); // Start with Roots - Northside
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [volume, setVolume] = useState(50);
   const audioRef = useRef<HTMLAudioElement | null>(null);
