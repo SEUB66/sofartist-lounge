@@ -43,7 +43,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   console.log('[GameBoyLogin] Rendering with isOpen=true');
   return (
     <div className="fixed inset-0 flex items-center justify-end pr-8 md:pr-16 z-40 animate-in fade-in duration-500">
-      <audio ref={audioRef} src="/gameboy-startup.mp3" preload="auto" />
+      <audio ref={audioRef} src="/gameboy-startup-real.mp3" preload="auto" />
       <div className="relative">
         {/* Minimize Button */}
         {onClose && (

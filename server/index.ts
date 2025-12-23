@@ -46,7 +46,12 @@ async function startServer() {
     // Development: Integrate Vite
     const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { 
+        middlewareMode: true,
+        hmr: {
+          server: server
+        }
+      },
       appType: "spa",
       root: path.resolve(__dirname, "..", "client"),
       configFile: path.resolve(__dirname, "..", "vite.config.ts"),

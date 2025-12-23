@@ -29,7 +29,7 @@ export default function Home() {
   const handleStart = () => {
     if (!hasStarted) {
       // Play Game Boy startup sound
-      const gameboySound = new Audio('/gameboy-startup.mp3');
+      const gameboySound = new Audio('/gameboy-startup-real.mp3');
       gameboySound.volume = 0.5;
       gameboySound.play().catch(e => console.log('Audio play failed:', e));
       

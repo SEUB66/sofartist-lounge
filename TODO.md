@@ -91,3 +91,11 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 - [ ] Implémenter l'upload S3 pour images
 - [ ] Interface d'upload accessible à tous les utilisateurs
 - [ ] Logo Apple Punk par défaut si MP3 sans cover
+
+### Corrections urgentes
+- [x] Corriger l'erreur WebSocket Vite (revenue après correction)
+  - Ajouté configuration HMR explicite avec serveur HTTP
+  - WebSocket fonctionne correctement maintenant
+- [x] Remplacer le son de startup par le vrai son Game Boy authentique (moins agressif)
+  - Téléchargé gameboy-startup-real.mp3 (74KB)
+  - Remplacé dans GameBoyLogin.tsx et Home.tsx
