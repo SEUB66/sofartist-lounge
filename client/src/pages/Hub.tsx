@@ -9,6 +9,7 @@ import { SettingsPanel } from '@/components/SettingsPanel';
 import { UploadModal } from '@/components/UploadModal';
 import { Settings, Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 interface Message {
   id: number;
@@ -28,6 +29,33 @@ export default function Hub() {
   const [showUpload, setShowUpload] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  
+  // Charger les utilisateurs en ligne
+  const { data: onlineUsers = [] } = trpc.presence.getOnlineUsers.useQuery(undefined, {
+    refetchInterval: 5000, // Mettre à jour toutes les 5 secondes
+  });
+  
+  const { data: onlineCount = 0 } = trpc.presence.getOnlineCount.useQuery(undefined, {
+    refetchInterval: 5000,
+  });
+  
+  // Mettre à jour la présence de l'utilisateur courant
+  const updatePresenceMutation = trpc.presence.updatePresence.useMutation();
+  
+  // Mettre à jour la présence
+  useEffect(() => {
+    if (!user) return;
+    
+    // Mettre à jour la présence immédiatement
+    updatePresenceMutation.mutate({ userId: user.id });
+    
+    // Puis mettre à jour toutes les 10 secondes
+    const interval = setInterval(() => {
+      updatePresenceMutation.mutate({ userId: user.id });
+    }, 10000);
+    
+    return () => clearInterval(interval);
+  }, [user, updatePresenceMutation]);
 
   // Rediriger si pas connecté
   useEffect(() => {
@@ -35,6 +63,9 @@ export default function Hub() {
       setLocation('/');
     }
   }, [isLoggedIn, setLocation]);
+  
+  // Ajouter useState import si manquant
+  // (déjà ajouté en haut du fichier)
 
   // Charger les messages depuis localStorage
   useEffect(() => {
@@ -82,9 +113,6 @@ export default function Hub() {
   if (!isLoggedIn || !user) {
     return null;
   }
-
-  // Pour l'instant, on affiche juste l'utilisateur connecté
-  const onlineUsers = [user];
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">

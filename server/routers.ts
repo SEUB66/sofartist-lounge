@@ -5,6 +5,69 @@ import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
 
+// Router pour la présence utilisateur
+const presenceRouter = router({
+  // Enregistrer ou mettre à jour la présence d'un utilisateur
+  updatePresence: publicProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input }) => {
+      // Vérifier si une session existe
+      const [existingSession] = await db
+        .select()
+        .from(sessions)
+        .where(eq(sessions.userId, input.userId))
+        .limit(1);
+
+      if (existingSession) {
+        // Mettre à jour le heartbeat
+        await db
+          .update(sessions)
+          .set({ lastHeartbeat: new Date() })
+          .where(eq(sessions.userId, input.userId));
+      } else {
+        // Créer une nouvelle session
+        await db.insert(sessions).values({
+          userId: input.userId,
+          lastHeartbeat: new Date(),
+        });
+      }
+
+      return { success: true };
+    }),
+
+  // Récupérer tous les utilisateurs en ligne
+  getOnlineUsers: publicProcedure.query(async () => {
+    // Les utilisateurs sont considérés en ligne s'ils ont eu un heartbeat dans les 30 dernières secondes
+    const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+
+    const onlineUsers = await db
+      .select({
+        id: users.id,
+        nickname: users.nickname,
+        profilePhoto: users.profilePhoto,
+        nicknameColor: users.nicknameColor,
+        mood: users.mood,
+      })
+      .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
+      .where(gt(sessions.lastHeartbeat, thirtySecondsAgo));
+
+    return onlineUsers;
+  }),
+
+  // Compter les utilisateurs en ligne
+  getOnlineCount: publicProcedure.query(async () => {
+    const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+
+    const [result] = await db
+      .select({ count: sql`COUNT(*)` })
+      .from(sessions)
+      .where(gt(sessions.lastHeartbeat, thirtySecondsAgo));
+
+    return result?.count || 0;
+  }),
+});
+
 // Router pour l'authentification
 const authRouter = router({
   // Login ultra simple : juste un nickname
@@ -265,6 +328,7 @@ export const appRouter = router({
   chat: chatRouter,
   settings: settingsRouter,
   upload: uploadRouter,
+  presence: presenceRouter,
 });
 
 export type AppRouter = typeof appRouter;

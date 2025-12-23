@@ -127,3 +127,10 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 
 ### Bug bulle utilisateur
 - [x] Nickname doit être DANS la bulle, pas en dessous (corrigé)
+
+### BUG CRITIQUE : Système de présence utilisateur manquant
+- [x] Compteur DEVS ONLINE ne se met pas à jour en temps réel (CORRIGÉ)
+- [x] Bulles utilisateurs ne se synchronisent pas entre les utilisateurs (CORRIGÉ)
+- [x] Implémenter système de présence utilisateur backend (CORRIGÉ)
+- [x] Ajouter endpoints tRPC pour getOnlineUsers et updatePresence (CORRIGÉ)
+- [x] Synchroniser les données en temps réel via polling (CORRIGÉ)
