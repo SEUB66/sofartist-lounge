@@ -35,7 +35,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-40 animate-in fade-in duration-500">
+    <div className="fixed inset-0 flex items-center justify-end pr-8 md:pr-16 z-40 animate-in fade-in duration-500">
       <audio ref={audioRef} src="/gameboy-startup.mp3" preload="auto" />
       <div className="relative">
         {/* Minimize Button */}

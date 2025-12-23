@@ -120,9 +120,8 @@ export default function Home() {
           alt="Seub Germain" 
           className="w-8 h-8 md:w-12 md:h-12 rounded-md md:rounded-lg shadow-xl md:shadow-2xl animate-pulse-subtle"
         />
-        <span style={{ fontFamily: 'VT323, monospace' }} className="text-xs md:text-lg bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 bg-clip-text text-transparent tracking-wide md:tracking-wider font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.4)]">
-          <span className="hidden md:inline">coded with LOVE &lt;3 by SEBASTIEN GERMAIN</span>
-          <span className="md:hidden">SEBASTIEN GERMAIN</span>
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-xs md:text-base bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 bg-clip-text text-transparent tracking-wide md:tracking-wider font-bold drop-shadow-[0_0_8px_rgba(168,85,247,0.4)]">
+          SEBG | APPLEPUNK | ALL RIGHTS RESERVED
         </span>
       </div>
 
