@@ -23,6 +23,11 @@
   - Le login fonctionne avec la touche Enter
   - Redirection vers /hub opérationnelle
 
+- [x] **ERREUR WEBSOCKET VITE CORRIGÉE**
+  - Supprimé la configuration proxy obsolète dans vite.config.ts
+  - Serveur Express + Vite unifié sur port 3000
+  - Hot-reload fonctionne correctement
+
 ## 🔜 À FAIRE
 
 ### Système de chat avec bulles 3D
