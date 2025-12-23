@@ -3,14 +3,13 @@ import { useTheme } from '../contexts/ThemeContext';
 
 interface GameBoyLoginProps {
   isOpen: boolean;
-  onLogin: (username: string, password: string) => void;
+  onLogin: (nickname: string) => void;
   onClose?: () => void;
 }
 
 export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   const { theme } = useTheme();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -27,8 +26,8 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && password) {
-      onLogin(username, password);
+    if (nickname.trim()) {
+      onLogin(nickname.trim());
     }
   };
 
@@ -53,26 +52,19 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
             <input 
               type="text" 
-              placeholder="USERNAME" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              className="w-full px-2 md:px-3 py-1 text-xs md:text-sm bg-black/20 text-green-900 placeholder:text-green-700/60 border border-green-700/30 rounded font-mono focus:outline-none focus:ring-2 focus:ring-green-600" 
-              style={{ fontFamily: 'VT323, monospace', fontSize: '14px' }} 
-            />
-            <input 
-              type="password" 
-              placeholder="PASSWORD" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              className="w-full px-2 md:px-3 py-1 text-xs md:text-sm bg-black/20 text-green-900 placeholder:text-green-700/60 border border-green-700/30 rounded font-mono focus:outline-none focus:ring-2 focus:ring-green-600" 
-              style={{ fontFamily: 'VT323, monospace', fontSize: '14px' }} 
+              placeholder="NICKNAME" 
+              value={nickname} 
+              onChange={(e) => setNickname(e.target.value)} 
+              className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/20 text-green-900 placeholder:text-green-700/60 border border-green-700/30 rounded font-mono focus:outline-none focus:ring-2 focus:ring-green-600" 
+              style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
+              autoFocus
             />
             <button 
               type="submit" 
-              className="w-full px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base bg-green-700 text-green-100 rounded font-bold hover:bg-green-600 transition-colors border border-green-900" 
-              style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
+              className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-green-700 text-green-100 rounded font-bold hover:bg-green-600 transition-colors border border-green-900" 
+              style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
             >
-              ENTER SYSTEM
+              ENTER HUB
             </button>
           </form>
         </div>

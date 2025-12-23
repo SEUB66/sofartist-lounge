@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { useUser } from "@/contexts/UserContext";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,11 +10,13 @@ import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import RetroTV from "@/components/RetroTV";
-import { GameBoyLogin } from "@/components/GameBoyLogin";
+import { GameBoyLoginWrapper } from "@/components/GameBoyLoginWrapper";
 import { Minus, Square, X, Monitor } from "lucide-react";
 
 export default function Home() {
   const { theme, setTheme } = useTheme();
+  const { isLoggedIn } = useUser();
+  const [, setLocation] = useLocation();
   const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
   const [isMaximized, setIsMaximized] = useState(false);
   const [isTVVisible, setIsTVVisible] = useState(false); // TV hidden at startup
@@ -140,14 +145,15 @@ export default function Home() {
       </div>
 
       {/* Game Boy Login */}
-      <GameBoyLogin 
-        isOpen={isWindowOpen} 
-        onLogin={(username, password) => {
-          console.log('Login:', username, password);
-          // Handle login logic here
-        }}
-        onClose={toggleWindow}
-      />
+      {!isLoggedIn && (
+        <GameBoyLoginWrapper 
+          isOpen={isWindowOpen} 
+          onClose={toggleWindow}
+          onSuccess={() => {
+            setLocation('/hub');
+          }}
+        />
+      )}
 
       {/* OLD Login Window - REMOVED */}
       {false && isWindowOpen && (
