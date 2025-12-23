@@ -215,8 +215,8 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         className="absolute inset-0 w-full h-full object-contain pointer-events-none z-50"
       />
 
-      {/* Screen Content Area - Adjusted for new TV image (centered) */}
-      <div className={`absolute top-[42px] left-[45px] w-[120px] h-[105px] md:top-[74px] md:left-[78px] md:w-[210px] md:h-[185px] bg-black rounded-[0.8rem] md:rounded-[1.5rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
+      {/* Screen Content Area - Perfectly centered */}
+      <div className={`absolute top-[42px] left-[42px] w-[120px] h-[105px] md:top-[74px] md:left-[74px] md:w-[210px] md:h-[185px] bg-black rounded-[0.8rem] md:rounded-[1.5rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
