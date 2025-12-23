@@ -57,7 +57,11 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   const [currentTrackIndex, setCurrentTrackIndex] = useState(2); // Start with Roots - Northside
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [volume, setVolume] = useState(50);
+  const [position, setPosition] = useState({ x: 16, y: 16 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const tvRef = useRef<HTMLDivElement>(null);
 
   // Initialize audio
   useEffect(() => {
@@ -159,11 +163,6 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     // If playing, check if track has specific image, otherwise use glitch
     return PLAYLIST[currentTrackIndex].image || "/static-glitch.jpg";
   };
-
-  const [position, setPosition] = useState({ x: 16, y: 16 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const tvRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
