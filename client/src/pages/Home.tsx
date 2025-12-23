@@ -112,6 +112,11 @@ export default function Home() {
         </div>
       )}
 
+      {/* Footer Credits */}
+      <div className="absolute bottom-2 right-4 z-50 text-[10px] font-mono text-white/30 tracking-widest pointer-events-none select-none">
+        Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+      </div>
+
       {/* Login Window */}
       {isWindowOpen && (
         <div className={`absolute transition-all duration-500 ease-in-out z-50 
