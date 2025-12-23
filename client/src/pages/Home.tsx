@@ -86,21 +86,6 @@ export default function Home() {
     <div className="min-h-screen w-full relative overflow-hidden">
       <UnicornBackground />
       
-      {/* Apple Punk Banner - Top Left */}
-      <a 
-        href="https://applepunk-react.vercel.app/" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed top-4 left-4 z-50 hover:scale-105 transition-transform duration-300 animate-in fade-in duration-700"
-      >
-        <img 
-          src="/applepunk-banner.jpg" 
-          alt="Apple Punk" 
-          className="h-16 w-auto rounded-lg shadow-[0_0_20px_rgba(0,200,255,0.3)] border border-cyan-400/30"
-        />
-      </a>
-
-      {/* Theme Toggle - Top Right */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
@@ -108,9 +93,9 @@ export default function Home() {
       {/* Retro TV Component - Shows when window is open */}
       <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
-      {/* Game Boy Press Start Button - Shows when window is CLOSED */}
+      {/* Desktop Taskbar / Dock Area (Bottom) */}
       {!isWindowOpen && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
           <button 
             onClick={() => {
               setTheme('unicorn'); // Switch to unicorn theme
@@ -119,16 +104,16 @@ export default function Home() {
             className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
             <img 
-              src="/snes-controller.png" 
-              alt="SNES Controller" 
-              className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
+              src="/press-start.jpg" 
+              alt="Press Start" 
+              className="h-16 w-auto rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)] border-2 border-cyan-400/50"
             />
           </button>
         </div>
       )}
 
       {/* Footer Credits with Icon - Centered, Bigger, More Visible */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 animate-in fade-in duration-1000 delay-500">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 animate-in fade-in duration-1000 delay-500">
         <img 
           src="/seub-icon.jpg" 
           alt="Seub Germain" 
