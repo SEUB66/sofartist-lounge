@@ -155,10 +155,8 @@ export default function Hub() {
           />
         ))}
       </div>
-
-      {/* Chat Input - En bas */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 w-full max-w-2xl px-4">
-        <form onSubmit={handleSendMessage} className="w-full">
+      {/* Chat Input - Bas de page */}
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">        <form onSubmit={handleSendMessage} className="w-full">
           <input
             type="text"
             value={chatInput}

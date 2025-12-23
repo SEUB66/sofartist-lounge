@@ -116,7 +116,14 @@ export default function Home() {
       {/* RetroTV is now global in App.tsx */}
 
       {/* Desktop Taskbar / Dock Area (Bottom) - Always visible, toggles Game Boy */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
+      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500 flex flex-col items-center gap-3">
+        {/* PRESS START Text */}
+        <div className="animate-pulse">
+          <p style={{ fontFamily: 'VT323, monospace' }} className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.8)] pixel-text">
+            ▶ PRESS START ◀
+          </p>
+        </div>
+        
         <button 
           onClick={handleStart}
           className="hover:scale-110 transition-transform duration-300 active:scale-95 pointer-events-auto cursor-pointer"
