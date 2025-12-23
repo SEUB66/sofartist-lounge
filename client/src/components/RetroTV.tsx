@@ -146,7 +146,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   };
 
   return (
-    <div className="fixed left-10 top-1/2 -translate-y-1/2 w-[500px] h-[400px] z-40 transition-all duration-500 animate-in slide-in-from-left fade-in">
+    <div className="fixed left-4 md:left-10 top-4 md:top-1/2 md:-translate-y-1/2 w-[280px] h-[224px] md:w-[500px] md:h-[400px] z-40 transition-all duration-500 animate-in slide-in-from-left fade-in">
       {/* TV Frame Image */}
       <img 
         src="/retro-tv-new.png" 
