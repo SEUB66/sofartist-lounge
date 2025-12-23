@@ -2,209 +2,132 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import UnicornBackground from "@/components/UnicornBackground";
+import RacingStripes from "@/components/RacingStripes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
-import RetroTV from "@/components/RetroTV";
-import { Minus, Square, X, Monitor } from "lucide-react";
 
 export default function Home() {
-  const { theme, setTheme } = useTheme();
-  const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
-  const [isMaximized, setIsMaximized] = useState(false);
-  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
-
-  const toggleWindow = () => {
-    if (!isWindowOpen) {
-      // Trigger auto-play on TV when opening window
-      setShouldAutoPlay(true);
-    } else {
-      setShouldAutoPlay(false);
-    }
-    setIsWindowOpen(!isWindowOpen);
-  };
-
-  const toggleMaximize = () => {
-    setIsMaximized(!isMaximized);
-  };
-
-  // Define glass styles based on theme
-  const getGlassStyle = () => {
-    switch (theme) {
-      case 'dark':
-        return "bg-cyan-900/20 border-cyan-500/30 shadow-[0_0_40px_rgba(6,182,212,0.2)]";
-      case 'light':
-        return "bg-orange-500/20 border-orange-500/30 shadow-[0_0_40px_rgba(249,115,22,0.2)]";
-      case 'unicorn':
-        return "bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-500/30 shadow-[0_0_40px_rgba(236,72,153,0.3)]";
-      default:
-        return "bg-black/40 border-white/10";
-    }
-  };
-
-  const getTitleStyle = () => {
-    switch (theme) {
-      case 'dark':
-        return "text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]";
-      case 'light':
-        return "text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]";
-      case 'unicorn':
-        return "bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 animate-gradient-x drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]";
-      default:
-        return "text-white";
-    }
-  };
-
-  const getButtonStyle = () => {
-    switch (theme) {
-      case 'dark':
-        return "bg-cyan-600/80 hover:bg-cyan-500 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)]";
-      case 'light':
-        return "bg-orange-500/80 hover:bg-orange-400 text-white shadow-[0_0_20px_rgba(249,115,22,0.4)] hover:shadow-[0_0_30px_rgba(249,115,22,0.6)]";
-      case 'unicorn':
-        return "bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 hover:from-pink-500 hover:via-purple-500 hover:to-cyan-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.4)] hover:shadow-[0_0_30px_rgba(236,72,153,0.6)]";
-      default:
-        return "bg-white/10 hover:bg-white/20";
-    }
-  };
-
-  const getInputStyle = () => {
-    switch (theme) {
-      case 'dark':
-        return "border-cyan-500/30 focus:border-cyan-400 focus:ring-cyan-400/20 placeholder:text-cyan-300/30 text-cyan-100";
-      case 'light':
-        return "border-orange-500/30 focus:border-orange-400 focus:ring-orange-400/20 placeholder:text-orange-300/50 text-orange-900 font-medium";
-      case 'unicorn':
-        return "border-pink-500/30 focus:border-pink-400 focus:ring-pink-400/20 placeholder:text-pink-300/50 text-white";
-      default:
-        return "border-white/20";
-    }
-  };
+  const { theme } = useTheme();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
+      {/* Background with particles */}
       <UnicornBackground />
       
+      {/* Racing stripes overlay */}
+      <RacingStripes />
+      
+      {/* Theme toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
 
-      {/* Retro TV Component - Shows when window is open */}
-      <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
-
-      {/* Desktop Taskbar / Dock Area (Bottom) */}
-      {!isWindowOpen && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
-          <button 
-            onClick={() => {
-              setTheme('unicorn'); // Switch to unicorn theme
-              toggleWindow(); // Open login window
-            }}
-            className="hover:scale-110 transition-transform duration-300 active:scale-95"
-          >
+      {/* Main login container */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          
+          {/* Apple Punk Banner */}
+          <div className="mb-8 animate-in fade-in slide-in-from-top duration-700">
             <img 
-              src="/press-start.jpg" 
-              alt="Press Start" 
-              className="h-16 w-auto rounded-full shadow-[0_0_20px_rgba(6,182,212,0.6)] border-2 border-cyan-400/50"
+              src="/applepunk-banner.jpg" 
+              alt="Apple Punk" 
+              className="w-full rounded-2xl shadow-[0_0_60px_rgba(0,200,255,0.3)] hover:shadow-[0_0_80px_rgba(0,200,255,0.5)] transition-all duration-500 hover:scale-[1.02]"
             />
-          </button>
-        </div>
-      )}
+          </div>
 
-      {/* Footer Credits */}
-      <div className="absolute bottom-2 right-4 z-50 text-[10px] font-mono text-white/30 tracking-widest pointer-events-none select-none">
-        Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
-      </div>
-
-      {/* Login Window */}
-      {isWindowOpen && (
-        <div className={`absolute transition-all duration-500 ease-in-out z-50 
-          ${isMaximized 
-            ? 'inset-4 w-auto h-auto' 
-            : 'top-1/2 -translate-y-1/2 right-[10%] w-[300px]' // Reduced width to 300px
-          }
-        `}>
-          <Card className={`w-full h-full backdrop-blur-xl border transition-all duration-500 flex flex-col ${getGlassStyle()}`}>
+          {/* Login Card */}
+          <div className="relative group animate-in fade-in slide-in-from-bottom duration-700 delay-200">
+            {/* Glow effect behind card */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
             
-            {/* Window Controls Header */}
-            <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 bg-black/10">
-              <div className="flex items-center gap-2">
-                <div className={`w-2.5 h-2.5 rounded-full ${theme === 'light' ? 'bg-orange-400' : 'bg-cyan-400'} animate-pulse`} />
-                <span className={`text-[10px] font-mono uppercase tracking-widest ${theme === 'light' ? 'text-orange-800/70' : 'text-white/50'}`}>
-                  Secure_Shell
-                </span>
+            {/* Main card */}
+            <div className="relative backdrop-blur-2xl bg-gradient-to-br from-gray-900/80 via-gray-800/70 to-gray-900/80 border border-gray-700/50 rounded-3xl p-8 shadow-2xl">
+              
+              {/* Title */}
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-black uppercase tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 animate-gradient-x mb-2">
+                  DEVCAVE HUB
+                </h1>
+                <p className="text-sm text-gray-400 uppercase tracking-widest font-mono">
+                  Enter the Future
+                </p>
               </div>
-              <div className="flex items-center gap-1.5">
-                <button 
-                  onClick={toggleWindow}
-                  className={`p-0.5 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
-                >
-                  <Minus size={12} />
-                </button>
-                <button 
-                  onClick={toggleMaximize}
-                  className={`p-0.5 rounded hover:bg-white/10 transition-colors ${theme === 'light' ? 'text-orange-800' : 'text-white'}`}
-                >
-                  <Square size={10} />
-                </button>
-                <button 
-                  onClick={toggleWindow}
-                  className="p-0.5 rounded hover:bg-red-500/20 hover:text-red-400 transition-colors text-white/50"
-                >
-                  <X size={12} />
-                </button>
-              </div>
-            </div>
 
-            <div className={`flex-1 flex flex-col ${isMaximized ? 'justify-center max-w-sm mx-auto w-full' : ''}`}>
-              <CardHeader className="space-y-1 pb-4 pt-4">
-                <CardTitle className={`text-2xl font-black text-center tracking-tighter uppercase transition-all duration-500 ${getTitleStyle()}`}>
-                  DEVCAVE BAR
-                </CardTitle>
-                <CardDescription className={`text-center text-xs font-light tracking-widest uppercase ${theme === 'light' ? 'text-orange-800/70' : 'text-gray-300'}`}>
-                  Access Terminal
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pb-4">
-                <form>
-                  <div className="grid w-full items-center gap-4">
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="username" className={`font-bold uppercase tracking-widest text-[10px] ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
-                        Identity
-                      </Label>
-                      <Input 
-                        id="username" 
-                        placeholder="CODENAME" 
-                        className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
-                      />
-                    </div>
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="password" className={`font-bold uppercase tracking-widest text-[10px] ${theme === 'light' ? 'text-orange-700' : 'text-gray-300'}`}>
-                        Passphrase
-                      </Label>
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        placeholder="••••••••" 
-                        className={`bg-white/5 h-9 text-sm transition-all duration-300 ${getInputStyle()}`} 
-                      />
-                    </div>
-                  </div>
-                </form>
-              </CardContent>
-              <CardFooter className="flex flex-col space-y-3 pt-2 pb-6">
-                <Button className={`w-full h-10 text-sm border-0 font-bold tracking-widest uppercase transition-all duration-300 hover:scale-[1.02] ${getButtonStyle()}`}>
-                  Enter System
+              {/* Form */}
+              <div className="space-y-6">
+                {/* Username */}
+                <div className="space-y-2">
+                  <Label 
+                    htmlFor="username" 
+                    className="text-xs uppercase tracking-widest text-gray-300 font-bold"
+                  >
+                    Username
+                  </Label>
+                  <Input 
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your codename"
+                    className="h-12 bg-black/30 border-gray-600/50 focus:border-cyan-400 focus:ring-cyan-400/20 text-white placeholder:text-gray-500 rounded-xl transition-all duration-300 hover:border-gray-500"
+                  />
+                </div>
+
+                {/* Password */}
+                <div className="space-y-2">
+                  <Label 
+                    htmlFor="password" 
+                    className="text-xs uppercase tracking-widest text-gray-300 font-bold"
+                  >
+                    Password
+                  </Label>
+                  <Input 
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="h-12 bg-black/30 border-gray-600/50 focus:border-cyan-400 focus:ring-cyan-400/20 text-white placeholder:text-gray-500 rounded-xl transition-all duration-300 hover:border-gray-500"
+                  />
+                </div>
+
+                {/* Enter button */}
+                <Button 
+                  className="w-full h-14 text-base font-black uppercase tracking-widest relative overflow-hidden group/btn rounded-xl"
+                >
+                  {/* Animated gradient background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 animate-gradient-x"></div>
+                  
+                  {/* Racing stripe animation on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
+                  
+                  {/* Button text */}
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <span>Enter the Hub</span>
+                    <span className="text-2xl">🏁</span>
+                  </span>
                 </Button>
-                <Button variant="link" className={`text-xs font-light h-auto p-0 ${theme === 'light' ? 'text-orange-800 hover:text-orange-600' : 'text-gray-400 hover:text-white'}`}>
+
+                {/* Forgot password */}
+                <button className="w-full text-sm text-gray-400 hover:text-cyan-400 transition-colors duration-300 font-mono">
                   Forgot credentials?
-                </Button>
-              </CardFooter>
+                </button>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+              <div className="absolute bottom-4 left-4 w-2 h-2 rounded-full bg-pink-400 animate-pulse delay-500"></div>
             </div>
-          </Card>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 text-center text-[10px] font-mono text-white/30 tracking-widest animate-in fade-in duration-1000 delay-500">
+            Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
