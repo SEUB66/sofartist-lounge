@@ -14,15 +14,8 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
   const [isMaximized, setIsMaximized] = useState(false);
-  const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
 
   const toggleWindow = () => {
-    if (!isWindowOpen) {
-      // Trigger auto-play on TV when opening window
-      setShouldAutoPlay(true);
-    } else {
-      setShouldAutoPlay(false);
-    }
     setIsWindowOpen(!isWindowOpen);
   };
 
@@ -91,27 +84,22 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      {/* Retro TV Component - Shows when window is open */}
-      <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
+      {/* Retro TV Component - Always visible and playing */}
+      <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={true} />
 
-      {/* Desktop Taskbar / Dock Area (Bottom) */}
-      {!isWindowOpen && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
-          <button 
-            onClick={() => {
-              setTheme('unicorn'); // Switch to unicorn theme
-              toggleWindow(); // Open login window
-            }}
-            className="hover:scale-110 transition-transform duration-300 active:scale-95"
-          >
-            <img 
-              src="/snes-controller.png" 
-              alt="SNES Controller" 
-              className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
-            />
-          </button>
-        </div>
-      )}
+      {/* Desktop Taskbar / Dock Area (Bottom) - Always visible, toggles Game Boy */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
+        <button 
+          onClick={toggleWindow}
+          className="hover:scale-110 transition-transform duration-300 active:scale-95"
+        >
+          <img 
+            src="/snes-controller.png" 
+            alt="SNES Controller" 
+            className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
+          />
+        </button>
+      </div>
 
       {/* Footer Credits with Icon - Centered, Bigger, More Visible */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 md:gap-3 animate-in fade-in duration-1000 delay-500">
