@@ -14,10 +14,10 @@ export function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="backdrop-blur-md bg-background/30 border-white/20">
-          {theme === 'light' && <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />}
-          {theme === 'dark' && <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />}
-          {theme === 'unicorn' && <Sparkles className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all text-fuchsia-400" />}
+        <Button variant="outline" size="icon" className="backdrop-blur-xl bg-white/90 dark:bg-gray-800/90 border-2 border-purple-400/60 shadow-lg shadow-purple-500/50 hover:shadow-xl hover:shadow-purple-500/70 hover:scale-110 transition-all duration-300 w-14 h-14">
+          {theme === 'light' && <Sun className="h-[1.8rem] w-[1.8rem] rotate-0 scale-100 transition-all text-yellow-500" />}
+          {theme === 'dark' && <Moon className="h-[1.8rem] w-[1.8rem] rotate-0 scale-100 transition-all text-blue-400" />}
+          {theme === 'unicorn' && <Sparkles className="h-[1.8rem] w-[1.8rem] rotate-0 scale-100 transition-all text-fuchsia-400 animate-pulse" />}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
