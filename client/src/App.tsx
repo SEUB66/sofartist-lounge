@@ -38,7 +38,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             {/* RetroTV persistante sur toutes les pages */}
-            <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={true} />
+            <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={false} />
             <Router />
           </TooltipProvider>
         </ThemeProvider>

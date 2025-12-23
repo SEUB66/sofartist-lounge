@@ -134,3 +134,6 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 - [x] Implémenter système de présence utilisateur backend (CORRIGÉ)
 - [x] Ajouter endpoints tRPC pour getOnlineUsers et updatePresence (CORRIGÉ)
 - [x] Synchroniser les données en temps réel via polling (CORRIGÉ)
+
+### BUG CRITIQUE : RetroTV
+- [x] RetroTV joue automatiquement au lieu de jouer seulement sur PRESS START (CORRIGÉ)
