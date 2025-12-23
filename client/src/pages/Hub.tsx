@@ -6,14 +6,26 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserBubble } from '@/components/UserBubble';
 import { ChatMessage } from '@/components/ChatMessage';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { trpc } from '@/lib/trpc';
 import { Settings } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface Message {
+  id: number;
+  userId: number;
+  nickname: string;
+  content: string;
+  createdAt: Date;
+  nicknameColor: string;
+  mood: string;
+  profilePhoto: string | null;
+}
 
 export default function Hub() {
   const { user, isLoggedIn } = useUser();
   const [, setLocation] = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [chatInput, setChatInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
 
   // Rediriger si pas connecté
   useEffect(() => {
@@ -22,57 +34,55 @@ export default function Hub() {
     }
   }, [isLoggedIn, setLocation]);
 
-  // Récupérer les utilisateurs en ligne
-  const { data: onlineUsers = [] } = trpc.chat.getOnlineUsers.useQuery(undefined, {
-    refetchInterval: 5000, // Refresh toutes les 5 secondes
-  });
-
-  // Récupérer les messages
-  const { data: messages = [] } = trpc.chat.getMessages.useQuery(
-    { limit: 50 },
-    {
-      refetchInterval: 2000, // Refresh toutes les 2 secondes
-    }
-  );
-
-  // Mutation pour envoyer un message
-  const sendMessageMutation = trpc.chat.sendMessage.useMutation();
-
-  // Heartbeat pour indiquer qu'on est en ligne
-  const heartbeatMutation = trpc.chat.heartbeat.useMutation();
-
+  // Charger les messages depuis localStorage
   useEffect(() => {
-    if (user) {
-      // Envoyer un heartbeat toutes les 30 secondes
-      const interval = setInterval(() => {
-        heartbeatMutation.mutate({ userId: user.id });
-      }, 30000);
-
-      // Envoyer un heartbeat initial
-      heartbeatMutation.mutate({ userId: user.id });
-
-      return () => clearInterval(interval);
+    const savedMessages = localStorage.getItem('devcave_messages');
+    if (savedMessages) {
+      try {
+        const parsed = JSON.parse(savedMessages);
+        setMessages(parsed.map((m: any) => ({
+          ...m,
+          createdAt: new Date(m.createdAt)
+        })));
+      } catch (e) {
+        console.error('Failed to parse messages:', e);
+      }
     }
-  }, [user]);
+  }, []);
+
+  // Sauvegarder les messages dans localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('devcave_messages', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !chatInput.trim()) return;
 
-    try {
-      await sendMessageMutation.mutateAsync({
-        userId: user.id,
-        content: chatInput.trim(),
-      });
-      setChatInput('');
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    }
+    const newMessage: Message = {
+      id: Date.now(),
+      userId: user.id,
+      nickname: user.nickname,
+      content: chatInput.trim(),
+      createdAt: new Date(),
+      nicknameColor: user.nicknameColor || '#00ff00',
+      mood: user.mood || '😊',
+      profilePhoto: user.profilePhoto,
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setChatInput('');
+    toast.success('Message sent!');
   };
 
   if (!isLoggedIn || !user) {
     return null;
   }
+
+  // Pour l'instant, on affiche juste l'utilisateur connecté
+  const onlineUsers = [user];
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">

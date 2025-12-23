@@ -10,7 +10,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: window.location.origin.replace(':3000', ':3001') + '/api/trpc',
+          url: '/api/trpc',
           transformer: superjson,
         }),
       ],

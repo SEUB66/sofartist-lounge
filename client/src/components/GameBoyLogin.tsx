@@ -26,13 +26,21 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[GameBoyLogin] handleSubmit called, nickname:', nickname);
     if (nickname.trim()) {
+      console.log('[GameBoyLogin] Calling onLogin with:', nickname.trim());
       onLogin(nickname.trim());
+    } else {
+      console.log('[GameBoyLogin] Nickname is empty!');
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('[GameBoyLogin] Not rendering (isOpen=false)');
+    return null;
+  }
 
+  console.log('[GameBoyLogin] Rendering with isOpen=true');
   return (
     <div className="fixed inset-0 flex items-center justify-end pr-8 md:pr-16 z-40 animate-in fade-in duration-500">
       <audio ref={audioRef} src="/gameboy-startup.mp3" preload="auto" />
@@ -60,7 +68,8 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
               autoFocus
             />
             <button 
-              type="submit" 
+              type="button" 
+              onClick={(e) => { e.preventDefault(); handleSubmit(e as any); }}
               className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-green-700 text-green-100 rounded font-bold hover:bg-green-600 transition-colors border border-green-900" 
               style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
             >

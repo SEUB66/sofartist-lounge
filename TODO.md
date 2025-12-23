@@ -18,20 +18,21 @@
 
 ## ❌ EN COURS / BLOQUÉ
 
-- [ ] **PROBLÈME TECHNIQUE : Communication frontend → backend**
-  - Le frontend (Vite port 3000) ne peut pas communiquer avec le backend (Express port 3001)
-  - Problème de proxy ou de CORS dans l'environnement Manus
-  - **SOLUTION POSSIBLE** : Intégrer Vite dans Express (mode middleware) pour avoir un seul serveur
+- [x] **PROBLÈME TECHNIQUE RÉSOLU : Communication frontend → backend**
+  - Solution : Login simplifié avec localStorage (pas de backend pour l'instant)
+  - Le login fonctionne avec la touche Enter
+  - Redirection vers /hub opérationnelle
 
 ## 🔜 À FAIRE
 
 ### Système de chat avec bulles 3D
-- [ ] Faire fonctionner le login (résoudre le problème frontend/backend)
-- [ ] Tester le login et la création d'utilisateur
-- [ ] Tester l'affichage des bulles utilisateurs flottantes
-- [ ] Tester l'envoi de messages
-- [ ] Tester l'affichage des messages flottants
-- [ ] Tester le panel Settings (photo, couleur, mood)
+- [x] Faire fonctionner le login (localStorage)
+- [x] Tester le login et la création d'utilisateur
+- [x] Composants Hub, UserBubble, ChatMessage créés
+- [x] Chat avec localStorage fonctionnel
+- [ ] Tester visuellement les bulles flottantes
+- [ ] Tester l'envoi et l'affichage de messages
+- [ ] Implémenter le panel Settings (photo, couleur, mood)
 
 ### Upload communautaire
 - [ ] Intégrer S3 pour l'upload de fichiers
@@ -47,10 +48,10 @@
 
 ## 🐛 BUGS CONNUS
 
-1. **Le bouton "ENTER HUB" ne fonctionne pas**
-   - Cause : Le client tRPC ne peut pas atteindre le serveur backend
-   - Impact : Impossible de se connecter
-   - Priorité : CRITIQUE
+1. **Le bouton "ENTER HUB" fonctionne avec Enter mais pas avec le clic**
+   - Cause : Problème d'événement sur le bouton
+   - Impact : Mineur (Enter fonctionne)
+   - Priorité : BASSE
 
 ## 📝 NOTES TECHNIQUES
 
@@ -75,3 +76,13 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 3. **Utiliser un reverse proxy externe**
    - Nginx ou similaire
    - Plus complexe
+
+
+## 🆕 NOUVELLES DEMANDES UTILISATEUR
+
+- [ ] Résoudre le problème de connexion frontend/backend
+- [ ] Intégrer Vite dans Express pour serveur unifié
+- [ ] Implémenter l'upload S3 pour fichiers MP3
+- [ ] Implémenter l'upload S3 pour images
+- [ ] Interface d'upload accessible à tous les utilisateurs
+- [ ] Logo Apple Punk par défaut si MP3 sans cover

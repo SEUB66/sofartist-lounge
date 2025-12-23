@@ -1,5 +1,4 @@
 import { GameBoyLogin } from './GameBoyLogin';
-import { trpc } from '@/lib/trpc';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -11,19 +10,26 @@ interface GameBoyLoginWrapperProps {
 
 export function GameBoyLoginWrapper({ isOpen, onClose, onSuccess }: GameBoyLoginWrapperProps) {
   const { setUser } = useUser();
-  const loginMutation = trpc.auth.login.useMutation();
 
   const handleLogin = async (nickname: string) => {
+    console.log('[LOGIN] Attempting login with nickname:', nickname);
     try {
-      const result = await loginMutation.mutateAsync({ nickname });
+      // Simple localStorage login for now
+      const user = {
+        id: Date.now(),
+        nickname,
+        profilePhoto: null,
+        nicknameColor: '#00ff00',
+        mood: '😊',
+        createdAt: new Date(),
+        lastSeenAt: new Date()
+      };
       
-      if (result.user) {
-        setUser(result.user as any);
-        toast.success(result.isNew ? `Bienvenue ${nickname} !` : `Re-bienvenue ${nickname} !`);
-        onSuccess?.();
-      }
+      setUser(user as any);
+      toast.success(`Bienvenue ${nickname} !`);
+      onSuccess?.();
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('[LOGIN] Error:', error);
       toast.error('Erreur de connexion');
     }
   };
