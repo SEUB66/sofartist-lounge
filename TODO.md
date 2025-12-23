@@ -109,3 +109,13 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 ### Compteur d'utilisateurs en ligne
 - [x] Ajouter compteur "X DEVS ONLINE" en temps réel dans le hub
 - [x] Affichage bien visible en haut de la page
+
+### Upload communautaire MP3 et Images
+- [x] Interface d'upload MP3 dans le hub
+- [x] Interface d'upload images dans le hub
+- [x] Backend tRPC pour upload vers S3
+- [x] Extraction métadonnées MP3 (titre, artiste, cover)
+- [x] Logo Apple Punk par défaut si MP3 sans cover
+- [x] Intégration tracks uploadées dans RetroTV
+- [ ] Upload photo de profil dans Settings Panel (TODO: intégrer dans Settings)
+- [x] Liste des fichiers uploadés accessibles à tous

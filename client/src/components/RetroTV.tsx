@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { trpc } from '@/lib/trpc';
 
 interface RetroTVProps {
   isOpen: boolean;
@@ -8,16 +9,17 @@ interface RetroTVProps {
   autoPlayTrigger: boolean;
 }
 
-const PLAYLIST = [
+// Playlist par défaut (sera combinée avec les uploads)
+const DEFAULT_playlist = [
   {
     title: "Ms. Pac-Man Theme",
-    src: "/lightbath.mp3", // Using the pacman file
-    image: "/apple-punk-logo.png" // Apple Punk Logo
+    src: "/lightbath.mp3",
+    image: "/apple-punk-logo.png"
   },
   {
     title: "Profound Impact",
     src: "/impact.mp3",
-    image: null // Will use default glitch image
+    image: null
   },
   {
     title: "Roots - Northside",
@@ -59,7 +61,23 @@ const PLAYLIST = [
 const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) => {
   const { theme } = useTheme();
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(2); // Start with Roots - Northside
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(2);
+  const [playlist, setPlaylist] = useState(DEFAULT_playlist);
+  
+  // Charger les tracks uploadées depuis la DB
+  const { data: uploadedTracks } = trpc.upload.listMedia.useQuery({ type: 'music' });
+  
+  // Combiner la playlist par défaut avec les tracks uploadées
+  useEffect(() => {
+    if (uploadedTracks && uploadedTracks.length > 0) {
+      const userTracks = uploadedTracks.map(track => ({
+        title: track.title,
+        src: track.fileUrl,
+        image: track.coverUrl || '/apple-punk-logo.png' // Logo Apple Punk par défaut
+      }));
+      setPlaylist([...DEFAULT_playlist, ...userTracks]);
+    }
+  }, [uploadedTracks]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [volume, setVolume] = useState(50);
   const [position, setPosition] = useState({ x: 16, y: 16 });
@@ -70,7 +88,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
   // Initialize audio
   useEffect(() => {
-    audioRef.current = new Audio(PLAYLIST[currentTrackIndex].src);
+    audioRef.current = new Audio(playlist[currentTrackIndex].src);
     audioRef.current.loop = true;
     audioRef.current.volume = volume / 100;
 
@@ -87,7 +105,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     if (audioRef.current && !isTransitioning) {
       const wasPlaying = isPlaying;
       audioRef.current.pause();
-      audioRef.current.src = PLAYLIST[currentTrackIndex].src;
+      audioRef.current.src = playlist[currentTrackIndex].src;
       if (wasPlaying) {
         audioRef.current.play().catch(e => console.error("Audio play failed:", e));
       }
@@ -131,9 +149,9 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
     setTimeout(() => {
       if (direction === 'next') {
-        setCurrentTrackIndex((prev) => (prev + 1) % PLAYLIST.length);
+        setCurrentTrackIndex((prev) => (prev + 1) % playlist.length);
       } else {
-        setCurrentTrackIndex((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+        setCurrentTrackIndex((prev) => (prev - 1 + playlist.length) % playlist.length);
       }
       setIsTransitioning(false);
       
@@ -171,7 +189,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       return "/game-over.jpg";
     }
     // If playing, check if track has specific image, otherwise use glitch
-    return PLAYLIST[currentTrackIndex].image || "/static-glitch.jpg";
+    return playlist[currentTrackIndex].image || "/static-glitch.jpg";
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -242,7 +260,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
                 Now Playing
               </p>
               <p className="text-white font-bold text-[8px] md:text-sm truncate w-24 md:w-48 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                {PLAYLIST[currentTrackIndex].title}
+                {playlist[currentTrackIndex].title}
               </p>
             </div>
           </div>

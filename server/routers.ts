@@ -3,6 +3,7 @@ import { db } from './db.js';
 import { users, messages, media, sessions } from '../drizzle/schema.js';
 import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
+import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
 
 // Router pour l'authentification
 const authRouter = router({
@@ -164,6 +165,28 @@ const settingsRouter = router({
 
 // Router pour l'upload de médias
 const uploadRouter = router({
+  // Obtenir une URL présignée pour uploader un fichier
+  getUploadUrl: publicProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+        type: z.enum(['music', 'image']),
+        filename: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const key = generateS3Key(input.userId, input.type, input.filename);
+      const uploadUrl = await getUploadUrl(key, input.contentType);
+      const publicUrl = getPublicUrl(key);
+
+      return {
+        uploadUrl,
+        publicUrl,
+        key,
+      };
+    }),
+
   // Lister tous les médias
   listMedia: publicProcedure
     .input(z.object({ type: z.enum(['music', 'image']).optional() }))

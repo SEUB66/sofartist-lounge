@@ -6,7 +6,8 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserBubble } from '@/components/UserBubble';
 import { ChatMessage } from '@/components/ChatMessage';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { Settings } from 'lucide-react';
+import { UploadModal } from '@/components/UploadModal';
+import { Settings, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Message {
@@ -24,6 +25,7 @@ export default function Hub() {
   const { user, isLoggedIn } = useUser();
   const [, setLocation] = useLocation();
   const [showSettings, setShowSettings] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -111,10 +113,25 @@ export default function Hub() {
         <Settings size={20} className="text-white" />
       </button>
 
+      {/* Upload Button */}
+      <button
+        onClick={() => setShowUpload(true)}
+        className="absolute top-4 left-16 z-50 p-2 rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 backdrop-blur-sm border border-white/20 transition-all hover:scale-110 shadow-lg"
+        title="Upload MP3 or Image"
+      >
+        <Upload size={20} className="text-white" />
+      </button>
+
       {/* Settings Panel */}
       {showSettings && (
         <SettingsPanel onClose={() => setShowSettings(false)} />
       )}
+
+      {/* Upload Modal */}
+      <UploadModal 
+        isOpen={showUpload} 
+        onClose={() => setShowUpload(false)} 
+      />
 
       {/* User Bubbles - Flottantes */}
       <div className="absolute inset-0 pointer-events-none z-10">
