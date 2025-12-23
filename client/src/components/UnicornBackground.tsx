@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import './UnicornBackground.css';
 
@@ -6,6 +6,7 @@ const UnicornBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef(0);
   const { theme } = useTheme();
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   // Configuration based on theme
   const getConfig = useCallback(() => {
@@ -159,6 +160,16 @@ const UnicornBackground = () => {
   return (
     <div className="unicorn-background-container">
       {/* Background Video Layer for Dark and Unicorn themes */}
+      {/* Loading Spinner */}
+      {!isVideoLoaded && (theme === 'dark' || theme === 'unicorn') && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
+          <div className="pixel-loader">
+            <div className="pixel-spinner"></div>
+            <p className="text-cyan-400 mt-4 font-mono text-sm tracking-wider animate-pulse">LOADING...</p>
+          </div>
+        </div>
+      )}
+
       {theme === 'dark' ? (
         <video
           className="background-video-layer"
@@ -166,6 +177,7 @@ const UnicornBackground = () => {
           loop
           muted
           playsInline
+          onLoadedData={() => setIsVideoLoaded(true)}
         >
           <source src="/dark-bg-video-v3.mp4" type="video/mp4" />
         </video>
@@ -176,6 +188,7 @@ const UnicornBackground = () => {
           loop
           muted
           playsInline
+          onLoadedData={() => setIsVideoLoaded(true)}
         >
           <source src="/unicorn-bg-video-v2.mp4" type="video/mp4" />
         </video>

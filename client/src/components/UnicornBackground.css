@@ -98,3 +98,62 @@
   object-fit: cover;
   z-index: 0;
 }
+
+/* Pixel Art Loader */
+.pixel-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-spinner {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  animation: pixel-rotate 1.2s linear infinite;
+}
+
+.pixel-spinner::before,
+.pixel-spinner::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #00ffff;
+  box-shadow: 
+    0 0 0 4px #00ffff,
+    16px 0 0 0 #00ffff,
+    32px 0 0 0 #00ffff,
+    48px 0 0 0 #00ffff,
+    0 16px 0 0 #00ffff,
+    48px 16px 0 0 #00ffff,
+    0 32px 0 0 #00ffff,
+    48px 32px 0 0 #00ffff,
+    0 48px 0 0 #00ffff,
+    16px 48px 0 0 #00ffff,
+    32px 48px 0 0 #00ffff,
+    48px 48px 0 0 #00ffff;
+}
+
+.pixel-spinner::after {
+  animation: pixel-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pixel-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pixel-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
