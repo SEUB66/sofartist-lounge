@@ -123,8 +123,15 @@ export default function Home() {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 text-center text-[10px] font-mono text-white/30 tracking-widest animate-in fade-in duration-1000 delay-500">
-            Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+          <div className="mt-8 flex items-center justify-center gap-3 text-[10px] text-white/40 tracking-widest animate-in fade-in duration-1000 delay-500">
+            <img 
+              src="/seub-icon.jpg" 
+              alt="Seub Germain" 
+              className="w-8 h-8 rounded-md shadow-lg"
+            />
+            <span style={{ fontFamily: 'VT323, monospace' }} className="text-sm">
+              Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
+            </span>
           </div>
         </div>
       </div>
