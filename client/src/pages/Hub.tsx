@@ -177,15 +177,23 @@ export default function Hub() {
         ))}
       </div>
       {/* Chat Input - Bas de page */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">        <form onSubmit={handleSendMessage} className="w-full">
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">
+        <form onSubmit={handleSendMessage} className="w-full flex gap-2">
           <input
             type="text"
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
             placeholder="Type your message..."
-            className="w-full px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all"
+            className="flex-1 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all"
             style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
           />
+          <button
+            type="submit"
+            className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white rounded-full font-bold transition-all hover:scale-105 border border-white/20"
+            style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
+          >
+            SEND
+          </button>
         </form>
       </div>
 

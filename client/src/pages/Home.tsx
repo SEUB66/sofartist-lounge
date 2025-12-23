@@ -73,7 +73,7 @@ export default function Home() {
       </div>
 
       {/* Game Boy Login */}
-      {!isLoggedIn && (
+      {isWindowOpen && (
         <GameBoyLoginWrapper 
           isOpen={isWindowOpen} 
           onClose={() => setIsWindowOpen(false)}
