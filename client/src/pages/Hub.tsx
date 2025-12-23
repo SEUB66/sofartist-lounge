@@ -64,50 +64,43 @@ export default function Hub() {
     }
   }, [isLoggedIn, setLocation]);
   
-  // Ajouter useState import si manquant
-  // (déjà ajouté en haut du fichier)
 
-  // Charger les messages depuis localStorage
+
+  // Charger les messages depuis la DB via tRPC
+  const { data: dbMessages, refetch: refetchMessages } = trpc.chat.getMessages.useQuery({ limit: 100 }, {
+    refetchInterval: 3000, // Mettre a jour toutes les 3 secondes
+  });
+  
+  // Mettre a jour les messages quand on charge depuis la DB
   useEffect(() => {
-    const savedMessages = localStorage.getItem('devcave_messages');
-    if (savedMessages) {
-      try {
-        const parsed = JSON.parse(savedMessages);
-        setMessages(parsed.map((m: any) => ({
-          ...m,
-          createdAt: new Date(m.createdAt)
-        })));
-      } catch (e) {
-        console.error('Failed to parse messages:', e);
-      }
+    if (dbMessages && dbMessages.length > 0) {
+      setMessages(dbMessages.map((m: any) => ({
+        ...m,
+        createdAt: new Date(m.createdAt)
+      })));
     }
-  }, []);
+  }, [dbMessages]);
 
-  // Sauvegarder les messages dans localStorage
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('devcave_messages', JSON.stringify(messages));
-    }
-  }, [messages]);
-
+  // Mutation pour envoyer un message
+  const sendMessageMutation = trpc.chat.sendMessage.useMutation();
+  
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !chatInput.trim()) return;
 
-    const newMessage: Message = {
-      id: Date.now(),
-      userId: user.id,
-      nickname: user.nickname,
-      content: chatInput.trim(),
-      createdAt: new Date(),
-      nicknameColor: user.nicknameColor || '#00ff00',
-      mood: user.mood || '😊',
-      profilePhoto: user.profilePhoto,
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-    setChatInput('');
-    toast.success('Message sent!');
+    try {
+      await sendMessageMutation.mutateAsync({
+        userId: user.id,
+        content: chatInput.trim(),
+      });
+      setChatInput('');
+      toast.success('Message sent!');
+      // Recharger les messages immediatement
+      await refetchMessages();
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error('Failed to send message');
+    }
   };
 
   if (!isLoggedIn || !user) {

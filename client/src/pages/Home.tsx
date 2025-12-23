@@ -126,12 +126,15 @@ export default function Home() {
         
         <button 
           onClick={handleStart}
-          className="hover:scale-110 transition-transform duration-300 active:scale-95 pointer-events-auto cursor-pointer"
+          onKeyDown={(e) => e.key === 'Enter' && handleStart()}
+          className="hover:scale-110 transition-transform duration-300 active:scale-95 pointer-events-auto cursor-pointer z-50 relative focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-lg"
+          type="button"
+          style={{ touchAction: 'auto' }}
         >
           <img 
             src="/snes-controller.png" 
             alt="SNES Controller" 
-            className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
+            className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)] pointer-events-none"
           />
         </button>
       </div>

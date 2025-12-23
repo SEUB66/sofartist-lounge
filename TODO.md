@@ -142,3 +142,7 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 - [x] Créer animation d'ouverture spectaculaire pour Game Boy (COMPLETÉ)
 - [x] Intégrer le vrai son Game Boy startup authentique (COMPLETÉ)
 - [x] Animation d'écran qui s'allume (COMPLETÉ)
+
+### PRIORITÉ 1 : Bug bouton SNES + Chat temps réel
+- [x] Corriger le bug du bouton SNES - le bouton doit répondre au clic (COMPLETÉ)
+- [x] Implémenter le chat synchronisé en temps réel entre tous les utilisateurs (COMPLETÉ)
