@@ -245,7 +245,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   return (
     <div 
       ref={tvRef}
-      className="fixed w-[240px] h-[192px] md:w-[420px] md:h-[336px] z-[9999] transition-all duration-500 animate-in slide-in-from-left fade-in cursor-move"
+      className="fixed w-[180px] h-[144px] md:w-[280px] md:h-[224px] z-[15] transition-all duration-500 animate-in slide-in-from-left fade-in cursor-move"
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
       onMouseDown={handleMouseDown}
     >

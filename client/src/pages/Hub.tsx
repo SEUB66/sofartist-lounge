@@ -126,21 +126,24 @@ export default function Hub() {
       </div>
 
       {/* Settings Button - Discret */}
+      {/* Settings Button - TEAL GLOW */}
       <button
         onClick={() => setShowSettings(!showSettings)}
-        className="absolute top-4 left-4 z-[100] p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 transition-all hover:scale-110"
+        className="absolute top-4 left-4 z-[100] w-14 h-14 rounded-lg bg-gradient-to-br from-teal-600 to-cyan-700 hover:from-teal-500 hover:to-cyan-600 backdrop-blur-sm border-2 border-teal-400 transition-all hover:scale-105 flex items-center justify-center shadow-lg"
+        style={{ boxShadow: '0 0 30px rgba(0, 200, 200, 0.6), inset 0 0 20px rgba(0, 200, 200, 0.3)' }}
         title="Settings"
       >
-        <Settings size={20} className="text-white" />
+        <Settings size={28} className="text-white drop-shadow-lg" />
       </button>
 
-      {/* Upload Button */}
+      {/* Upload Button - PINK GLOW */}
       <button
         onClick={() => setShowUpload(true)}
-        className="absolute top-4 left-16 z-[100] p-2 rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 backdrop-blur-sm border border-white/20 transition-all hover:scale-110 shadow-lg"
+        className="absolute top-4 left-20 z-[100] w-14 h-14 rounded-lg bg-gradient-to-br from-pink-600 to-rose-700 hover:from-pink-500 hover:to-rose-600 backdrop-blur-sm border-2 border-pink-400 transition-all hover:scale-105 flex items-center justify-center shadow-lg"
+        style={{ boxShadow: '0 0 30px rgba(236, 72, 153, 0.6), inset 0 0 20px rgba(236, 72, 153, 0.3)' }}
         title="Upload MP3 or Image"
       >
-        <Upload size={20} className="text-white" />
+        <Upload size={28} className="text-white drop-shadow-lg" />
       </button>
 
       {/* Settings Panel */}
