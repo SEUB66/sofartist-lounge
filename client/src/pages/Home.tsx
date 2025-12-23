@@ -119,9 +119,9 @@ export default function Home() {
             className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
             <img 
-              src="/press-start.jpg" 
-              alt="Press Start" 
-              className="h-20 w-auto rounded-full shadow-[0_0_30px_rgba(6,182,212,0.8)] border-2 border-cyan-400/50"
+              src="/snes-controller.png" 
+              alt="SNES Controller" 
+              className="h-24 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
             />
           </button>
         </div>
