@@ -7,6 +7,7 @@ import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import RetroTV from "@/components/RetroTV";
+import { GameBoyLogin } from "@/components/GameBoyLogin";
 import { Minus, Square, X, Monitor } from "lucide-react";
 
 export default function Home() {
@@ -108,22 +109,15 @@ export default function Home() {
       {/* Retro TV Component - Shows when window is open */}
       <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
-      {/* Game Boy Press Start Button - Shows when window is CLOSED */}
+      {/* Game Boy Login - Shows when window is CLOSED */}
       {!isWindowOpen && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
-          <button 
-            onClick={() => {
-              setTheme('unicorn'); // Switch to unicorn theme
-              toggleWindow(); // Open login window
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
+          <GameBoyLogin 
+            onLogin={(username, password) => {
+              console.log('Login:', username, password);
+              toggleWindow();
             }}
-            className="hover:scale-110 transition-transform duration-300 active:scale-95"
-          >
-            <img 
-              src="/press-start.jpg" 
-              alt="Press Start" 
-              className="h-20 w-auto rounded-full shadow-[0_0_30px_rgba(6,182,212,0.8)] border-2 border-cyan-400/50"
-            />
-          </button>
+          />
         </div>
       )}
 
