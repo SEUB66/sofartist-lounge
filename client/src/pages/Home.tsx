@@ -114,13 +114,13 @@ export default function Home() {
       )}
 
       {/* Footer Credits with Icon - Centered, Bigger, More Visible */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 animate-in fade-in duration-1000 delay-500">
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-4 animate-in fade-in duration-1000 delay-500">
         <img 
           src="/seub-icon.jpg" 
           alt="Seub Germain" 
-          className="w-10 h-10 rounded-md shadow-xl animate-pulse-subtle"
+          className="w-16 h-16 rounded-lg shadow-2xl animate-pulse-subtle"
         />
-        <span style={{ fontFamily: 'VT323, monospace' }} className="text-base md:text-lg bg-gradient-to-r from-cyan-400 via-pink-500 to-purple-500 bg-clip-text text-transparent tracking-wider font-bold">
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-xl md:text-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 bg-clip-text text-transparent tracking-wider font-bold drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">
           Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN - ALL RIGHT RESERVED
         </span>
       </div>
