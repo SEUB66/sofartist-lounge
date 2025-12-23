@@ -132,7 +132,7 @@ export function UserBubble({ user, index, totalUsers }: UserBubbleProps) {
 
         {/* Contenu de la bulle (ne tourne pas) */}
         <div
-          className="relative z-10 flex flex-col items-center justify-center gap-1"
+          className="relative z-10 flex flex-col items-center justify-center gap-0.5"
           style={{
             transform: `rotate(${-rotation}deg)`,
           }}
@@ -142,11 +142,11 @@ export function UserBubble({ user, index, totalUsers }: UserBubbleProps) {
             <img
               src={user.profilePhoto}
               alt={user.nickname}
-              className="w-14 h-14 rounded-full object-cover border-2 border-white/50 shadow-lg"
+              className="w-12 h-12 rounded-full object-cover border-2 border-white/50 shadow-lg"
             />
           ) : (
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-2xl border-2 border-white/50 shadow-lg"
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl border-2 border-white/50 shadow-lg"
               style={{ 
                 backgroundColor: userColor,
                 fontFamily: 'VT323, monospace'
@@ -156,22 +156,21 @@ export function UserBubble({ user, index, totalUsers }: UserBubbleProps) {
             </div>
           )}
 
-          {/* Mood emoji */}
-          <div className="text-2xl drop-shadow-lg">{userMood}</div>
-        </div>
+          {/* Nickname */}
+          <div
+            className="text-sm font-bold whitespace-nowrap px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-sm mt-0.5"
+            style={{
+              color: userColor,
+              textShadow: `0 0 10px ${userColor}, 0 0 20px ${userColor}80`,
+              fontFamily: 'VT323, monospace',
+              fontSize: '14px',
+            }}
+          >
+            {user.nickname}
+          </div>
 
-        {/* Nickname */}
-        <div
-          className="absolute -bottom-8 text-sm font-bold whitespace-nowrap px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/30"
-          style={{
-            color: userColor,
-            textShadow: `0 0 15px ${userColor}, 0 0 30px ${userColor}80`,
-            fontFamily: 'VT323, monospace',
-            fontSize: '18px',
-            transform: `rotate(${-rotation}deg)`,
-          }}
-        >
-          {user.nickname}
+          {/* Mood emoji */}
+          <div className="text-xl drop-shadow-lg mt-0.5">{userMood}</div>
         </div>
       </div>
     </div>

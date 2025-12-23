@@ -124,3 +124,6 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 - [x] Conflit fenêtre de chat avec les crédits en bas (chat remonté à bottom-20)
 - [x] Redesign bulles utilisateurs : 3D transparentes avec reflets arc-en-ciel (style savon)
 - [x] Ajouter texte "PRESS START" en pixel art au-dessus de la manette SNES
+
+### Bug bulle utilisateur
+- [x] Nickname doit être DANS la bulle, pas en dessous (corrigé)
