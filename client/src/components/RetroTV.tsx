@@ -119,6 +119,11 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
 
     setIsTransitioning(true);
     
+    // Play TV channel change sound
+    const channelSound = new Audio('/tv-channel-change.mp3');
+    channelSound.volume = 0.3;
+    channelSound.play().catch(e => console.log('Channel change sound failed:', e));
+    
     // Pause current audio during transition
     if (audioRef.current) {
       audioRef.current.pause();

@@ -14,9 +14,35 @@ export default function Home() {
   const { theme, setTheme } = useTheme();
   const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isTVVisible, setIsTVVisible] = useState(false); // TV hidden at startup
+  const [hasStarted, setHasStarted] = useState(false); // Track if user has started
 
   const toggleWindow = () => {
     setIsWindowOpen(!isWindowOpen);
+  };
+
+  const handleStart = () => {
+    if (!hasStarted) {
+      // Play Game Boy startup sound
+      const gameboySound = new Audio('/gameboy-startup.mp3');
+      gameboySound.volume = 0.5;
+      gameboySound.play().catch(e => console.log('Audio play failed:', e));
+      
+      // Play TV power on sound after a short delay
+      setTimeout(() => {
+        const tvSound = new Audio('/tv-power-on.mp3');
+        tvSound.volume = 0.4;
+        tvSound.play().catch(e => console.log('Audio play failed:', e));
+      }, 500);
+      
+      // Show TV and Game Boy
+      setIsTVVisible(true);
+      setIsWindowOpen(true);
+      setHasStarted(true);
+    } else {
+      // Just toggle Game Boy if already started
+      toggleWindow();
+    }
   };
 
   const toggleMaximize = () => {
@@ -84,13 +110,13 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      {/* Retro TV Component - Always visible and playing */}
-      <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={true} />
+      {/* Retro TV Component - Hidden at startup, appears on first click */}
+      {isTVVisible && <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={hasStarted} />}
 
       {/* Desktop Taskbar / Dock Area (Bottom) - Always visible, toggles Game Boy */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
         <button 
-          onClick={toggleWindow}
+          onClick={handleStart}
           className="hover:scale-110 transition-transform duration-300 active:scale-95"
         >
           <img 
