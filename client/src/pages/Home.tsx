@@ -7,6 +7,7 @@ import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import RetroTV from "@/components/RetroTV";
+import { GameBoyLogin } from "@/components/GameBoyLogin";
 import { Minus, Square, X, Monitor } from "lucide-react";
 
 export default function Home() {
@@ -124,8 +125,17 @@ export default function Home() {
         </span>
       </div>
 
-      {/* Login Window */}
-      {isWindowOpen && (
+      {/* Game Boy Login */}
+      <GameBoyLogin 
+        isOpen={isWindowOpen} 
+        onLogin={(username, password) => {
+          console.log('Login:', username, password);
+          // Handle login logic here
+        }} 
+      />
+
+      {/* OLD Login Window - REMOVED */}
+      {false && isWindowOpen && (
         <div className={`absolute transition-all duration-500 ease-in-out z-50 
           ${isMaximized 
             ? 'inset-4 w-auto h-auto' 
