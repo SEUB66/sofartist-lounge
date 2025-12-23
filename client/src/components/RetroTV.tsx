@@ -160,8 +160,50 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
     return PLAYLIST[currentTrackIndex].image || "/static-glitch.jpg";
   };
 
+  const [position, setPosition] = useState({ x: 16, y: 16 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const tvRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStart]);
+
   return (
-    <div className="fixed left-4 top-4 md:left-8 md:top-1/2 md:-translate-y-1/2 w-[240px] h-[192px] md:w-[420px] md:h-[336px] z-[9999] transition-all duration-500 animate-in slide-in-from-left fade-in">
+    <div 
+      ref={tvRef}
+      className="fixed w-[240px] h-[192px] md:w-[420px] md:h-[336px] z-[9999] transition-all duration-500 animate-in slide-in-from-left fade-in cursor-move"
+      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      onMouseDown={handleMouseDown}
+    >
       {/* TV Frame Image */}
       <img 
         src="/retro-tv-new.png" 
@@ -169,8 +211,8 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         className="absolute inset-0 w-full h-full object-contain pointer-events-none z-50"
       />
 
-      {/* Screen Content Area - Adjusted for new TV image */}
-      <div className={`absolute top-[42px] left-[41px] w-[120px] h-[105px] md:top-[74px] md:left-[71px] md:w-[210px] md:h-[185px] bg-black rounded-[0.8rem] md:rounded-[1.5rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
+      {/* Screen Content Area - Adjusted for new TV image (centered) */}
+      <div className={`absolute top-[42px] left-[45px] w-[120px] h-[105px] md:top-[74px] md:left-[78px] md:w-[210px] md:h-[185px] bg-black rounded-[0.8rem] md:rounded-[1.5rem] overflow-hidden z-40 flex flex-col items-center justify-center ${getScreenGlow()}`}>
         
         {/* Dynamic Screen Image */}
         <div className="absolute inset-0 flex items-center justify-center bg-black">
@@ -211,6 +253,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         {/* Top half for Next Track */}
         <button 
           onClick={nextTrack}
+          onMouseDown={(e) => e.stopPropagation()}
           className="w-full h-1/2 cursor-pointer hover:bg-white/10 rounded-t-full transition-colors"
           title="Next Track"
           aria-label="Next Track"
@@ -218,6 +261,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         {/* Bottom half for Previous Track */}
         <button 
           onClick={prevTrack}
+          onMouseDown={(e) => e.stopPropagation()}
           className="w-full h-1/2 cursor-pointer hover:bg-white/10 rounded-b-full transition-colors"
           title="Previous Track"
           aria-label="Previous Track"
@@ -227,6 +271,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       {/* Middle Knob - Play/Pause */}
       <button 
         onClick={() => setIsPlaying(!isPlaying)}
+        onMouseDown={(e) => e.stopPropagation()}
         className="absolute top-[77px] right-[36px] w-[24px] h-[23px] md:top-[134px] md:right-[63px] md:w-[42px] md:h-[40px] z-[60] cursor-pointer hover:bg-white/10 rounded-full transition-colors"
         title={isPlaying ? "Pause" : "Play"}
         aria-label={isPlaying ? "Pause" : "Play"}
