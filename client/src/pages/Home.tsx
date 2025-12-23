@@ -7,17 +7,16 @@ import UnicornBackground from "@/components/UnicornBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import RetroTV from "@/components/RetroTV";
-import { Minus, Square, X, Monitor } from "lucide-react";
+import { Minus, Square, X } from "lucide-react";
 
 export default function Home() {
   const { theme, setTheme } = useTheme();
-  const [isWindowOpen, setIsWindowOpen] = useState(false); // Start minimized
+  const [isWindowOpen, setIsWindowOpen] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const [shouldAutoPlay, setShouldAutoPlay] = useState(false);
 
   const toggleWindow = () => {
     if (!isWindowOpen) {
-      // Trigger auto-play on TV when opening window
       setShouldAutoPlay(true);
     } else {
       setShouldAutoPlay(false);
@@ -29,7 +28,6 @@ export default function Home() {
     setIsMaximized(!isMaximized);
   };
 
-  // Define glass styles based on theme
   const getGlassStyle = () => {
     switch (theme) {
       case 'dark':
@@ -86,20 +84,21 @@ export default function Home() {
     <div className="min-h-screen w-full relative overflow-hidden">
       <UnicornBackground />
       
+      {/* Theme toggle - top right */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
 
-      {/* Retro TV Component - Shows when window is open */}
+      {/* Retro TV Component - top left on desktop, top on mobile */}
       <RetroTV isOpen={isWindowOpen} onClose={() => {}} autoPlayTrigger={shouldAutoPlay} />
 
-      {/* Desktop Taskbar / Dock Area (Bottom) */}
+      {/* Game Boy Press Start Button - bottom center when window closed */}
       {!isWindowOpen && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500">
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom fade-in duration-500">
           <button 
             onClick={() => {
-              setTheme('unicorn'); // Switch to unicorn theme
-              toggleWindow(); // Open login window
+              setTheme('unicorn');
+              toggleWindow();
             }}
             className="hover:scale-110 transition-transform duration-300 active:scale-95"
           >
@@ -112,12 +111,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* Login Window */}
+      {/* Login Window - right side on desktop, full on mobile */}
       {isWindowOpen && (
-        <div className={`absolute transition-all duration-500 ease-in-out z-50 
+        <div className={`fixed transition-all duration-500 ease-in-out z-50
           ${isMaximized 
             ? 'inset-4 w-auto h-auto' 
-            : 'top-1/2 -translate-y-1/2 right-[10%] w-[300px]' // Reduced width to 300px
+            : 'md:top-1/2 md:-translate-y-1/2 md:right-[8%] md:w-[340px] top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-[90%] max-w-[340px]'
           }
         `}>
           <Card className={`w-full h-full backdrop-blur-xl border transition-all duration-500 flex flex-col ${getGlassStyle()}`}>
@@ -200,6 +199,18 @@ export default function Home() {
           </Card>
         </div>
       )}
+
+      {/* Footer - bottom left */}
+      <div className="fixed bottom-4 left-4 z-30 flex items-center gap-2 animate-in fade-in duration-1000 delay-500">
+        <img 
+          src="/seub-icon.jpg" 
+          alt="Seub Germain" 
+          className="w-6 h-6 rounded shadow-lg hidden md:block"
+        />
+        <span style={{ fontFamily: 'VT323, monospace' }} className="text-[10px] md:text-xs text-white/30 tracking-wider">
+          Designed - coded with LOVE &lt;3 by SEBASTIEN GERMAIN
+        </span>
+      </div>
     </div>
   );
 }
