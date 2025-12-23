@@ -11,10 +11,10 @@ const UnicornBackground = () => {
   const getConfig = useCallback(() => {
       if (theme === 'unicorn') {
       return {
-        COLOR_PRIMARY: [1.0, 0.0, 0.8], // Hot Pink
-        COLOR_SECONDARY: [0.0, 1.0, 1.0], // Cyan
-        COLOR_TERTIARY: [0.8, 0.2, 1.0], // Purple
-        PARTICLE_COUNT: 400, // More particles
+        COLOR_PRIMARY: [0.4, 0.8, 0.8], // Turquoise
+        COLOR_SECONDARY: [0.68, 0.85, 0.9], // Bleu bébé
+        COLOR_TERTIARY: [0.0, 0.8, 0.8], // Cyan
+        PARTICLE_COUNT: 600, // More particles
         SMOKE_SPEED: 0.0002, // Slightly faster
         FRICTION: 0.96,
         MOUSE_INFLUENCE: 0.8, // More reactive
@@ -22,9 +22,9 @@ const UnicornBackground = () => {
       };
     } else if (theme === 'dark') {
       return {
-        COLOR_PRIMARY: [0.3, 0.4, 0.5], // Slate Blue
-        COLOR_SECONDARY: [0.2, 0.2, 0.3], // Dark Grey
-        COLOR_TERTIARY: [0.4, 0.4, 0.5], // Grey
+        COLOR_PRIMARY: [0.4, 0.8, 0.8], // Turquoise
+        COLOR_SECONDARY: [0.0, 0.5, 0.5], // Teal
+        COLOR_TERTIARY: [0.75, 0.6, 0.85], // Purple pastel
         PARTICLE_COUNT: 150, // Less particles for cleaner look
         SMOKE_SPEED: 0.00005, // Very slow
         FRICTION: 0.98,
@@ -34,9 +34,9 @@ const UnicornBackground = () => {
     } else {
       // Light theme
       return {
-        COLOR_PRIMARY: [0.8, 0.9, 1.0], // Pale Blue
-        COLOR_SECONDARY: [0.9, 0.8, 0.9], // Pale Purple
-        COLOR_TERTIARY: [0.9, 0.9, 0.9], // Light Grey
+        COLOR_PRIMARY: [1.0, 0.75, 0.8], // Pale pink
+        COLOR_SECONDARY: [0.68, 0.85, 0.9], // Bleu bébé
+        COLOR_TERTIARY: [0.75, 0.6, 0.85], // Purple pastel
         PARTICLE_COUNT: 100, // Minimal
         SMOKE_SPEED: 0.00005,
         FRICTION: 0.98,
@@ -164,10 +164,7 @@ const UnicornBackground = () => {
         style={{ backgroundImage: `url(${getConfig().BG_IMAGE})` }}
       />
       
-      {/* Unicorn Asset Overlay */}
-      {theme === 'unicorn' && (
-        <div className="unicorn-asset-overlay" />
-      )}
+
       
       {/* Canvas Layer (Particles) */}
       <canvas ref={canvasRef} className="unicorn-canvas" />
