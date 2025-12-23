@@ -86,6 +86,21 @@ export default function Home() {
     <div className="min-h-screen w-full relative overflow-hidden">
       <UnicornBackground />
       
+      {/* Apple Punk Banner - Top Left */}
+      <a 
+        href="https://applepunk-react.vercel.app/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed top-4 left-4 z-50 hover:scale-105 transition-transform duration-300 animate-in fade-in duration-700"
+      >
+        <img 
+          src="/applepunk-banner.jpg" 
+          alt="Apple Punk" 
+          className="h-16 w-auto rounded-lg shadow-[0_0_20px_rgba(0,200,255,0.3)] border border-cyan-400/30"
+        />
+      </a>
+
+      {/* Theme Toggle - Top Right */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
