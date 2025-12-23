@@ -48,6 +48,11 @@ const PLAYLIST = [
     title: "Laboratorium - Joel Rampage",
     src: "/ES_Laboratorium-JoelRampage.mp3",
     image: "/ride.jpg"
+  },
+  {
+    title: "Elevex - Chanson Officielle",
+    src: "/Elevex-ChansonOfficielle.mp3",
+    image: "/logo.png"
   }
 ];
 
