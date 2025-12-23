@@ -93,6 +93,15 @@ export default function Hub() {
         <ThemeToggle />
       </div>
 
+      {/* Compteur d'utilisateurs en ligne */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+        <div className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/30 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.3)]">
+          <span style={{ fontFamily: 'VT323, monospace' }} className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse">
+            {onlineUsers.length} DEV{onlineUsers.length > 1 ? 'S' : ''} ONLINE
+          </span>
+        </div>
+      </div>
+
       {/* Settings Button - Discret */}
       <button
         onClick={() => setShowSettings(!showSettings)}

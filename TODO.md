@@ -99,3 +99,13 @@ Le proxy Vite configuré dans `vite.config.ts` ne fonctionne pas correctement po
 - [x] Remplacer le son de startup par le vrai son Game Boy authentique (moins agressif)
   - Téléchargé gameboy-startup-real.mp3 (74KB)
   - Remplacé dans GameBoyLogin.tsx et Home.tsx
+
+### RetroTV persistante et chat synchronisé
+- [x] Rendre la RetroTV persistante entre les pages (login et hub)
+- [x] RetroTV visible et draggable sur toutes les pages
+- [x] Chat flottant avec bulles de messages dans le hub
+- [x] Expérience sociale : chatter ensemble en écoutant la même musique
+
+### Compteur d'utilisateurs en ligne
+- [x] Ajouter compteur "X DEVS ONLINE" en temps réel dans le hub
+- [x] Affichage bien visible en haut de la page

@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { UserProvider } from "./contexts/UserContext";
 import Home from "./pages/Home";
 import Hub from "./pages/Hub";
+import RetroTV from "./components/RetroTV";
 
 
 function Router() {
@@ -36,6 +37,8 @@ function App() {
         >
           <TooltipProvider>
             <Toaster />
+            {/* RetroTV persistante sur toutes les pages */}
+            <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={true} />
             <Router />
           </TooltipProvider>
         </ThemeProvider>
