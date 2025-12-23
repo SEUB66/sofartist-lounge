@@ -555,6 +555,176 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+  library: router({
+    getAssets: protectedProcedure.query(async ({ ctx }) => {
+      const { getDb } = await import("./db");
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const { userLibrary } = await import("../drizzle/schema");
+      const { eq, desc } = await import("drizzle-orm");
+      
+      const assets = await db
+        .select()
+        .from(userLibrary)
+        .where(eq(userLibrary.userId, ctx.user.id))
+        .orderBy(desc(userLibrary.createdAt));
+      
+      return assets;
+    }),
+    uploadAsset: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1).max(255),
+        fileName: z.string(),
+        fileData: z.string(),
+        contentType: z.string(),
+        mediaType: z.enum(["image", "video", "audio", "pdf"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Upload to S3
+        const { storagePut } = await import("./storage");
+        const buffer = Buffer.from(input.fileData.split(",")[1], "base64");
+        const timestamp = Date.now();
+        const sanitizedName = input.fileName.replace(/[^a-zA-Z0-9.-]/g, "_");
+        const key = `library/${ctx.user.id}/${timestamp}-${sanitizedName}`;
+        const result = await storagePut(key, buffer, input.contentType);
+        
+        // Save to DB
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { userLibrary } = await import("../drizzle/schema");
+        
+        await db.insert(userLibrary).values({
+          userId: ctx.user.id,
+          title: input.title,
+          mediaUrl: result.url,
+          mediaType: input.mediaType,
+          fileKey: key,
+          mimeType: input.contentType,
+          size: buffer.length,
+          isPrivate: 1,
+        });
+        
+        return { success: true };
+      }),
+    deleteAsset: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { userLibrary } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Only owner can delete
+        await db.delete(userLibrary).where(
+          and(eq(userLibrary.id, input.id), eq(userLibrary.userId, ctx.user.id))
+        );
+        
+        return { success: true };
+      }),
+    shareToWall: protectedProcedure
+      .input(z.object({ assetId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { userLibrary, posts } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Get asset
+        const asset = await db.select().from(userLibrary).where(
+          and(eq(userLibrary.id, input.assetId), eq(userLibrary.userId, ctx.user.id))
+        ).limit(1);
+        
+        if (asset.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+        }
+        
+        // Create post in WALL
+        await db.insert(posts).values({
+          userId: ctx.user.id,
+          title: asset[0].title,
+          content: `Shared from my library`,
+          mediaUrl: asset[0].mediaUrl,
+          mediaType: asset[0].mediaType,
+          fileKey: asset[0].fileKey,
+          likes: 0,
+        });
+        
+        return { success: true };
+      }),
+    pushToTV: protectedProcedure
+      .input(z.object({ assetId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { userLibrary, media } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Get asset
+        const asset = await db.select().from(userLibrary).where(
+          and(eq(userLibrary.id, input.assetId), eq(userLibrary.userId, ctx.user.id))
+        ).limit(1);
+        
+        if (asset.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+        }
+        
+        if (asset[0].mediaType !== "video" && asset[0].mediaType !== "image") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Only videos and images can be pushed to TV" });
+        }
+        
+        // Add to TV media
+        await db.insert(media).values({
+          type: asset[0].mediaType === "video" ? "video" : "image",
+          userId: ctx.user.id,
+          filename: asset[0].title,
+          url: asset[0].mediaUrl,
+          fileKey: asset[0].fileKey,
+          mimeType: asset[0].mimeType,
+          size: asset[0].size,
+        });
+        
+        return { success: true };
+      }),
+    addToRadio: protectedProcedure
+      .input(z.object({ assetId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { getDb } = await import("./db");
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        const { userLibrary, media } = await import("../drizzle/schema");
+        const { eq, and } = await import("drizzle-orm");
+        
+        // Get asset
+        const asset = await db.select().from(userLibrary).where(
+          and(eq(userLibrary.id, input.assetId), eq(userLibrary.userId, ctx.user.id))
+        ).limit(1);
+        
+        if (asset.length === 0) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+        }
+        
+        if (asset[0].mediaType !== "audio") {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Only audio files can be added to RADIO" });
+        }
+        
+        // Add to RADIO media
+        await db.insert(media).values({
+          type: "audio",
+          userId: ctx.user.id,
+          filename: asset[0].title,
+          url: asset[0].mediaUrl,
+          fileKey: asset[0].fileKey,
+          mimeType: asset[0].mimeType,
+          size: asset[0].size,
+        });
+        
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

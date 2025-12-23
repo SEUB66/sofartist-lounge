@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Radio, Tv, MessageSquare, Image as ImageIcon, Settings } from "lucide-react";
+import { Radio, Tv, MessageSquare, Image as ImageIcon, Settings, FolderOpen } from "lucide-react";
 
 type Module = "radio" | "tv" | "board" | "wall";
 
@@ -126,7 +126,7 @@ export default function Dashboard() {
             <p className="text-xl text-gray-300 mb-8">
               Choisissez un module ci-dessus pour commencer
             </p>
-            <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <div className="p-6 bg-purple-900/30 rounded-lg border border-purple-500/50 hover:border-purple-400 transition-all cursor-pointer" onClick={() => window.location.href = "/live"}>
                 <Radio className="w-12 h-12 mx-auto mb-3 text-purple-400" />
                 <h3 className="text-xl font-bold mb-2">RADIO</h3>
@@ -146,6 +146,11 @@ export default function Dashboard() {
                 <ImageIcon className="w-12 h-12 mx-auto mb-3 text-purple-400" />
                 <h3 className="text-xl font-bold mb-2">WALL</h3>
                 <p className="text-sm text-gray-400">Gallery</p>
+              </div>
+              <div className="p-6 bg-gradient-to-br from-fuchsia-900/40 to-purple-900/40 rounded-lg border-2 border-fuchsia-500/60 hover:border-fuchsia-400 transition-all cursor-pointer" onClick={() => window.location.href = "/library"}>
+                <FolderOpen className="w-12 h-12 mx-auto mb-3 text-fuchsia-400" />
+                <h3 className="text-xl font-bold mb-2">MY LIBRARY</h3>
+                <p className="text-sm text-gray-400">Personal Assets</p>
               </div>
             </div>
           </div>

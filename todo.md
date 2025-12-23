@@ -89,3 +89,15 @@
 - [x] Routers backend (wall.getPosts, wall.createPost, wall.deletePost, wall.toggleLike, wall.addComment)
 - [x] Validation formats : images (.PNG, .GIF, .JPEG, .JPG), vidéos (.MP4, .MOV, .WMV), audio (.MP3, .WAV), PDF (.PDF)
 - [x] Limites : 10MB images, 200MB vidéos, 80MB audio, 20MB PDF
+
+## ✅ PHASE 17 : MY LIBRARY (Personal Assets)
+- [x] Table user_library dans le schéma DB
+- [x] Page /library avec galerie personnelle
+- [x] Upload multiformat dans library (images, vidéos, audio, PDF)
+- [x] Assets privés par défaut (visible que par le user)
+- [x] Bouton "SHARE TO WALL" → crée post public
+- [x] Bouton "PUSH TO TV" → broadcast sur TV
+- [x] Bouton "ADD TO RADIO" → ajoute à playlist
+- [x] Delete asset de sa library
+- [x] Routers backend (library.getAssets, library.uploadAsset, library.deleteAsset, library.shareToWall, library.pushToTV, library.addToRadio)
+- [x] Navigation depuis Dashboard

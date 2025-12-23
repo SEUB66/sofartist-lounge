@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS user_library (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  title VARCHAR(255) NOT NULL,\n  mediaUrl TEXT NOT NULL,\n  mediaType ENUM('image', 'video', 'audio', 'pdf') NOT NULL,\n  fileKey TEXT NOT NULL,\n  mimeType VARCHAR(100),\n  size INT,\n  isPrivate INT DEFAULT 1 NOT NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3GEZ22KnG87deUN.root --database kTHKHDptenrRnbqSNy7sPc --execute CREATE TABLE IF NOT EXISTS user_library (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  title VARCHAR(255) NOT NULL,\n  mediaUrl TEXT NOT NULL,\n  mediaType ENUM('image', 'video', 'audio', 'pdf') NOT NULL,\n  fileKey TEXT NOT NULL,\n  mimeType VARCHAR(100),\n  size INT,\n  isPrivate INT DEFAULT 1 NOT NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1638
+}

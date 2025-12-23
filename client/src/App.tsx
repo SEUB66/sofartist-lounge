@@ -13,6 +13,7 @@ import Live from "./pages/Live";
 import TV from "./pages/TV";
 import Wall from "./pages/Wall";
 import Board from "./pages/Board";
+import Library from "./pages/Library";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -25,6 +26,7 @@ function Router() {
       <Route path={"/tv"} component={TV} />
       <Route path={"/wall"} component={Wall} />
       <Route path={"/board"} component={Board} />
+      <Route path={"/library"} component={Library} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

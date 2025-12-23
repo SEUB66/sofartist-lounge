@@ -113,3 +113,20 @@ export const sessions = mysqlTable("sessions", {
 
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
+
+// User library table for personal assets
+export const userLibrary = mysqlTable("user_library", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  mediaUrl: text("mediaUrl").notNull(),
+  mediaType: mysqlEnum("mediaType", ["image", "video", "audio", "pdf"]).notNull(),
+  fileKey: text("fileKey").notNull(),
+  mimeType: varchar("mimeType", { length: 100 }),
+  size: int("size"),
+  isPrivate: int("isPrivate").default(1).notNull(), // 1 = private, 0 = shared
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type UserLibrary = typeof userLibrary.$inferSelect;
+export type InsertUserLibrary = typeof userLibrary.$inferInsert;
