@@ -22,14 +22,14 @@ async function startServer() {
   app.use(express.json());
 
   // Logging middleware
-  app.use('/api', (req, res, next) => {
+  app.use('/trpc', (req, res, next) => {
     console.log(`[API] ${req.method} ${req.url}`);
     next();
   });
 
   // tRPC endpoint
   app.use(
-    "/api/trpc",
+    "/trpc",
     createExpressMiddleware({
       router: appRouter,
       createContext: () => ({}),
@@ -69,7 +69,7 @@ async function startServer() {
 
   server.listen(Number(port), '0.0.0.0', () => {
     console.log(`🚀 Server running on http://0.0.0.0:${port}/`);
-    console.log(`📡 tRPC endpoint: http://0.0.0.0:${port}/api/trpc`);
+    console.log(`📡 tRPC endpoint: http://0.0.0.0:${port}/trpc`);
   });
 }
 
