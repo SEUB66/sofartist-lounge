@@ -41,9 +41,11 @@ async function startServer() {
     const staticPath = path.resolve(__dirname, "public");
     app.use(express.static(staticPath));
 
-    // Handle client-side routing
+    // Handle client-side routing (MUST be after API routes)
     app.get("*", (_req, res) => {
-      res.sendFile(path.join(staticPath, "index.html"));
+      const indexPath = path.join(staticPath, "index.html");
+      console.log('[Static] Serving index.html from:', indexPath);
+      res.sendFile(indexPath);
     });
   } else {
     // Development: Integrate Vite
