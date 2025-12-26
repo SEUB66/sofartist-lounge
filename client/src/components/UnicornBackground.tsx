@@ -188,9 +188,10 @@ const UnicornBackground = () => {
           loop
           muted
           playsInline
+          poster="/unicorn-bg-poster.jpg"
           onLoadedData={() => setIsVideoLoaded(true)}
         >
-          <source src="/unicorn-bg.webm" type="video/webm" />
+          <source src="/unicorn-bg-animated.webm" type="video/webm" />
         </video>
       ) : (
         /* Background Image Layer for Light theme */
