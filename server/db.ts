@@ -1,9 +1,7 @@
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import { Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon } from '@neondatabase/serverless';
 import * as schema from '../drizzle/schema.js';
 
-console.log('[DB] Using DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50) + '...');
+const sql = neon(process.env.DATABASE_URL!);
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-export const db = drizzle(pool, { schema });
+export const db = drizzle(sql, { schema });
