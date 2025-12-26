@@ -1,10 +1,12 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import pg from 'pg';
 import * as schema from '../drizzle/schema.js';
+
+const { Pool } = pg;
 
 // Lazy initialization to avoid crashes when DATABASE_URL is not set at import time
 let _db: ReturnType<typeof drizzle> | null = null;
-let _pool: Pool | null = null;
+let _pool: typeof Pool.prototype | null = null;
 
 function getDb() {
   if (!_db) {
