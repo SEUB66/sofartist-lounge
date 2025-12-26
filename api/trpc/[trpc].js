@@ -1,7 +1,7 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { appRouter } from '../../server/routers.js';
+import { appRouter } from '../../dist/index.js';
 
-export default async function handler(request: Request) {
+export default async function handler(request) {
   return fetchRequestHandler({
     endpoint: '/api/trpc',
     req: request,
