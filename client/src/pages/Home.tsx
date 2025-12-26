@@ -87,7 +87,7 @@ export default function Home() {
 
       <CustomizableTV 
         isOpen={true}
-        initialStyle="1970s"
+        initialStyle="1990s"
         initialPosition={{ x: 20, y: 80 }}
         size="medium"
         startPlaying={tvStartPlaying}

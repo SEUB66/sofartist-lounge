@@ -85,7 +85,7 @@ interface CustomizableTVProps {
 const CustomizableTV: React.FC<CustomizableTVProps> = ({
   isOpen,
   onClose,
-  initialStyle = '1970s',
+  initialStyle = '1990s',
   initialPosition = { x: 16, y: 16 },
   size = 'medium',
   onStyleChange,

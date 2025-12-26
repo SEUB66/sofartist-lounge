@@ -280,7 +280,7 @@ export default function Hub() {
 
       <CustomizableTV 
         isOpen={true}
-        initialStyle={user?.tvStyle || '1970s'}
+        initialStyle={user?.tvStyle || '1990s'}
         initialPosition={{ x: 20, y: 80 }}
         size="medium"
         startPlaying={tvStartPlaying}
