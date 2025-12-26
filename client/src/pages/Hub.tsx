@@ -1,3 +1,4 @@
+// Neon Connection Fix Trigger
 import { useEffect, useState } from 'react';
 import { useUser } from '@/contexts/UserContext';
 import { useLocation } from 'wouter';
