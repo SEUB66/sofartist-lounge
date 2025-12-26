@@ -298,7 +298,7 @@ const settingsRouter = router({
         .where(eq(users.id, input.userId))
         .limit(1);
 
-      return user?.tvStyle || '1970s';
+      return user?.tvStyle || '1990s';
     }),
 });
 

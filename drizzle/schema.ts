@@ -7,7 +7,7 @@ export const users = pgTable('users', {
   profilePhoto: text('profile_photo'), // URL de la photo de profil
   nicknameColor: varchar('nickname_color', { length: 7 }).default('#00ffff'), // Couleur hex
   mood: varchar('mood', { length: 10 }).default('😊'), // Emoji mood
-  tvStyle: varchar('tv_style', { length: 20 }).default('1970s'), // Style de TV préféré
+  tvStyle: varchar('tv_style', { length: 20 }).default('1990s'), // Style de TV préféré
   passwordHash: text('password_hash'), // Mot de passe optionnel (bcrypt hash)
   createdAt: timestamp('created_at').defaultNow(),
   lastSeenAt: timestamp('last_seen_at').defaultNow(),
