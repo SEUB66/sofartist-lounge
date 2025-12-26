@@ -52,3 +52,22 @@ export const playbackState = pgTable('playback_state', {
   isPlaying: boolean('is_playing').default(false),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
+
+// Table des instruments actifs (jam session)
+export const activeInstruments = pgTable('active_instruments', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().unique(), // Un user = un instrument
+  instrument: varchar('instrument', { length: 20 }).notNull(), // 'guitar', 'bass', 'drums', 'keyboard', 'strings', 'recorder'
+  isPlaying: boolean('is_playing').default(false),
+  lastActivity: timestamp('last_activity').defaultNow(),
+});
+
+// Table des notes jouées en temps réel (pour sync)
+export const jamNotes = pgTable('jam_notes', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull(),
+  instrument: varchar('instrument', { length: 20 }).notNull(),
+  note: varchar('note', { length: 10 }).notNull(), // Ex: 'C4', 'D#5', 'kick', 'snare'
+  velocity: integer('velocity').default(100), // 0-127 (MIDI velocity)
+  timestamp: timestamp('timestamp').defaultNow(),
+});

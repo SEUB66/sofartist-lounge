@@ -1,6 +1,6 @@
 import { publicProcedure, router } from './trpc.js';
 import { db } from './db.js';
-import { users, messages, media, sessions, playbackState } from '../drizzle/schema.js';
+import { users, messages, media, sessions, playbackState, activeInstruments, jamNotes } from '../drizzle/schema.js';
 import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
@@ -499,6 +499,106 @@ const playbackRouter = router({
     }),
 });
 
+// Router pour la jam session
+const jamRouter = router({  // Sélectionner un instrument
+  selectInstrument: publicProcedure
+    .input(z.object({ 
+      userId: z.number(), 
+      instrument: z.string() 
+    }))
+    .mutation(async ({ input }) => {
+      // Vérifier si l'utilisateur a déjà un instrument
+      const [existing] = await db
+        .select()
+        .from(activeInstruments)
+        .where(eq(activeInstruments.userId, input.userId))
+        .limit(1);
+
+      if (existing) {
+        // Mettre à jour l'instrument
+        await db
+          .update(activeInstruments)
+          .set({ 
+            instrument: input.instrument,
+            lastActivity: new Date()
+          })
+          .where(eq(activeInstruments.userId, input.userId));
+      } else {
+        // Créer un nouvel instrument actif
+        await db.insert(activeInstruments).values({
+          userId: input.userId,
+          instrument: input.instrument,
+          isPlaying: false,
+          lastActivity: new Date(),
+        });
+      }
+
+      return { success: true };
+    }),
+
+  // Récupérer tous les instruments actifs
+  getActiveInstruments: publicProcedure.query(async () => {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    
+    const instruments = await db
+      .select({
+        id: activeInstruments.id,
+        userId: activeInstruments.userId,
+        instrument: activeInstruments.instrument,
+        isPlaying: activeInstruments.isPlaying,
+        nickname: users.nickname,
+        nicknameColor: users.nicknameColor,
+      })
+      .from(activeInstruments)
+      .innerJoin(users, eq(activeInstruments.userId, users.id))
+      .where(gt(activeInstruments.lastActivity, fiveMinutesAgo));
+
+    return instruments;
+  }),
+
+  // Jouer une note
+  playNote: publicProcedure
+    .input(z.object({
+      userId: z.number(),
+      instrument: z.string(),
+      note: z.string(),
+      velocity: z.number().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      // Enregistrer la note
+      await db.insert(jamNotes).values({
+        userId: input.userId,
+        instrument: input.instrument,
+        note: input.note,
+        velocity: input.velocity || 100,
+        timestamp: new Date(),
+      });
+
+      // Mettre à jour l'activité
+      await db
+        .update(activeInstruments)
+        .set({ 
+          isPlaying: true,
+          lastActivity: new Date()
+        })
+        .where(eq(activeInstruments.userId, input.userId));
+
+      return { success: true };
+    }),
+
+  // Arrêter de jouer
+  stopPlaying: publicProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(activeInstruments)
+        .set({ isPlaying: false })
+        .where(eq(activeInstruments.userId, input.userId));
+
+      return { success: true };
+    }),
+});
+
 // Router principal
 export const appRouter = router({
   auth: authRouter,
@@ -507,6 +607,7 @@ export const appRouter = router({
   upload: uploadRouter,
   presence: presenceRouter,
   playback: playbackRouter,
+  jam: jamRouter,
 });
 
 export type AppRouter = typeof appRouter;

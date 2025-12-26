@@ -11,6 +11,12 @@ import { Settings, Upload } from 'lucide-react';
 import CustomizableTV from '@/components/CustomizableTV';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
+import InstrumentSelector from '@/components/InstrumentSelector';
+import type { InstrumentId } from '@/components/InstrumentSelector';
+import PianoKeyboard from '@/components/instruments/PianoKeyboard';
+import DrumPads from '@/components/instruments/DrumPads';
+import GuitarStrings from '@/components/instruments/GuitarStrings';
+import { useJamSession } from '@/hooks/useJamSync';
 
 interface Message {
   id: number;
@@ -32,6 +38,9 @@ export default function Hub() {
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentInstrument, setCurrentInstrument] = useState<InstrumentId | null>(null);
+  
+  const { selectInstrument, activeInstruments } = useJamSession(user?.id || null);
   
   const { data: onlineUsers = [] } = trpc.presence.getOnlineUsers.useQuery(undefined, {
     refetchInterval: 5000,
@@ -216,6 +225,26 @@ export default function Hub() {
         size="medium"
         startPlaying={tvStartPlaying}
       />
+
+      {/* Instrument Selector */}
+      <InstrumentSelector 
+        currentInstrument={currentInstrument}
+        onSelectInstrument={(instrumentId) => {
+          setCurrentInstrument(instrumentId);
+          selectInstrument(instrumentId);
+        }}
+      />
+
+      {/* Active Instrument Interface */}
+      {currentInstrument && (
+        <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-40">
+          {currentInstrument === 'keyboard' && <PianoKeyboard userId={user?.id || null} />}
+          {currentInstrument === 'drums' && <DrumPads userId={user?.id || null} />}
+          {currentInstrument === 'guitar' && <GuitarStrings userId={user?.id || null} />}
+          {currentInstrument === 'bass' && <GuitarStrings userId={user?.id || null} />}
+          {currentInstrument === 'strings' && <PianoKeyboard userId={user?.id || null} />}
+        </div>
+      )}
 
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 md:gap-3 animate-in fade-in duration-1000 delay-500">
         <img
