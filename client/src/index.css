@@ -289,3 +289,45 @@
 .animate-bubble-pop {
   animation: bubble-pop 1s ease-out forwards;
 }
+
+/* CRT Monitor Effects */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+@keyframes crt-glow {
+  0%, 100% { filter: brightness(1) contrast(1); }
+  50% { filter: brightness(1.05) contrast(1.1); }
+}
+
+.crt-screen {
+  animation: crt-flicker 0.15s infinite, crt-glow 3s ease-in-out infinite;
+}
+
+.crt-scanlines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+/* Windows 95 Button Press Animation */
+@keyframes win95-press {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(2px, 2px); }
+}
+
+.win95-button-pressed {
+  animation: win95-press 0.1s ease-out forwards;
+}
+
+/* Pixel Art Rendering */
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
