@@ -165,7 +165,7 @@ const UnicornBackground = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
           <div className="pixel-loader">
             <div className="pixel-spinner"></div>
-            <p className="text-cyan-400 mt-4 font-mono text-sm tracking-wider animate-pulse">LOADING...</p>
+            <p className="text-cyan-400 mt-4 text-sm tracking-wider animate-pulse">LOADING...</p>
           </div>
         </div>
       )}
@@ -179,7 +179,7 @@ const UnicornBackground = () => {
           playsInline
           onLoadedData={() => setIsVideoLoaded(true)}
         >
-          <source src="/dark-bg-video-v3.mp4" type="video/mp4" />
+          <source src="/dodge.webm" type="video/webm" />
         </video>
       ) : theme === 'unicorn' ? (
         <video
@@ -190,7 +190,7 @@ const UnicornBackground = () => {
           playsInline
           onLoadedData={() => setIsVideoLoaded(true)}
         >
-          <source src="/unicorn-bg-video-v2.mp4" type="video/mp4" />
+          <source src="/unicorn-bg.webm" type="video/webm" />
         </video>
       ) : (
         /* Background Image Layer for Light theme */

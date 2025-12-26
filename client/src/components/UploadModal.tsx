@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { X, Upload, Music, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Music, Image as ImageIcon, Disc } from 'lucide-react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 import { useUser } from '@/contexts/UserContext';
@@ -7,123 +7,213 @@ import { useUser } from '@/contexts/UserContext';
 interface UploadModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onUploadComplete?: () => void;
 }
 
-type UploadTab = 'mp3' | 'image';
+type UploadTab = 'mp3-only' | 'mp3-with-cover';
 
-export function UploadModal({ isOpen, onClose }: UploadModalProps) {
+export function UploadModal({ isOpen, onClose, onUploadComplete }: UploadModalProps) {
   const { user } = useUser();
-  const [activeTab, setActiveTab] = useState<UploadTab>('mp3');
-  const [isDragging, setIsDragging] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [activeTab, setActiveTab] = useState<UploadTab>('mp3-only');
+  const [isDraggingMp3, setIsDraggingMp3] = useState(false);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [selectedMp3, setSelectedMp3] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [trackTitle, setTrackTitle] = useState('');
+  const [artistName, setArtistName] = useState('');
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mp3InputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const getUploadUrlMutation = trpc.upload.getUploadUrl.useMutation();
   const addMediaMutation = trpc.upload.addMedia.useMutation();
 
   if (!isOpen) return null;
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    const file = files[0];
-    
-    if (file) {
-      validateAndSetFile(file);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      validateAndSetFile(files[0]);
-    }
-  };
-
-  const validateAndSetFile = (file: File) => {
+  const validateMp3 = (file: File): boolean => {
     const maxSize = 50 * 1024 * 1024; // 50MB
-    
-    if (activeTab === 'mp3') {
-      if (!file.type.startsWith('audio/')) {
-        toast.error('Please select an audio file');
-        return;
-      }
-    } else {
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select an image file');
-        return;
-      }
+    if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3')) {
+      toast.error('Please select an MP3 audio file');
+      return false;
     }
-    
     if (file.size > maxSize) {
       toast.error('File size must be less than 50MB');
-      return;
+      return false;
     }
-    
-    setSelectedFile(file);
+    return true;
+  };
+
+  const validateImage = (file: File): boolean => {
+    const maxSize = 10 * 1024 * 1024; // 10MB for images
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file (JPG, PNG, GIF)');
+      return false;
+    }
+    if (file.size > maxSize) {
+      toast.error('Image size must be less than 10MB');
+      return false;
+    }
+    return true;
+  };
+
+  const handleMp3Drop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingMp3(false);
+    const file = e.dataTransfer.files[0];
+    if (file && validateMp3(file)) {
+      setSelectedMp3(file);
+      // Auto-fill title from filename
+      const title = file.name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ');
+      setTrackTitle(title);
+    }
+  };
+
+  const handleImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingImage(false);
+    const file = e.dataTransfer.files[0];
+    if (file && validateImage(file)) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleMp3Select = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && validateMp3(file)) {
+      setSelectedMp3(file);
+      const title = file.name.replace(/\.[^/.]+$/, '').replace(/_/g, ' ');
+      setTrackTitle(title);
+    }
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && validateImage(file)) {
+      setSelectedImage(file);
+    }
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !user) return;
-    
+    if (!selectedMp3 || !user) {
+      toast.error('Please select an MP3 file');
+      return;
+    }
+
+    if (activeTab === 'mp3-with-cover' && !selectedImage) {
+      toast.error('Please select a cover image');
+      return;
+    }
+
     setUploading(true);
     setUploadProgress(0);
-    
+
     try {
-      // 1. Obtenir l'URL présignée
-      const { uploadUrl, publicUrl, key } = await getUploadUrlMutation.mutateAsync({
-        userId: user.id,
-        type: activeTab === 'mp3' ? 'music' : 'image',
-        filename: selectedFile.name,
-        contentType: selectedFile.type,
-      });
+      let coverUrl = '/game-over.jpg'; // Default cover
 
-      setUploadProgress(25);
+      // Upload cover image first if provided
+      if (activeTab === 'mp3-with-cover' && selectedImage) {
+        setUploadProgress(10);
+        
+        const imageUpload = await getUploadUrlMutation.mutateAsync({
+          userId: user.id,
+          type: 'image',
+          filename: selectedImage.name,
+          contentType: selectedImage.type,
+        });
 
-      // 2. Uploader le fichier vers S3
-      const uploadResponse = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: selectedFile,
-        headers: {
-          'Content-Type': selectedFile.type,
-        },
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error('S3 upload failed');
+        // Upload image with progress tracking
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          
+          xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+              const percentComplete = 10 + Math.round((e.loaded / e.total) * 20);
+              setUploadProgress(percentComplete);
+            }
+          });
+          
+          xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve();
+            } else {
+              reject(new Error('Image upload failed'));
+            }
+          });
+          
+          xhr.addEventListener('error', () => reject(new Error('Network error')));
+          xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
+          
+          xhr.open('PUT', imageUpload.uploadUrl);
+          xhr.setRequestHeader('Content-Type', selectedImage.type);
+          xhr.send(selectedImage);
+        });
+        
+        coverUrl = imageUpload.publicUrl;
+        setUploadProgress(30);
       }
 
-      setUploadProgress(75);
+      // Upload MP3
+      setUploadProgress(40);
+      
+      const mp3Upload = await getUploadUrlMutation.mutateAsync({
+        userId: user.id,
+        type: 'music',
+        filename: selectedMp3.name,
+        contentType: selectedMp3.type || 'audio/mpeg',
+      });
 
-      // 3. Enregistrer dans la base de données
+      // Upload MP3 with progress tracking
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = 40 + Math.round((e.loaded / e.total) * 40);
+            setUploadProgress(percentComplete);
+          }
+        });
+        
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            setUploadProgress(80);
+            resolve();
+          } else {
+            reject(new Error('MP3 upload failed'));
+          }
+        });
+        
+        xhr.addEventListener('error', () => reject(new Error('Network error')));
+        xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
+        
+        xhr.open('PUT', mp3Upload.uploadUrl);
+        xhr.setRequestHeader('Content-Type', selectedMp3.type || 'audio/mpeg');
+        xhr.send(selectedMp3);
+      });
+
+      // Save to database
       await addMediaMutation.mutateAsync({
         userId: user.id,
-        type: activeTab === 'mp3' ? 'music' : 'image',
-        title: selectedFile.name.replace(/\.[^/.]+$/, ''), // Remove extension
-        fileUrl: publicUrl,
-        fileKey: key,
-        mimeType: selectedFile.type,
-        size: selectedFile.size,
+        type: 'music',
+        title: trackTitle || selectedMp3.name.replace(/\.[^/.]+$/, ''),
+        fileUrl: mp3Upload.publicUrl,
+        coverUrl: coverUrl,
+        fileKey: mp3Upload.key,
+        mimeType: selectedMp3.type || 'audio/mpeg',
+        size: selectedMp3.size,
       });
 
       setUploadProgress(100);
+      toast.success('🎵 Track uploaded! Added to queue.');
       
-      toast.success(`${activeTab === 'mp3' ? 'Track' : 'Image'} uploaded successfully!`);
-      setSelectedFile(null);
+      // Reset form
+      setSelectedMp3(null);
+      setSelectedImage(null);
+      setTrackTitle('');
+      setArtistName('');
       setUploadProgress(0);
+      
+      onUploadComplete?.();
       onClose();
     } catch (error) {
       console.error('Upload error:', error);
@@ -134,17 +224,14 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-gradient-to-br from-gray-900/95 via-purple-900/95 to-gray-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="bg-gradient-to-br from-gray-900/98 via-purple-900/98 to-gray-900/98 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 bg-gray-900/95 z-10">
           <h2 style={{ fontFamily: 'VT323, monospace' }} className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            UPLOAD FILES
+            📻 UPLOAD TO RADIO
           </h2>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-full hover:bg-white/10 transition-colors"
-          >
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 transition-colors">
             <X size={24} className="text-white" />
           </button>
         </div>
@@ -152,110 +239,156 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
         {/* Tabs */}
         <div className="flex gap-2 p-4 border-b border-white/10">
           <button
-            onClick={() => setActiveTab('mp3')}
-            className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${
-              activeTab === 'mp3'
+            onClick={() => setActiveTab('mp3-only')}
+            className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all ${
+              activeTab === 'mp3-only'
                 ? 'bg-gradient-to-r from-cyan-600 to-purple-600 text-white shadow-lg'
                 : 'bg-white/5 text-white/60 hover:bg-white/10'
             }`}
-            style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
+            style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
           >
-            <Music className="inline mr-2" size={20} />
-            MP3 TRACKS
+            <Music className="inline mr-2" size={18} />
+            MP3 ONLY
           </button>
           <button
-            onClick={() => setActiveTab('image')}
-            className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${
-              activeTab === 'image'
+            onClick={() => setActiveTab('mp3-with-cover')}
+            className={`flex-1 py-3 px-4 rounded-lg font-bold transition-all ${
+              activeTab === 'mp3-with-cover'
                 ? 'bg-gradient-to-r from-pink-600 to-orange-600 text-white shadow-lg'
                 : 'bg-white/5 text-white/60 hover:bg-white/10'
             }`}
-            style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
+            style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
           >
-            <ImageIcon className="inline mr-2" size={20} />
-            IMAGES
+            <Disc className="inline mr-2" size={18} />
+            IMAGE + MP3
           </button>
         </div>
 
-        {/* Upload Area */}
-        <div className="p-6">
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all ${
-              isDragging
-                ? 'border-cyan-400 bg-cyan-400/10'
-                : 'border-white/20 hover:border-white/40 hover:bg-white/5'
-            }`}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={activeTab === 'mp3' ? 'audio/*' : 'image/*'}
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            
-            <Upload size={48} className="mx-auto mb-4 text-cyan-400" />
-            
-            <p style={{ fontFamily: 'VT323, monospace' }} className="text-xl text-white mb-2">
-              {selectedFile ? selectedFile.name : 'Drop your file here or click to browse'}
-            </p>
-            
-            <p className="text-sm text-white/60">
-              {activeTab === 'mp3' 
-                ? 'Supported formats: MP3, WAV, OGG (Max 50MB)'
-                : 'Supported formats: JPG, PNG, GIF (Max 50MB)'}
-            </p>
+        {/* Upload Areas */}
+        <div className="p-6 space-y-4">
+          {/* MP3 Upload Area */}
+          <div>
+            <label style={{ fontFamily: 'VT323, monospace' }} className="block text-lg text-cyan-400 mb-2">
+              🎵 MP3 FILE
+            </label>
+            <div
+              onDragOver={(e) => { e.preventDefault(); setIsDraggingMp3(true); }}
+              onDragLeave={() => setIsDraggingMp3(false)}
+              onDrop={handleMp3Drop}
+              onClick={() => mp3InputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                isDraggingMp3 ? 'border-cyan-400 bg-cyan-400/10' : 
+                selectedMp3 ? 'border-green-400 bg-green-400/10' :
+                'border-white/20 hover:border-white/40 hover:bg-white/5'
+              }`}
+            >
+              <input ref={mp3InputRef} type="file" accept="audio/*,.mp3" onChange={handleMp3Select} className="hidden" />
+              <Music size={36} className={`mx-auto mb-2 ${selectedMp3 ? 'text-green-400' : 'text-cyan-400'}`} />
+              <p style={{ fontFamily: 'VT323, monospace' }} className="text-lg text-white">
+                {selectedMp3 ? `✓ ${selectedMp3.name}` : 'Drop MP3 here or click to browse'}
+              </p>
+              {selectedMp3 && (
+                <p className="text-sm text-white/60 mt-1">
+                  {(selectedMp3.size / (1024 * 1024)).toFixed(2)} MB
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Selected File Info */}
-          {selectedFile && (
-            <div className="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p style={{ fontFamily: 'VT323, monospace' }} className="text-lg text-white">
-                    {selectedFile.name}
-                  </p>
-                  <p className="text-sm text-white/60">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
-                </div>
-                {!uploading && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedFile(null);
-                    }}
-                    className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                  >
-                    <X size={20} className="text-white" />
-                  </button>
+          {/* Cover Image Upload Area (only for mp3-with-cover tab) */}
+          {activeTab === 'mp3-with-cover' && (
+            <div>
+              <label style={{ fontFamily: 'VT323, monospace' }} className="block text-lg text-pink-400 mb-2">
+                🖼️ COVER IMAGE
+              </label>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDraggingImage(true); }}
+                onDragLeave={() => setIsDraggingImage(false)}
+                onDrop={handleImageDrop}
+                onClick={() => imageInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                  isDraggingImage ? 'border-pink-400 bg-pink-400/10' : 
+                  selectedImage ? 'border-green-400 bg-green-400/10' :
+                  'border-white/20 hover:border-white/40 hover:bg-white/5'
+                }`}
+              >
+                <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
+                {selectedImage ? (
+                  <div className="flex items-center justify-center gap-4">
+                    <img 
+                      src={URL.createObjectURL(selectedImage)} 
+                      alt="Cover preview" 
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="text-left">
+                      <p style={{ fontFamily: 'VT323, monospace' }} className="text-lg text-white">
+                        ✓ {selectedImage.name}
+                      </p>
+                      <p className="text-sm text-white/60">
+                        {(selectedImage.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <ImageIcon size={36} className="mx-auto mb-2 text-pink-400" />
+                    <p style={{ fontFamily: 'VT323, monospace' }} className="text-lg text-white">
+                      Drop cover image here or click to browse
+                    </p>
+                  </>
                 )}
               </div>
-              
-              {/* Progress Bar */}
-              {uploading && uploadProgress > 0 && (
-                <div className="mt-3">
-                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                  <p className="text-xs text-white/60 mt-1 text-center">
-                    {uploadProgress}% uploaded
-                  </p>
-                </div>
-              )}
+            </div>
+          )}
+
+          {/* Track Info */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label style={{ fontFamily: 'VT323, monospace' }} className="block text-sm text-white/60 mb-1">
+                TRACK TITLE
+              </label>
+              <input
+                type="text"
+                value={trackTitle}
+                onChange={(e) => setTrackTitle(e.target.value)}
+                placeholder="Enter track title..."
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-cyan-400"
+                style={{ fontFamily: 'VT323, monospace' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontFamily: 'VT323, monospace' }} className="block text-sm text-white/60 mb-1">
+                ARTIST NAME
+              </label>
+              <input
+                type="text"
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+                placeholder="Enter artist name..."
+                className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-cyan-400"
+                style={{ fontFamily: 'VT323, monospace' }}
+              />
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          {uploading && uploadProgress > 0 && (
+            <div className="mt-4">
+              <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p style={{ fontFamily: 'VT323, monospace' }} className="text-center text-white/60 mt-2">
+                {uploadProgress}% - {uploadProgress < 30 ? 'Uploading cover...' : uploadProgress < 80 ? 'Uploading MP3...' : 'Saving to database...'}
+              </p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3 p-6 border-t border-white/10">
+        <div className="flex gap-3 p-6 border-t border-white/10 sticky bottom-0 bg-gray-900/95">
           <button
             onClick={onClose}
             className="flex-1 py-3 px-6 rounded-lg bg-white/5 hover:bg-white/10 text-white font-bold transition-all"
@@ -265,15 +398,15 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
           </button>
           <button
             onClick={handleUpload}
-            disabled={!selectedFile || uploading}
+            disabled={!selectedMp3 || uploading || (activeTab === 'mp3-with-cover' && !selectedImage)}
             className={`flex-1 py-3 px-6 rounded-lg font-bold transition-all ${
-              selectedFile && !uploading
+              selectedMp3 && !uploading && (activeTab === 'mp3-only' || selectedImage)
                 ? 'bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white shadow-lg'
                 : 'bg-white/10 text-white/40 cursor-not-allowed'
             }`}
             style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
           >
-            {uploading ? 'UPLOADING...' : 'UPLOAD'}
+            {uploading ? '⏳ UPLOADING...' : '🚀 ADD TO QUEUE'}
           </button>
         </div>
       </div>

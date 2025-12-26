@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { trpc } from '@/lib/trpc';
+import BubblePop from './BubblePop';
 
 interface RetroTVProps {
   isOpen: boolean;
@@ -62,11 +63,16 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(2);
   const [playlist, setPlaylist] = useState(DEFAULT_playlist);
+  const [likeTrigger, setLikeTrigger] = useState(0);
+  const [dislikeTrigger, setDislikeTrigger] = useState(0);
+  const [trackLikes, setTrackLikes] = useState<{[key: number]: {likes: number, dislikes: number}}>({});
   
   // Charger l'etat de lecture depuis la DB
   const { data: playbackState, refetch: refetchPlayback } = trpc.playback.getPlaybackState.useQuery();
   const setCurrentTrackMutation = trpc.playback.setCurrentTrack.useMutation();
   const setIsPlayingMutation = trpc.playback.setIsPlaying.useMutation();
+  const likeMutation = trpc.upload.likeMedia.useMutation();
+  const dislikeMutation = trpc.upload.dislikeMedia.useMutation();
   
   // Charger les tracks uploadees depuis la DB
   const { data: uploadedTracks } = trpc.upload.listMedia.useQuery({ type: 'music' });
@@ -77,9 +83,17 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
       const userTracks = uploadedTracks.map(track => ({
         title: track.title,
         src: track.fileUrl,
-        image: track.coverUrl || '/apple-punk-logo.png'
+        image: track.coverUrl || '/apple-punk-logo.png',
+        id: track.id
       }));
       setPlaylist([...DEFAULT_playlist, ...userTracks]);
+      
+      // Initialize likes/dislikes
+      const likesData: {[key: number]: {likes: number, dislikes: number}} = {};
+      uploadedTracks.forEach(track => {
+        likesData[track.id] = { likes: track.likes || 0, dislikes: track.dislikes || 0 };
+      });
+      setTrackLikes(likesData);
     }
   }, [uploadedTracks]);
 
@@ -269,7 +283,7 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
           <div className="relative z-10 flex flex-col items-center w-full p-4 bg-black/10 h-full justify-center animate-in fade-in duration-700">
             
             <div className="text-center mb-4">
-              <p className={`font-mono text-[6px] md:text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
+              <p className={`text-[6px] md:text-[10px] tracking-widest uppercase mb-1 ${theme === 'light' ? 'text-orange-300' : 'text-cyan-300'} drop-shadow-md`}>
                 Now Playing
               </p>
               <p className="text-white font-bold text-[8px] md:text-sm truncate w-24 md:w-48 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
@@ -308,6 +322,71 @@ const RetroTV: React.FC<RetroTVProps> = ({ isOpen, onClose, autoPlayTrigger }) =
         title={isPlaying ? "Pause" : "Play"}
         aria-label={isPlaying ? "Pause" : "Play"}
       />
+
+      {/* Like/Dislike Buttons */}
+      <div className="absolute bottom-[12px] left-[12px] right-[12px] md:bottom-[20px] md:left-[20px] md:right-[20px] z-[60] flex items-center justify-between">
+        {/* Like Button */}
+        <div className="relative">
+          <button
+            onClick={() => {
+              const currentTrack = playlist[currentTrackIndex];
+              if ((currentTrack as any).id) {
+                likeMutation.mutate({ mediaId: (currentTrack as any).id }, {
+                  onSuccess: (data) => {
+                    setTrackLikes(prev => ({
+                      ...prev,
+                      [(currentTrack as any).id]: { ...prev[(currentTrack as any).id], likes: data.likes }
+                    }));
+                    setLikeTrigger(prev => prev + 1);
+                  }
+                });
+              }
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="relative bg-green-500/80 hover:bg-green-400 text-white rounded-full p-1 md:p-2 transition-all hover:scale-110 shadow-lg"
+            title="Like"
+          >
+            <ThumbsUp className="w-3 h-3 md:w-4 md:h-4" />
+            {(playlist[currentTrackIndex] as any).id && trackLikes[(playlist[currentTrackIndex] as any).id] && (
+              <span className="absolute -top-1 -right-1 bg-white text-green-600 text-[6px] md:text-[8px] font-bold rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">
+                {trackLikes[(playlist[currentTrackIndex] as any).id].likes}
+              </span>
+            )}
+            <BubblePop trigger={likeTrigger} color="#22c55e" />
+          </button>
+        </div>
+
+        {/* Dislike Button */}
+        <div className="relative">
+          <button
+            onClick={() => {
+              const currentTrack = playlist[currentTrackIndex];
+              if ((currentTrack as any).id) {
+                dislikeMutation.mutate({ mediaId: (currentTrack as any).id }, {
+                  onSuccess: (data) => {
+                    setTrackLikes(prev => ({
+                      ...prev,
+                      [(currentTrack as any).id]: { ...prev[(currentTrack as any).id], dislikes: data.dislikes }
+                    }));
+                    setDislikeTrigger(prev => prev + 1);
+                  }
+                });
+              }
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="relative bg-red-500/80 hover:bg-red-400 text-white rounded-full p-1 md:p-2 transition-all hover:scale-110 shadow-lg"
+            title="Dislike"
+          >
+            <ThumbsDown className="w-3 h-3 md:w-4 md:h-4" />
+            {(playlist[currentTrackIndex] as any).id && trackLikes[(playlist[currentTrackIndex] as any).id] && (
+              <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[6px] md:text-[8px] font-bold rounded-full w-3 h-3 md:w-4 md:h-4 flex items-center justify-center">
+                {trackLikes[(playlist[currentTrackIndex] as any).id].dislikes}
+              </span>
+            )}
+            <BubblePop trigger={dislikeTrigger} color="#ef4444" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

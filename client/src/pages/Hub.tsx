@@ -8,6 +8,7 @@ import { ChatMessage } from '@/components/ChatMessage';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { UploadModal } from '@/components/UploadModal';
 import { Settings, Upload } from 'lucide-react';
+import CustomizableTV from '@/components/CustomizableTV';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
@@ -23,33 +24,30 @@ interface Message {
 }
 
 export default function Hub() {
+  const [tvStartPlaying, setTvStartPlaying] = useState(true);
   const { user, isLoggedIn } = useUser();
   const [, setLocation] = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Charger les utilisateurs en ligne
   const { data: onlineUsers = [] } = trpc.presence.getOnlineUsers.useQuery(undefined, {
-    refetchInterval: 5000, // Mettre à jour toutes les 5 secondes
+    refetchInterval: 5000,
   });
   
   const { data: onlineCount = 0 } = trpc.presence.getOnlineCount.useQuery(undefined, {
     refetchInterval: 5000,
   });
   
-  // Mettre à jour la présence de l'utilisateur courant
   const updatePresenceMutation = trpc.presence.updatePresence.useMutation();
   
-  // Mettre à jour la présence
   useEffect(() => {
     if (!user) return;
     
-    // Mettre à jour la présence immédiatement
     updatePresenceMutation.mutate({ userId: user.id });
     
-    // Puis mettre à jour toutes les 10 secondes
     const interval = setInterval(() => {
       updatePresenceMutation.mutate({ userId: user.id });
     }, 10000);
@@ -57,37 +55,40 @@ export default function Hub() {
     return () => clearInterval(interval);
   }, [user, updatePresenceMutation]);
 
-  // Rediriger si pas connecté
   useEffect(() => {
     if (!isLoggedIn) {
       setLocation('/');
     }
   }, [isLoggedIn, setLocation]);
-  
 
-
-  // Charger les messages depuis la DB via tRPC
   const { data: dbMessages, refetch: refetchMessages } = trpc.chat.getMessages.useQuery({ limit: 100 }, {
-    refetchInterval: 3000, // Mettre a jour toutes les 3 secondes
+    refetchInterval: 3000,
   });
   
-  // Mettre a jour les messages quand on charge depuis la DB
   useEffect(() => {
-    if (dbMessages && dbMessages.length > 0) {
-      setMessages(dbMessages.map((m: any) => ({
-        ...m,
-        createdAt: new Date(m.createdAt)
-      })));
-    }
+    // Wait minimum 3 seconds before showing messages to prevent flash
+    const timer = setTimeout(() => {
+      if (dbMessages && dbMessages.length > 0) {
+        setMessages(dbMessages.map((m: any) => ({
+          ...m,
+          createdAt: new Date(m.createdAt)
+        })));
+      }
+      setIsLoading(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
   }, [dbMessages]);
 
-  // Mutation pour envoyer un message
   const sendMessageMutation = trpc.chat.sendMessage.useMutation();
+  
+  const [isSending, setIsSending] = useState(false);
   
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !chatInput.trim()) return;
+    if (!user || !chatInput.trim() || isSending) return;
 
+    setIsSending(true);
     try {
       await sendMessageMutation.mutateAsync({
         userId: user.id,
@@ -95,11 +96,12 @@ export default function Hub() {
       });
       setChatInput('');
       toast.success('Message sent!');
-      // Recharger les messages immediatement
       await refetchMessages();
     } catch (error) {
       console.error('Failed to send message:', error);
       toast.error('Failed to send message');
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -111,12 +113,10 @@ export default function Hub() {
     <div className="min-h-screen w-full relative overflow-hidden">
       <UnicornBackground />
 
-      {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-[100]">
         <ThemeToggle />
       </div>
 
-      {/* Compteur d'utilisateurs en ligne */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100]">
         <div className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/30 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.3)]">
           <span style={{ fontFamily: 'VT323, monospace' }} className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse">
@@ -125,8 +125,6 @@ export default function Hub() {
         </div>
       </div>
 
-      {/* Settings Button - Discret */}
-      {/* Settings Button - TEAL GLOW */}
       <button
         onClick={() => setShowSettings(!showSettings)}
         className="absolute top-4 left-4 z-[100] w-14 h-14 rounded-lg bg-gradient-to-br from-teal-600 to-cyan-700 hover:from-teal-500 hover:to-cyan-600 backdrop-blur-sm border-2 border-teal-400 transition-all hover:scale-105 flex items-center justify-center shadow-lg"
@@ -136,7 +134,6 @@ export default function Hub() {
         <Settings size={28} className="text-white drop-shadow-lg" />
       </button>
 
-      {/* Upload Button - PINK GLOW */}
       <button
         onClick={() => setShowUpload(true)}
         className="absolute top-4 left-20 z-[100] w-14 h-14 rounded-lg bg-gradient-to-br from-pink-600 to-rose-700 hover:from-pink-500 hover:to-rose-600 backdrop-blur-sm border-2 border-pink-400 transition-all hover:scale-105 flex items-center justify-center shadow-lg"
@@ -146,18 +143,15 @@ export default function Hub() {
         <Upload size={28} className="text-white drop-shadow-lg" />
       </button>
 
-      {/* Settings Panel */}
       {showSettings && (
         <SettingsPanel onClose={() => setShowSettings(false)} />
       )}
 
-      {/* Upload Modal */}
       <UploadModal 
         isOpen={showUpload} 
         onClose={() => setShowUpload(false)} 
       />
 
-      {/* User Bubbles - Flottantes */}
       <div className="absolute inset-0 pointer-events-none z-10">
         {onlineUsers.map((onlineUser, index) => (
           <UserBubble
@@ -169,17 +163,31 @@ export default function Hub() {
         ))}
       </div>
 
-      {/* Chat Messages - Flottants */}
-      <div className="absolute inset-0 pointer-events-none z-20">
-        {messages.slice(-10).map((message, index) => (
-          <ChatMessage
-            key={message.id}
-            message={message}
-            index={index}
-          />
-        ))}
-      </div>
-      {/* Chat Input - Bas de page */}
+      {isLoading ? (
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <div className="text-center animate-pulse">
+            <div style={{ fontFamily: 'VT323, monospace' }} className="text-6xl text-cyan-400 drop-shadow-[0_0_20px_rgba(6,182,212,0.8)] mb-4">
+              ⏳
+            </div>
+            <div style={{ fontFamily: 'VT323, monospace' }} className="text-3xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]">
+              LOADING...
+            </div>
+          </div>
+        </div>
+      ) : (
+        messages.length > 0 && (
+          <div className="absolute inset-0 pointer-events-none z-20">
+            {messages.slice(-10).map((message, index) => (
+              <ChatMessage
+                key={message.id}
+                message={message}
+                index={index}
+              />
+            ))}
+          </div>
+        )
+      )}
+      
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">
         <form onSubmit={handleSendMessage} className="w-full flex gap-2">
           <input
@@ -192,15 +200,23 @@ export default function Hub() {
           />
           <button
             type="submit"
-            className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white rounded-full font-bold transition-all hover:scale-105 border border-white/20"
+            disabled={isSending}
+            className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white rounded-full font-bold transition-all hover:scale-105 border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
           >
-            SEND
+            {isSending ? 'SENDING...' : 'SEND'}
           </button>
         </form>
       </div>
 
-      {/* Footer Credits */}
+      <CustomizableTV 
+        isOpen={true}
+        initialStyle={user?.tvStyle || '1970s'}
+        initialPosition={{ x: 20, y: 80 }}
+        size="medium"
+        startPlaying={tvStartPlaying}
+      />
+
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 md:gap-3 animate-in fade-in duration-1000 delay-500">
         <img
           src="/seub-icon.jpg"
@@ -213,6 +229,19 @@ export default function Hub() {
         >
           SEBG | APPLEPUNK | ALL RIGHTS RESERVED
         </span>
+        <a 
+          href="https://seub.ca" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="hover:scale-110 transition-transform duration-300"
+        >
+          <img 
+            src="/applepunk-logo.gif" 
+            alt="ApplePunk" 
+            className="w-12 h-auto md:w-18 drop-shadow-[0_0_15px_rgba(236,72,153,0.8)]"
+            style={{ width: '48px' }}
+          />
+        </a>
       </div>
     </div>
   );

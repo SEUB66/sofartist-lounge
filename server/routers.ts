@@ -1,9 +1,10 @@
-import { router, publicProcedure } from './trpc.js';
+import { publicProcedure, router } from './trpc.js';
 import { db } from './db.js';
 import { users, messages, media, sessions, playbackState } from '../drizzle/schema.js';
 import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
+import { hashPassword } from './crypto';
 
 // Router pour la présence utilisateur
 const presenceRouter = router({
@@ -70,9 +71,12 @@ const presenceRouter = router({
 
 // Router pour l'authentification
 const authRouter = router({
-  // Login ultra simple : juste un nickname
+  // Login avec nickname et mot de passe optionnel
   login: publicProcedure
-    .input(z.object({ nickname: z.string().min(1).max(50) }))
+    .input(z.object({ 
+      nickname: z.string().min(1).max(50),
+      password: z.string().optional()
+    }))
     .mutation(async ({ input }) => {
       // Vérifier si l'utilisateur existe
       const [existingUser] = await db
@@ -82,6 +86,22 @@ const authRouter = router({
         .limit(1);
 
       if (existingUser) {
+        // Si l'utilisateur a un mot de passe, vérifier
+        if (existingUser.passwordHash) {
+          // Utilisateur protégé par mot de passe
+          if (!input.password) {
+            throw new Error('Password required for this nickname');
+          }
+          const passwordHash = await hashPassword(input.password);
+          const isValid = passwordHash === existingUser.passwordHash;
+          if (!isValid) {
+            throw new Error('Invalid password');
+          }
+        } else {
+          // Utilisateur SANS mot de passe - connexion libre
+          // Pas de vérification nécessaire
+        }
+        
         // Mettre à jour lastSeenAt
         await db
           .update(users)
@@ -92,22 +112,35 @@ const authRouter = router({
       }
 
       // Créer un nouvel utilisateur
+      const passwordHash = input.password ? await hashPassword(input.password) : null;
+      
       const [newUser] = await db
         .insert(users)
         .values({
           nickname: input.nickname,
           nicknameColor: '#00ffff',
           mood: '😊',
+          passwordHash: passwordHash,
         })
-        .$returningId();
+        .returning();
 
-      const [user] = await db
-        .select()
+      return { user: newUser, isNew: true };
+    }),
+
+  // Vérifier si un nickname est protégé
+  checkNickname: publicProcedure
+    .input(z.object({ nickname: z.string().min(1).max(50) }))
+    .query(async ({ input }) => {
+      const [existingUser] = await db
+        .select({ passwordHash: users.passwordHash })
         .from(users)
-        .where(eq(users.id, newUser.id))
+        .where(eq(users.nickname, input.nickname))
         .limit(1);
 
-      return { user, isNew: true };
+      return {
+        exists: !!existingUser,
+        requiresPassword: !!(existingUser?.passwordHash)
+      };
     }),
 
   // Récupérer l'utilisateur courant (par ID)
@@ -164,7 +197,7 @@ const chatRouter = router({
           userId: input.userId,
           content: input.content,
         })
-        .$returningId();
+        .returning();
 
       return { success: true, messageId: msg.id };
     }),
@@ -212,17 +245,60 @@ const settingsRouter = router({
         profilePhoto: z.string().optional(),
         nicknameColor: z.string().optional(),
         mood: z.string().optional(),
+        password: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { userId, ...updates } = input;
+      const { userId, password, ...updates } = input;
+      
+      // Si un mot de passe est fourni, le hasher
+      const finalUpdates: any = { ...updates };
+      if (password !== undefined) {
+        if (password === '') {
+          // Mot de passe vide = supprimer la protection
+          finalUpdates.passwordHash = null;
+        } else {
+          // Hasher le nouveau mot de passe
+          finalUpdates.passwordHash = await hashPassword(password);
+        }
+      }
 
       await db
         .update(users)
-        .set(updates)
+        .set(finalUpdates)
         .where(eq(users.id, userId));
 
       return { success: true };
+    }),
+
+  // Mettre à jour le style de TV
+  updateTvStyle: publicProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+        tvStyle: z.enum(['1960s', '1970s', '1980s', '1990s', 'crt']),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(users)
+        .set({ tvStyle: input.tvStyle })
+        .where(eq(users.id, input.userId));
+
+      return { success: true };
+    }),
+
+  // Récupérer le style de TV d'un utilisateur
+  getTvStyle: publicProcedure
+    .input(z.object({ userId: z.number() }))
+    .query(async ({ input }) => {
+      const [user] = await db
+        .select({ tvStyle: users.tvStyle })
+        .from(users)
+        .where(eq(users.id, input.userId))
+        .limit(1);
+
+      return user?.tvStyle || '1970s';
     }),
 });
 
@@ -264,6 +340,8 @@ const uploadRouter = router({
           coverUrl: media.coverUrl,
           mimeType: media.mimeType,
           size: media.size,
+          likes: media.likes,
+          dislikes: media.dislikes,
           createdAt: media.createdAt,
           uploaderNickname: users.nickname,
         })
@@ -296,7 +374,7 @@ const uploadRouter = router({
       const [newMedia] = await db
         .insert(media)
         .values(input)
-        .$returningId();
+        .returning();
 
       return { success: true, mediaId: newMedia.id };
     }),
@@ -319,6 +397,42 @@ const uploadRouter = router({
       await db.delete(media).where(eq(media.id, input.mediaId));
 
       return { success: true, fileKey: mediaItem.fileKey };
+    }),
+
+  // Liker un média
+  likeMedia: publicProcedure
+    .input(z.object({ mediaId: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(media)
+        .set({ likes: sql`${media.likes} + 1` })
+        .where(eq(media.id, input.mediaId));
+
+      const [updated] = await db
+        .select({ likes: media.likes })
+        .from(media)
+        .where(eq(media.id, input.mediaId))
+        .limit(1);
+
+      return { success: true, likes: updated?.likes || 0 };
+    }),
+
+  // Disliker un média
+  dislikeMedia: publicProcedure
+    .input(z.object({ mediaId: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(media)
+        .set({ dislikes: sql`${media.dislikes} + 1` })
+        .where(eq(media.id, input.mediaId));
+
+      const [updated] = await db
+        .select({ dislikes: media.dislikes })
+        .from(media)
+        .where(eq(media.id, input.mediaId))
+        .limit(1);
+
+      return { success: true, dislikes: updated?.dislikes || 0 };
     }),
 });
 

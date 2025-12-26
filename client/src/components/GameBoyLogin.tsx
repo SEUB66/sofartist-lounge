@@ -1,15 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { trpc } from '@/lib/trpc';
 
 interface GameBoyLoginProps {
   isOpen: boolean;
-  onLogin: (nickname: string) => void;
+  onLogin: (nickname: string, password?: string) => void;
   onClose?: () => void;
 }
 
 export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
   const { theme } = useTheme();
   const [nickname, setNickname] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [requiresPassword, setRequiresPassword] = useState(false);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -33,12 +38,33 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
     return '/gameboy-classic.png';
   };
 
+  // Vérifier si le nickname existe et est protégé
+  const checkNicknameMutation = trpc.auth.checkNickname.useQuery(
+    { nickname: nickname.trim() },
+    { enabled: false }
+  );
+
+  const handleNicknameBlur = async () => {
+    if (nickname.trim().length > 0) {
+      setIsCheckingNickname(true);
+      const result = await checkNicknameMutation.refetch();
+      if (result.data?.requiresPassword) {
+        setRequiresPassword(true);
+        setShowPassword(true);
+      } else {
+        setRequiresPassword(false);
+        setShowPassword(false);
+      }
+      setIsCheckingNickname(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('[GameBoyLogin] handleSubmit called, nickname:', nickname);
     if (nickname.trim()) {
-      console.log('[GameBoyLogin] Calling onLogin with:', nickname.trim());
-      onLogin(nickname.trim());
+      console.log('[GameBoyLogin] Calling onLogin with:', nickname.trim(), 'password:', password ? '***' : 'none');
+      onLogin(nickname.trim(), password || undefined);
     } else {
       console.log('[GameBoyLogin] Nickname is empty!');
     }
@@ -71,27 +97,71 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
         <img 
           src={getGameBoyImage()} 
           alt="Game Boy" 
-          className={`w-[200px] md:w-[268px] h-auto drop-shadow-2xl transition-all duration-500 ${
+          className={`w-[150px] md:w-[200px] h-auto drop-shadow-2xl transition-all duration-500 ${
             isAnimating ? 'filter brightness-150 drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]' : ''
           }`}
         />
-        <div className={`absolute top-[15%] left-[12%] w-[76%] h-[30%] bg-gradient-to-br from-green-200/90 to-green-300/90 backdrop-blur-sm rounded-sm flex flex-col items-center justify-center p-2 md:p-3 gap-1 md:gap-2 transition-all duration-500 ${
-          isAnimating ? 'animate-pulse from-green-100 to-green-200' : 'animate-fade-in'
-        }`} style={{boxShadow: isAnimating ? 'inset 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(34,197,94,0.5)' : 'inset 0 2px 8px rgba(0,0,0,0.3)'}}>
+        <div className={`absolute top-[15%] left-[12%] w-[76%] h-[30%] rounded-sm flex flex-col items-center justify-center p-2 md:p-3 gap-1 md:gap-2 transition-all duration-500 ${
+          isAnimating ? 'animate-pulse' : 'animate-fade-in'
+        }`} style={{
+          background: 'linear-gradient(135deg, rgba(155, 188, 15, 1.0) 0%, rgba(139, 172, 15, 1.0) 100%)',
+          boxShadow: isAnimating 
+            ? 'inset 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(155,188,15,0.6)' 
+            : 'inset 0 2px 8px rgba(0,0,0,0.3), inset 0 0 60px rgba(0,0,0,0.1)',
+          backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.03) 3px)',
+        }}>
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
             <input 
               type="text" 
               placeholder="NICKNAME" 
               value={nickname} 
-              onChange={(e) => setNickname(e.target.value)} 
-              className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/20 text-green-900 placeholder:text-green-700/60 border border-green-700/30 rounded font-mono focus:outline-none focus:ring-2 focus:ring-green-600" 
+              onChange={(e) => setNickname(e.target.value)}
+              onBlur={handleNicknameBlur}
+              className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/10 text-green-900 placeholder:text-green-800/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-green-900/50" 
               style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
               autoFocus
             />
+            {isCheckingNickname && (
+              <div className="text-xs text-green-900" style={{ fontFamily: 'VT323, monospace' }}>
+                Checking nickname...
+              </div>
+            )}
+            
+            {/* Password toggle button - only show if user manually wants it or if required */}
+            {!requiresPassword && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="w-full px-2 py-1 text-xs bg-black/10 text-green-900 rounded hover:bg-black/20 transition-colors border-none"
+                style={{ fontFamily: 'VT323, monospace' }}
+              >
+                {showPassword ? '▲ HIDE PASSWORD' : '▼ HAVE PASSWORD?'}
+              </button>
+            )}
+            
+            {showPassword && (
+              <div className="flex flex-col gap-1">
+                {requiresPassword && (
+                  <div className="text-xs text-green-900 font-bold" style={{ fontFamily: 'VT323, monospace' }}>
+                    🔒 This nickname is protected!
+                  </div>
+                )}
+                <input 
+                  type="password" 
+                  placeholder={requiresPassword ? "PASSWORD REQUIRED" : "PASSWORD (OPTIONAL)"}
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/10 text-green-900 placeholder:text-green-800/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-green-900/50" 
+                  style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
+                  required={requiresPassword}
+                />
+              </div>
+            )}
+            
             <button 
               type="button" 
               onClick={(e) => { e.preventDefault(); handleSubmit(e as any); }}
-              className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-green-700 text-green-100 rounded font-bold hover:bg-green-600 transition-colors border border-green-900" 
+              className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-green-900/30 text-green-900 rounded font-bold hover:bg-green-900/40 transition-colors border-none" 
               style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
             >
               ENTER HUB

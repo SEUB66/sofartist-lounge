@@ -7,7 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { UserProvider } from "./contexts/UserContext";
 import Home from "./pages/Home";
 import Hub from "./pages/Hub";
-import RetroTV from "./components/RetroTV";
+// RetroTV removed - using CustomizableTV in Home.tsx instead
 
 
 function Router() {
@@ -37,8 +37,7 @@ function App() {
         >
           <TooltipProvider>
             <Toaster />
-            {/* RetroTV persistante sur toutes les pages */}
-            <RetroTV isOpen={true} onClose={() => {}} autoPlayTrigger={false} />
+            {/* CustomizableTV is now in Home.tsx with user preferences */}
             <Router />
           </TooltipProvider>
         </ThemeProvider>

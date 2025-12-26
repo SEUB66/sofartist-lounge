@@ -27,6 +27,8 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
   const [selectedColor, setSelectedColor] = useState(user?.nicknameColor || '#00ffff');
   const [selectedMood, setSelectedMood] = useState(user?.mood || '😊');
   const [photoUrl, setPhotoUrl] = useState(user?.profilePhoto || '');
+  const [password, setPassword] = useState('');
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
 
   const updateProfileMutation = trpc.settings.updateProfile.useMutation();
 
@@ -39,6 +41,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
         nicknameColor: selectedColor,
         mood: selectedMood,
         profilePhoto: photoUrl || undefined,
+        password: password || undefined, // Only send if password is provided
       });
 
       // Mettre à jour l'utilisateur local
@@ -58,7 +61,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
       <div className="bg-gradient-to-br from-purple-900/90 to-cyan-900/90 backdrop-blur-xl border border-white/20 rounded-2xl p-6 w-full max-w-md shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -131,6 +134,34 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Password Protection (Optional) */}
+        <div className="mb-6">
+          <button
+            onClick={() => setShowPasswordSection(!showPasswordSection)}
+            className="w-full py-2 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all flex items-center justify-between px-4"
+            style={{ fontFamily: 'VT323, monospace' }}
+          >
+            <span>🔒 PASSWORD PROTECTION (OPTIONAL)</span>
+            <span>{showPasswordSection ? '▲' : '▼'}</span>
+          </button>
+          
+          {showPasswordSection && (
+            <div className="mt-3 p-4 bg-white/5 border border-white/10 rounded-lg">
+              <p className="text-white/70 text-xs mb-3" style={{ fontFamily: 'VT323, monospace' }}>
+                Set a password to lock your nickname and settings. Without a password, anyone can use your nickname.
+              </p>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password (leave empty to remove)"
+                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
+                style={{ fontFamily: 'VT323, monospace' }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Save Button */}

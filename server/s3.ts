@@ -23,7 +23,7 @@ const BUCKET_NAME = process.env.S3_BUCKET_NAME!;
 export async function getUploadUrl(
   key: string,
   contentType: string,
-  expiresIn: number = 300
+  expiresIn: number = 1800
 ): Promise<string> {
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,

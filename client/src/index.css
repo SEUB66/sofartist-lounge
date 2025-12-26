@@ -148,6 +148,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    line-height: 1.4;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -219,4 +222,70 @@
 
 .animate-pulse-subtle {
   animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* VT323 Font for retro look */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* Glitch animation for TV static */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.animate-scan {
+  animation: scan 0.5s linear infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.1s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06b6d4, #8b5cf6, #ec4899);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #22d3ee, #a78bfa, #f472b6);
+}
+
+/* Bubble pop animation for likes/dislikes */
+@keyframes bubble-pop {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(var(--bubble-x, 0), var(--bubble-y, 0)) scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(calc(var(--bubble-x, 0) * 2), calc(var(--bubble-y, 0) * 2)) scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-bubble-pop {
+  animation: bubble-pop 1s ease-out forwards;
 }
