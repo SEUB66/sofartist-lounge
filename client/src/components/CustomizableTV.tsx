@@ -440,6 +440,84 @@ const CustomizableTV: React.FC<CustomizableTVProps> = ({
                 background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)'
               }}
             />
+            
+            {/* Radio Controls Overlay (visible on hover - inside screen) */}
+            {showControls && (
+              <div 
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-2 pointer-events-auto"
+                style={{ zIndex: 50 }}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  {/* Back Button */}
+                  <button
+                    onClick={handlePrev}
+                    disabled={isTransitioning}
+                    className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+                    title="Previous"
+                  >
+                    <SkipBack size={14} className="text-white" />
+                  </button>
+                  
+                  {/* Play/Pause Button */}
+                  <button
+                    onClick={togglePlay}
+                    className="p-2 rounded-full bg-cyan-500/80 hover:bg-cyan-400 transition-colors"
+                    title={isPlaying ? 'Pause' : 'Play'}
+                  >
+                    {isPlaying ? (
+                      <Pause size={16} className="text-white" />
+                    ) : (
+                      <Play size={16} className="text-white" />
+                    )}
+                  </button>
+                  
+                  {/* Next Button */}
+                  <button
+                    onClick={handleNext}
+                    disabled={isTransitioning}
+                    className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
+                    title="Next"
+                  >
+                    <SkipForward size={14} className="text-white" />
+                  </button>
+                  
+                  {/* Volume Button */}
+                  <button
+                    onClick={toggleMute}
+                    className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                    title={isMuted ? 'Unmute' : 'Mute'}
+                  >
+                    {isMuted ? (
+                      <VolumeX size={14} className="text-white" />
+                    ) : (
+                      <Volume2 size={14} className="text-white" />
+                    )}
+                  </button>
+                  
+                  {/* Volume Slider */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={isMuted ? 0 : volume}
+                    onChange={(e) => {
+                      setVolume(parseFloat(e.target.value));
+                      setIsMuted(false);
+                    }}
+                    className="w-12 h-1 bg-white/20 rounded-full appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #06b6d4 0%, #06b6d4 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) 100%)`
+                    }}
+                  />
+                </div>
+                
+                {/* Track info */}
+                <p className="text-center text-[8px] text-white/60 mt-1" style={{ fontFamily: 'VT323, monospace' }}>
+                  {currentTrackIndex + 1}/{tracks.length} tracks
+                </p>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -452,84 +530,6 @@ const CustomizableTV: React.FC<CustomizableTVProps> = ({
         style={{ zIndex: 10 }}
         draggable={false}
       />
-      
-      {/* LAYER 3: Radio Controls Overlay (visible on hover - z-index 20) */}
-      {showControls && isPoweredOn && (
-        <div 
-          className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-2 rounded-b-lg"
-          style={{ zIndex: 20 }}
-        >
-          <div className="flex items-center justify-center gap-2">
-            {/* Back Button */}
-            <button
-              onClick={handlePrev}
-              disabled={isTransitioning}
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
-              title="Previous"
-            >
-              <SkipBack size={14} className="text-white" />
-            </button>
-            
-            {/* Play/Pause Button */}
-            <button
-              onClick={togglePlay}
-              className="p-2 rounded-full bg-cyan-500/80 hover:bg-cyan-400 transition-colors"
-              title={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <Pause size={16} className="text-white" />
-              ) : (
-                <Play size={16} className="text-white" />
-              )}
-            </button>
-            
-            {/* Next Button */}
-            <button
-              onClick={handleNext}
-              disabled={isTransitioning}
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors disabled:opacity-50"
-              title="Next"
-            >
-              <SkipForward size={14} className="text-white" />
-            </button>
-            
-            {/* Volume Button */}
-            <button
-              onClick={toggleMute}
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-              title={isMuted ? 'Unmute' : 'Mute'}
-            >
-              {isMuted ? (
-                <VolumeX size={14} className="text-white" />
-              ) : (
-                <Volume2 size={14} className="text-white" />
-              )}
-            </button>
-            
-            {/* Volume Slider */}
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={isMuted ? 0 : volume}
-              onChange={(e) => {
-                setVolume(parseFloat(e.target.value));
-                setIsMuted(false);
-              }}
-              className="w-12 h-1 bg-white/20 rounded-full appearance-none cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, #06b6d4 0%, #06b6d4 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.2) 100%)`
-              }}
-            />
-          </div>
-          
-          {/* Track info */}
-          <p className="text-center text-[8px] text-white/60 mt-1" style={{ fontFamily: 'VT323, monospace' }}>
-            {currentTrackIndex + 1}/{tracks.length} tracks
-          </p>
-        </div>
-      )}
       
       {/* LAYER 4: Style Picker Button (z-index 30) */}
       <button
