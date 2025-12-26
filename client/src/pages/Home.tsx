@@ -41,25 +41,24 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500 flex flex-col items-center gap-3">
+      <div 
+        onClick={handleStart}
+        className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom fade-in duration-500 flex flex-col items-center gap-3 cursor-pointer hover:scale-[1.02] transition-transform duration-300 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-lg"
+      >
         <div className="animate-pulse">
           <p style={{ fontFamily: 'VT323, monospace' }} className="text-lg md:text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]">
             ▶ PRESS START ◀
           </p>
         </div>
         
-        <button 
-          onClick={handleStart}
-          className="hover:scale-110 transition-transform duration-300 active:scale-95 pointer-events-auto cursor-pointer z-50 relative focus:outline-none focus:ring-2 focus:ring-purple-400 rounded-lg"
-          type="button"
-        >
+        <div className="pointer-events-auto z-50 relative">
           <img 
             src="/snes-controller.png" 
             alt="SNES Controller" 
             className="h-18 md:h-20 w-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.6)] pointer-events-none"
             style={{ height: '72px' }}
           />
-        </button>
+        </div>
       </div>
 
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 md:gap-3 animate-in fade-in duration-1000 delay-500">
