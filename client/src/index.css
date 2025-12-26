@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -224,8 +225,7 @@
   animation: pulse-subtle 3s ease-in-out infinite;
 }
 
-/* VT323 Font for retro look */
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+/* VT323 Font imported at top of file */
 
 /* Glitch animation for TV static */
 @keyframes glitch {

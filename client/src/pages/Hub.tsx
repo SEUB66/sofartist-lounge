@@ -257,7 +257,6 @@ export default function Hub() {
           )}
         </div>
         
-        {/* Chat Input */
         <form onSubmit={handleSendMessage} className="w-full flex gap-2">
           <input
             type="text"
