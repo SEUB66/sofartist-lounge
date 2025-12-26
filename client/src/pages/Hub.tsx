@@ -172,32 +172,92 @@ export default function Hub() {
         ))}
       </div>
 
-      {isLoading ? (
-        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <div className="text-center animate-pulse">
-            <div style={{ fontFamily: 'VT323, monospace' }} className="text-6xl text-cyan-400 drop-shadow-[0_0_20px_rgba(6,182,212,0.8)] mb-4">
-              ⏳
-            </div>
-            <div style={{ fontFamily: 'VT323, monospace' }} className="text-3xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]">
-              LOADING...
-            </div>
-          </div>
-        </div>
-      ) : (
-        messages.length > 0 && (
-          <div className="absolute inset-0 pointer-events-none z-20">
-            {messages.slice(-10).map((message, index) => (
-              <ChatMessage
-                key={message.id}
-                message={message}
-                index={index}
-              />
-            ))}
-          </div>
-        )
-      )}
-      
+      {/* Fixed Chat Box */}
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">
+        {/* Chat Messages */}
+        <div 
+          className="mb-3 p-4 rounded-2xl overflow-y-auto"
+          style={{
+            maxHeight: '300px',
+            background: 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(20px)',
+            border: '2px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div style={{ fontFamily: 'VT323, monospace' }} className="text-2xl text-cyan-400 animate-pulse">
+                ⏳ LOADING CHAT...
+              </div>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="text-center py-8">
+              <div style={{ fontFamily: 'VT323, monospace' }} className="text-xl text-white/50">
+                💬 NO MESSAGES YET. BE THE FIRST!
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {messages.slice(-20).map((message) => (
+                <div key={message.id} className="flex items-start gap-2 hover:bg-white/5 p-2 rounded-lg transition-colors">
+                  {/* Avatar */}
+                  {message.profilePhoto ? (
+                    <img 
+                      src={message.profilePhoto} 
+                      alt={message.nickname}
+                      className="w-8 h-8 rounded-full flex-shrink-0"
+                    />
+                  ) : (
+                    <div 
+                      className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold"
+                      style={{ 
+                        background: message.nicknameColor || '#808080',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {message.nickname[0].toUpperCase()}
+                    </div>
+                  )}
+                  
+                  {/* Message Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2">
+                      <span 
+                        className="font-bold"
+                        style={{ 
+                          fontFamily: 'VT323, monospace',
+                          fontSize: '18px',
+                          color: message.nicknameColor || '#ffffff'
+                        }}
+                      >
+                        {message.nickname}
+                      </span>
+                      <span 
+                        className="text-white/40 text-xs"
+                        style={{ fontFamily: 'VT323, monospace' }}
+                      >
+                        {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <div 
+                      className="text-white break-words"
+                      style={{ 
+                        fontFamily: 'VT323, monospace',
+                        fontSize: '16px',
+                        lineHeight: '1.4'
+                      }}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Chat Input */
         <form onSubmit={handleSendMessage} className="w-full flex gap-2">
           <input
             type="text"
