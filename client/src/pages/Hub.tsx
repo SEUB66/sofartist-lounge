@@ -131,7 +131,7 @@ export default function Hub() {
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100]">
         <div className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 via-purple-500/20 to-pink-500/20 backdrop-blur-xl border border-white/30 rounded-full shadow-[0_0_30px_rgba(6,182,212,0.3)]">
           <span style={{ fontFamily: 'VT323, monospace' }} className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wider drop-shadow-[0_0_10px_rgba(6,182,212,0.5)] animate-pulse">
-            {onlineUsers.length} DEV{onlineUsers.length > 1 ? 'S' : ''} ONLINE
+            {onlineUsers.length} ARTIST{onlineUsers.length !== 1 ? 'S' : ''} LIVE
           </span>
         </div>
       </div>
@@ -184,16 +184,20 @@ export default function Hub() {
       </div>
 
       {/* Fixed Chat Box */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">
+      {/* Right Sidebar Chat */}
+      <div className="fixed right-0 top-0 bottom-0 z-40 w-80 md:w-96 flex flex-col bg-black/40 backdrop-blur-xl border-l border-white/10">
+        {/* Chat Header */}
+        <div className="p-4 border-b border-white/10">
+          <h2 className="text-cyan-400 font-bold text-xl" style={{ fontFamily: 'VT323, monospace' }}>
+            💬 CHAT
+          </h2>
+        </div>
+        
         {/* Chat Messages */}
         <div 
-          className="mb-3 p-4 rounded-2xl overflow-y-auto"
+          className="flex-1 p-4 overflow-y-auto"
           style={{
-            maxHeight: '300px',
-            background: 'rgba(0, 0, 0, 0.7)',
-            backdropFilter: 'blur(20px)',
-            border: '2px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+            background: 'transparent',
           }}
         >
           {isLoading ? (
@@ -268,24 +272,27 @@ export default function Hub() {
           )}
         </div>
         
-        <form onSubmit={handleSendMessage} className="w-full flex gap-2">
-          <input
-            type="text"
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-6 py-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all"
-            style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
-          />
-          <button
-            type="submit"
-            disabled={isSending}
-            className="px-6 py-4 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white rounded-full font-bold transition-all hover:scale-105 border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
-          >
-            {isSending ? 'SENDING...' : 'SEND'}
-          </button>
-        </form>
+        {/* Chat Input */}
+        <div className="p-4 border-t border-white/10">
+          <form onSubmit={handleSendMessage} className="flex flex-col gap-2">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="Type message..."
+              className="w-full px-4 py-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all"
+              style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
+            />
+            <button
+              type="submit"
+              disabled={isSending}
+              className="w-full px-4 py-3 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white rounded-lg font-bold transition-all hover:scale-105 border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ fontFamily: 'VT323, monospace', fontSize: '16px' }}
+            >
+              {isSending ? 'SENDING...' : 'SEND'}
+            </button>
+          </form>
+        </div>
       </div>
 
       <CustomizableTV 
@@ -309,7 +316,7 @@ export default function Hub() {
 
       {/* Active Instrument Interface */}
       {currentInstrument && (
-        <div className="fixed bottom-[520px] md:bottom-32 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw]">
+        <div className="fixed bottom-[520px] md:bottom-32 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw] md:max-w-[calc(100vw-320px)]">
           {currentInstrument === 'keyboard' && <PianoKeyboard userId={user?.id || null} />}
           {currentInstrument === 'drums' && <DrumPads userId={user?.id || null} />}
           {currentInstrument === 'guitar' && <GuitarStrings userId={user?.id || null} />}

@@ -29,7 +29,7 @@ const InstrumentSelector: React.FC<InstrumentSelectorProps> = ({
   onSelectInstrument,
 }) => {
   return (
-    <div className="fixed bottom-[460px] md:bottom-[380px] left-1/2 transform -translate-x-1/2 z-40">
+    <div className="fixed bottom-[460px] md:bottom-[380px] left-1/2 transform -translate-x-1/2 z-40 md:max-w-[calc(100vw-320px)]">
       {/* Windows 95 Taskbar Style Container */}
       <div 
         className="flex gap-0.5 md:gap-1 p-1 md:p-2 rounded-lg overflow-x-auto max-w-[95vw]"

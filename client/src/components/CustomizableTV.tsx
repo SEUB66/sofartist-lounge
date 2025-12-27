@@ -70,6 +70,8 @@ const DEFAULT_TRACKS = [
   { id: 5, title: 'Train Heist', artist: 'Unknown', file: '/train-heist.mp3', cover: '/santa-dj.jpg' },
   { id: 6, title: 'Xmas Bromance', artist: 'Unknown', file: '/xmas-bromance.mp3', cover: '/gangsta-claus.jpg' },
   { id: 7, title: 'Xmas Lofi', artist: 'Unknown', file: '/xmas-lofi.mp3', cover: '/santa-dj.jpg' },
+  { id: 8, title: 'New Track 1', artist: 'Default', file: '/default-track-1.mp3', cover: '/default-cover-1.jpg' },
+  { id: 9, title: 'New Track 2', artist: 'Default', file: '/default-track-2.mp3', cover: '/default-cover-2.jpg' },
 ];
 
 interface CustomizableTVProps {
