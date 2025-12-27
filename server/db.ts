@@ -1,42 +1,10 @@
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { createPool } from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
 import * as schema from '../drizzle/schema.js';
 
-// Lazy initialization to avoid crashes when DATABASE_URL is not set at import time
-let _db: ReturnType<typeof drizzle> | null = null;
+console.log('[DB] Initializing database with @vercel/postgres...');
 
-function getDb() {
-  if (!_db) {
-    const databaseUrl = process.env.DATABASE_URL;
-    
-    if (!databaseUrl) {
-      throw new Error('DATABASE_URL environment variable is not set');
-    }
-    
-    console.log('[DB] Initializing database connection...');
-    console.log('[DB] DATABASE_URL host:', databaseUrl.split('@')[1]?.split('/')[0] || 'unknown');
-    
-    // Create pool with DATABASE_URL
-    const pool = createPool({
-      connectionString: databaseUrl,
-    });
-    
-    _db = drizzle(pool, { schema });
-    
-    console.log('[DB] Database connection initialized successfully');
-  }
-  
-  return _db;
-}
+// Use sql directly - it automatically uses DATABASE_URL or POSTGRES_URL
+export const db = drizzle(sql, { schema });
 
-// Export a proxy that lazily initializes the database
-export const db = new Proxy({} as ReturnType<typeof drizzle>, {
-  get(_, prop) {
-    const realDb = getDb();
-    const value = (realDb as any)[prop];
-    if (typeof value === 'function') {
-      return value.bind(realDb);
-    }
-    return value;
-  }
-});
+console.log('[DB] Database initialized successfully');
