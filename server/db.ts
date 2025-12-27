@@ -15,21 +15,16 @@ if (!connectionString) {
 
 console.log('[DB] Connection string found, creating postgres.js client...');
 
-try {
-  // postgres.js with SSL for serverless PostgreSQL (works with Neon, Railway, etc.)
-  const queryClient = postgres(connectionString, {
-    max: 1, // Serverless: minimal connections
-    idle_timeout: 20,
-    connect_timeout: 10,
-    ssl: 'require', // Require SSL
-  });
+// postgres.js with SSL for serverless PostgreSQL (works with Neon, Railway, etc.)
+const queryClient = postgres(connectionString, {
+  max: 10, // Railway: more connections allowed
+  idle_timeout: 20,
+  connect_timeout: 10,
+  ssl: 'require', // Require SSL
+});
 
-  console.log('[DB] postgres.js client created successfully');
+console.log('[DB] postgres.js client created successfully');
 
-  export const db = drizzle(queryClient, { schema });
+export const db = drizzle(queryClient, { schema });
 
-  console.log('[DB] Drizzle ORM initialized successfully');
-} catch (error) {
-  console.error('[DB] FATAL ERROR during initialization:', error);
-  throw error;
-}
+console.log('[DB] Drizzle ORM initialized successfully');
