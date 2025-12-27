@@ -39,7 +39,7 @@ export default function Hub() {
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentInstrument, setCurrentInstrument] = useState<InstrumentId | null>('drums');
+  const [currentInstrument, setCurrentInstrument] = useState<InstrumentId | null>(null);
   const [showInstrumentSelector, setShowInstrumentSelector] = useState(false);
   
   const { selectInstrument, activeInstruments } = useJamSession(user?.id || null);
