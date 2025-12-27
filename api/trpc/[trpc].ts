@@ -1,6 +1,7 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { appRouter } from '../../server/routers.js';
 
+// Force rebuild: 2025-12-26 20:19
 export default async function handler(request: Request) {
   try {
     console.log('[tRPC Handler] Starting request handling...');
