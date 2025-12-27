@@ -39,7 +39,8 @@ export default function Hub() {
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentInstrument, setCurrentInstrument] = useState<InstrumentId | null>(null);
+  const [currentInstrument, setCurrentInstrument] = useState<InstrumentId | null>('drums');
+  const [showInstrumentSelector, setShowInstrumentSelector] = useState(false);
   
   const { selectInstrument, activeInstruments } = useJamSession(user?.id || null);
   
@@ -151,6 +152,15 @@ export default function Hub() {
         title="Upload MP3 or Image"
       >
         <Upload size={28} className="text-white drop-shadow-lg" />
+      </button>
+
+      <button
+        onClick={() => setShowInstrumentSelector(!showInstrumentSelector)}
+        className="absolute top-4 left-36 z-[100] w-14 h-14 rounded-lg bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-500 hover:to-blue-600 backdrop-blur-sm border-2 border-cyan-400 transition-all hover:scale-105 flex items-center justify-center shadow-lg"
+        style={{ boxShadow: '0 0 30px rgba(6, 182, 212, 0.6), inset 0 0 20px rgba(6, 182, 212, 0.3)' }}
+        title={showInstrumentSelector ? 'Hide Instruments' : 'Show Instruments'}
+      >
+        <span className="text-2xl">{showInstrumentSelector ? '🎹' : '🥁'}</span>
       </button>
 
       {showSettings && (
@@ -286,14 +296,16 @@ export default function Hub() {
         startPlaying={tvStartPlaying}
       />
 
-      {/* Instrument Selector */}
-      <InstrumentSelector 
-        currentInstrument={currentInstrument}
-        onSelectInstrument={(instrumentId) => {
-          setCurrentInstrument(instrumentId);
-          selectInstrument(instrumentId);
-        }}
-      />
+      {/* Instrument Selector - Hidden by default */}
+      {showInstrumentSelector && (
+        <InstrumentSelector 
+          currentInstrument={currentInstrument}
+          onSelectInstrument={(instrumentId) => {
+            setCurrentInstrument(instrumentId);
+            selectInstrument(instrumentId);
+          }}
+        />
+      )}
 
       {/* Active Instrument Interface */}
       {currentInstrument && (
