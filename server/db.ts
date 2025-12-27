@@ -10,11 +10,12 @@ if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
 
 const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 
-// postgres.js is designed for serverless and works with any PostgreSQL database
+// postgres.js with SSL for Railway PostgreSQL
 const queryClient = postgres(connectionString!, {
-  max: 1, // Serverless: use minimal connections
+  max: 1, // Serverless: minimal connections
   idle_timeout: 20,
   connect_timeout: 10,
+  ssl: 'require', // Railway requires SSL
 });
 
 export const db = drizzle(queryClient, { schema });
