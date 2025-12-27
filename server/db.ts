@@ -1,12 +1,9 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import pg from 'pg';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql } from '@vercel/postgres';
 import * as schema from '../drizzle/schema.js';
-
-const { Pool } = pg;
 
 // Lazy initialization to avoid crashes when DATABASE_URL is not set at import time
 let _db: ReturnType<typeof drizzle> | null = null;
-let _pool: typeof Pool.prototype | null = null;
 
 function getDb() {
   if (!_db) {
@@ -19,12 +16,7 @@ function getDb() {
     console.log('[DB] Initializing database connection...');
     console.log('[DB] DATABASE_URL host:', databaseUrl.split('@')[1]?.split('/')[0] || 'unknown');
     
-    _pool = new Pool({
-      connectionString: databaseUrl,
-      ssl: false, // Railway PostgreSQL doesn't require SSL
-    });
-    
-    _db = drizzle(_pool, { schema });
+    _db = drizzle(sql, { schema });
     
     console.log('[DB] Database connection initialized successfully');
   }
