@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { sql } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 import * as schema from '../drizzle/schema.js';
 
 // Lazy initialization to avoid crashes when DATABASE_URL is not set at import time
@@ -16,7 +16,12 @@ function getDb() {
     console.log('[DB] Initializing database connection...');
     console.log('[DB] DATABASE_URL host:', databaseUrl.split('@')[1]?.split('/')[0] || 'unknown');
     
-    _db = drizzle(sql, { schema });
+    // Create pool with DATABASE_URL
+    const pool = createPool({
+      connectionString: databaseUrl,
+    });
+    
+    _db = drizzle(pool, { schema });
     
     console.log('[DB] Database connection initialized successfully');
   }
