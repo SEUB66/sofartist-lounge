@@ -4,7 +4,7 @@ import { users, messages, media, sessions, playbackState, activeInstruments, jam
 import { eq, desc, sql, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { getUploadUrl, generateS3Key, getPublicUrl } from './s3.js';
-import { hashPassword } from './crypto';
+import { hashPassword } from './crypto.js';
 
 // Router pour la présence utilisateur
 const presenceRouter = router({
