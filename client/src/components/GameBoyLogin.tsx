@@ -104,10 +104,10 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
         <div className={`absolute top-[15%] left-[12%] w-[76%] h-[30%] rounded-sm flex flex-col items-center justify-center p-2 md:p-3 gap-1 md:gap-2 transition-all duration-500 ${
           isAnimating ? 'animate-pulse' : 'animate-fade-in'
         }`} style={{
-          background: 'linear-gradient(135deg, rgba(155, 188, 15, 1.0) 0%, rgba(139, 172, 15, 1.0) 100%)',
+          background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(14, 165, 233, 0.95) 100%)',
           boxShadow: isAnimating 
-            ? 'inset 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(155,188,15,0.6)' 
-            : 'inset 0 2px 8px rgba(0,0,0,0.3), inset 0 0 60px rgba(0,0,0,0.1)',
+            ? 'inset 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(6,182,212,0.8)' 
+            : 'inset 0 2px 8px rgba(0,0,0,0.3), inset 0 0 60px rgba(6,182,212,0.2)',
           backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.03) 3px)',
         }}>
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
@@ -117,12 +117,12 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
               value={nickname} 
               onChange={(e) => setNickname(e.target.value)}
               onBlur={handleNicknameBlur}
-              className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/10 text-green-900 placeholder:text-green-800/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-green-900/50" 
+              className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/20 text-white placeholder:text-white/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-cyan-300/50" 
               style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
               autoFocus
             />
             {isCheckingNickname && (
-              <div className="text-xs text-green-900" style={{ fontFamily: 'VT323, monospace' }}>
+              <div className="text-xs text-white font-bold" style={{ fontFamily: 'VT323, monospace' }}>
                 Checking nickname...
               </div>
             )}
@@ -132,7 +132,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="w-full px-2 py-1 text-xs bg-black/10 text-green-900 rounded hover:bg-black/20 transition-colors border-none"
+                className="w-full px-2 py-1 text-xs bg-black/20 text-white rounded hover:bg-black/30 transition-colors border-none"
                 style={{ fontFamily: 'VT323, monospace' }}
               >
                 {showPassword ? '▲ HIDE PASSWORD' : '▼ HAVE PASSWORD?'}
@@ -142,7 +142,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
             {showPassword && (
               <div className="flex flex-col gap-1">
                 {requiresPassword && (
-                  <div className="text-xs text-green-900 font-bold" style={{ fontFamily: 'VT323, monospace' }}>
+                  <div className="text-xs text-yellow-300 font-bold" style={{ fontFamily: 'VT323, monospace' }}>
                     🔒 This nickname is protected!
                   </div>
                 )}
@@ -151,7 +151,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
                   placeholder={requiresPassword ? "PASSWORD REQUIRED" : "PASSWORD (OPTIONAL)"}
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)} 
-                  className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/10 text-green-900 placeholder:text-green-800/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-green-900/50" 
+                  className="w-full px-2 md:px-3 py-2 text-sm md:text-base bg-black/20 text-white placeholder:text-white/70 border-none rounded focus:outline-none focus:ring-2 focus:ring-cyan-300/50" 
                   style={{ fontFamily: 'VT323, monospace', fontSize: '18px' }}
                   required={requiresPassword}
                 />
@@ -161,7 +161,7 @@ export function GameBoyLogin({ isOpen, onLogin, onClose }: GameBoyLoginProps) {
             <button 
               type="button" 
               onClick={(e) => { e.preventDefault(); handleSubmit(e as any); }}
-              className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-green-900/30 text-green-900 rounded font-bold hover:bg-green-900/40 transition-colors border-none" 
+              className="w-full px-2 md:px-3 py-2 text-base md:text-lg bg-cyan-500/80 text-white rounded font-bold hover:bg-cyan-400 transition-colors border-none shadow-lg" 
               style={{ fontFamily: 'VT323, monospace', fontSize: '20px' }}
             >
               ENTER HUB

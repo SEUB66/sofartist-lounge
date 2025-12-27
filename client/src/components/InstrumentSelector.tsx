@@ -29,10 +29,10 @@ const InstrumentSelector: React.FC<InstrumentSelectorProps> = ({
   onSelectInstrument,
 }) => {
   return (
-    <div className="fixed bottom-[380px] left-1/2 transform -translate-x-1/2 z-40">
+    <div className="fixed bottom-[460px] md:bottom-[380px] left-1/2 transform -translate-x-1/2 z-40">
       {/* Windows 95 Taskbar Style Container */}
       <div 
-        className="flex gap-1 p-2 rounded-lg"
+        className="flex gap-0.5 md:gap-1 p-1 md:p-2 rounded-lg overflow-x-auto max-w-[95vw]"
         style={{
           background: 'linear-gradient(180deg, #c0c0c0 0%, #808080 100%)',
           boxShadow: 'inset 2px 2px 0px rgba(255,255,255,0.8), inset -2px -2px 0px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.5)',
@@ -46,10 +46,8 @@ const InstrumentSelector: React.FC<InstrumentSelectorProps> = ({
             <button
               key={instrument.id}
               onClick={() => onSelectInstrument(instrument.id)}
-              className="group relative transition-all duration-100"
+              className="group relative transition-all duration-100 w-14 h-14 md:w-20 md:h-20 flex-shrink-0"
               style={{
-                width: '80px',
-                height: '80px',
                 background: isSelected 
                   ? 'linear-gradient(135deg, #808080 0%, #c0c0c0 100%)'
                   : 'linear-gradient(135deg, #dfdfdf 0%, #c0c0c0 100%)',
@@ -72,7 +70,7 @@ const InstrumentSelector: React.FC<InstrumentSelectorProps> = ({
                 <img 
                   src={instrument.icon} 
                   alt={instrument.name}
-                  className="w-10 h-10 mb-1"
+                  className="w-7 h-7 md:w-10 md:h-10 mb-0.5 md:mb-1"
                   style={{
                     imageRendering: 'pixelated',
                     filter: isSelected ? 'brightness(1.2) drop-shadow(0 0 4px cyan)' : 'none',
@@ -81,10 +79,9 @@ const InstrumentSelector: React.FC<InstrumentSelectorProps> = ({
                 
                 {/* Label */}
                 <span 
-                  className="text-xs font-bold tracking-tight"
+                  className="text-[10px] md:text-xs font-bold tracking-tight"
                   style={{
                     fontFamily: 'VT323, monospace',
-                    fontSize: '14px',
                     color: isSelected ? '#00ffff' : '#000',
                     textShadow: isSelected 
                       ? '0 0 8px rgba(0,255,255,0.8), 1px 1px 0 rgba(255,255,255,0.5)' 

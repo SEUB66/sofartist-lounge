@@ -297,7 +297,7 @@ export default function Hub() {
 
       {/* Active Instrument Interface */}
       {currentInstrument && (
-        <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-40">
+        <div className="fixed bottom-[520px] md:bottom-32 left-1/2 transform -translate-x-1/2 z-40 max-w-[95vw]">
           {currentInstrument === 'keyboard' && <PianoKeyboard userId={user?.id || null} />}
           {currentInstrument === 'drums' && <DrumPads userId={user?.id || null} />}
           {currentInstrument === 'guitar' && <GuitarStrings userId={user?.id || null} />}

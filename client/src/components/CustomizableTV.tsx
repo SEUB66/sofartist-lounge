@@ -99,6 +99,7 @@ const CustomizableTV: React.FC<CustomizableTVProps> = ({
   const [isPoweredOn, setIsPoweredOn] = useState(true);
   const [showStylePicker, setShowStylePicker] = useState(false);
   const [showControls, setShowControls] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   
   // Transition State
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -352,7 +353,7 @@ const CustomizableTV: React.FC<CustomizableTVProps> = ({
   return (
     <div
       ref={tvRef}
-      className={`fixed z-[100] cursor-move transition-transform duration-200 ${isDragging ? 'scale-105' : ''}`}
+      className={`fixed z-[100] cursor-move transition-all duration-300 ${isDragging ? 'scale-105' : ''} ${isMinimized ? 'scale-50 opacity-70' : ''}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -531,15 +532,26 @@ const CustomizableTV: React.FC<CustomizableTVProps> = ({
         draggable={false}
       />
       
-      {/* LAYER 4: Style Picker Button (z-index 30) */}
-      <button
-        onClick={() => setShowStylePicker(!showStylePicker)}
-        className="absolute top-0 right-0 bg-purple-600 hover:bg-purple-500 text-white text-xs px-2 py-1 rounded-bl-lg transition-colors"
-        style={{ zIndex: 30 }}
-        title="Change TV Style"
-      >
-        📺
-      </button>
+      {/* LAYER 4: Control Buttons (z-index 30) */}
+      <div className="absolute top-0 right-0 flex gap-1" style={{ zIndex: 30 }}>
+        {/* Minimize Button */}
+        <button
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-2 py-1 rounded-bl-lg transition-colors"
+          title={isMinimized ? 'Maximize TV' : 'Minimize TV'}
+        >
+          {isMinimized ? '□' : '−'}
+        </button>
+        
+        {/* Style Picker Button */}
+        <button
+          onClick={() => setShowStylePicker(!showStylePicker)}
+          className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-2 py-1 rounded-br-lg transition-colors"
+          title="Change TV Style"
+        >
+          📺
+        </button>
+      </div>
       
       {/* Style Picker Dropdown */}
       {showStylePicker && (
