@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  nickname  String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  messages  Message[]
+  sessions  Session[]
+  
+  @@map("users")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  content   String
+  timestamp DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("messages")
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  type      String
+  url       String
+  timestamp DateTime @default(now())
+  
+  @@map("media")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+model PlaybackState {
+  id           String  @id @default(uuid())
+  currentTime  Float   @map("current_time")
+  isPlaying    Boolean @map("is_playing")
+  currentTrack String  @map("current_track")
+  
+  @@map("playback_state")
+}
+
+model ActiveInstrument {
+  id         String @id @default(uuid())
+  instrument String
+  isActive   Boolean @map("is_active")
+  
+  @@map("active_instruments")
+}
+
+model JamNote {
+  id        String   @id @default(uuid())
+  note      String
+  timestamp DateTime @default(now())
+  
+  @@map("jam_notes")
+}
