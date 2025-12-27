@@ -227,7 +227,7 @@ export default function Hub() {
                         fontSize: '14px'
                       }}
                     >
-                      {message.nickname[0].toUpperCase()}
+                      {message.nickname?.[0]?.toUpperCase() || '?'}
                     </div>
                   )}
                   

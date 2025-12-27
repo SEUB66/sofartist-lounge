@@ -98,7 +98,15 @@ const chatRouter = router({
         }
       });
 
-      return msgs.reverse();
+      // Flatten the structure to match frontend expectations
+      return msgs.reverse().map(msg => ({
+        id: msg.id,
+        content: msg.content,
+        timestamp: msg.timestamp,
+        userId: msg.userId,
+        nickname: msg.user.nickname,
+        nicknameColor: '#808080' // Default color for now
+      }));
     }),
 
   // Envoyer un message
