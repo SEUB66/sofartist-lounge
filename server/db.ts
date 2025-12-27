@@ -1,10 +1,25 @@
-import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { sql } from '@vercel/postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import pg from 'pg';
 import * as schema from '../drizzle/schema.js';
 
-console.log('[DB] Initializing database with @vercel/postgres...');
+const { Pool } = pg;
 
-// Use sql directly - it automatically uses DATABASE_URL or POSTGRES_URL
-export const db = drizzle(sql, { schema });
+console.log('[DB] Initializing database with node-postgres...');
+
+if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
+  throw new Error('POSTGRES_URL or DATABASE_URL environment variable is required');
+}
+
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
+// Create pool with serverless-friendly configuration
+const pool = new Pool({
+  connectionString,
+  max: 1, // Serverless: use minimal connections
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+});
+
+export const db = drizzle(pool, { schema });
 
 console.log('[DB] Database initialized successfully');
