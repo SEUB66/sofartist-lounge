@@ -100,7 +100,7 @@
     "add": "^2.0.6",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.26.0",
     "pnpm": "^10.15.1",
     "postcss": "^8.4.47",
     "prisma": "^5.22.0",
