@@ -24,7 +24,7 @@ interface Message {
   userId: number;
   nickname: string;
   content: string;
-  createdAt: Date;
+  timestamp: Date;
   nicknameColor: string;
   mood: string;
   profilePhoto: string | null;
@@ -82,7 +82,7 @@ export default function Hub() {
       if (dbMessages && dbMessages.length > 0) {
         setMessages(dbMessages.map((m: any) => ({
           ...m,
-          createdAt: new Date(m.createdAt)
+          timestamp: new Date(m.timestamp)
         })));
       }
       setIsLoading(false);
@@ -252,7 +252,7 @@ export default function Hub() {
                         className="text-white/40 text-xs"
                         style={{ fontFamily: 'VT323, monospace' }}
                       >
-                        {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     <div 

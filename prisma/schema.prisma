@@ -12,6 +12,9 @@ model User {
   nickname  String   @unique
   password  String?
   createdAt DateTime @default(now()) @map("created_at")
+  nicknameColor String? @map("nickname_color")
+  mood          String?
+  profilePhoto  String? @map("profile_photo")
   
   messages  Message[]
   sessions  Session[]

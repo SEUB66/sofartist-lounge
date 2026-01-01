@@ -32,8 +32,8 @@ const authRouter = router({
         
         // Mettre à jour lastSeenAt
         const updatedUser = await prisma.user.update({
-          where: { id: existingUser.id },
-          data: { createdAt: new Date() }
+           where: { id: existingUser.id },
+          data: { lastSeenAt: new Date() }}
         });
 
         return { user: updatedUser, isNew: false };
@@ -46,6 +46,8 @@ const authRouter = router({
         data: {
           nickname: input.nickname,
           password: passwordHash,
+          nicknameColor: '#00ffff', // Default color
+          mood: '😊', // Default mood
         }
       });
 
@@ -68,15 +70,24 @@ const authRouter = router({
     }),
 
   // Récupérer l'utilisateur courant (par ID)
-  me: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      const user = await prisma.user.findUnique({
-        where: { id: input.userId }
-      });
+	  me: publicProcedure
+	    .input(z.object({ userId: z.string() }))
+	    .query(async ({ input }) => {
+	      const user = await prisma.user.findUnique({
+	        where: { id: input.userId },
+	        select: {
+	          id: true,
+	          nickname: true,
+	          password: true,
+	          createdAt: true,
+	          nicknameColor: true,
+	          mood: true,
+	          profilePhoto: true,
+	        }
+	      });
 
-      return user || null;
-    }),
+	      return user || null;
+	    }),
 });
 
 // Router pour le chat
@@ -92,7 +103,10 @@ const chatRouter = router({
           user: {
             select: {
               id: true,
-              nickname: true
+              nickname: true,
+              nicknameColor: true,
+              mood: true,
+              profilePhoto: true
             }
           }
         }
@@ -105,7 +119,9 @@ const chatRouter = router({
         timestamp: msg.timestamp,
         userId: msg.userId,
         nickname: msg.user.nickname,
-        nicknameColor: '#808080' // Default color for now
+        nicknameColor: msg.user.nicknameColor,
+        mood: msg.user.mood,
+        profilePhoto: msg.user.profilePhoto
       }));
     }),
 
@@ -260,6 +276,39 @@ const jamRouter = router({
     }),
 });
 
+// Router pour les paramètres utilisateur
+const settingsRouter = router({
+  // Mettre à jour le profil utilisateur (couleur, humeur, photo, mot de passe)
+  updateProfile: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        nicknameColor: z.string().optional(),
+        mood: z.string().optional(),
+        profilePhoto: z.string().optional().nullable(),
+        password: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const dataToUpdate: any = {
+        nicknameColor: input.nicknameColor,
+        mood: input.mood,
+        profilePhoto: input.profilePhoto,
+      };
+
+      if (input.password) {
+        dataToUpdate.password = await hashPassword(input.password);
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: input.userId },
+        data: dataToUpdate,
+      });
+
+      return { success: true, user: updatedUser };
+    }),
+});
+
 // Router principal
 export const appRouter = router({
   auth: authRouter,
@@ -267,6 +316,7 @@ export const appRouter = router({
   playback: playbackRouter,
   instruments: instrumentRouter,
   jam: jamRouter,
+  settings: settingsRouter,
 });
 
 export type AppRouter = typeof appRouter;

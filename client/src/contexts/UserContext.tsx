@@ -4,8 +4,8 @@ interface User {
   id: number;
   nickname: string;
   profilePhoto: string | null;
-  nicknameColor: string;
-  mood: string;
+  nicknameColor: string | null;
+  mood: string | null;
   createdAt: Date;
   lastSeenAt: Date;
 }
